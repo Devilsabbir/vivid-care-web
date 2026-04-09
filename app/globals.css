@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f7f9fb;
+  color: #191c1e;
+  font-family: 'Inter', sans-serif;
+}
+
+.font-headline {
+  font-family: 'Manrope', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+}
+
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.primary-gradient {
+  background: linear-gradient(135deg, #00446f 0%, #225c8a 100%);
+}
+
+.glass-header {
+  background: rgba(247, 249, 251, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ghost-border {
+  outline: 1px solid rgba(193, 199, 209, 0.15);
+}
+
+/* FullCalendar overrides */
+.fc {
+  font-family: 'Inter', sans-serif;
+}
+
+.fc .fc-toolbar-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #191c1e;
+}
+
+.fc .fc-button {
+  background: linear-gradient(135deg, #00446f 0%, #225c8a 100%) !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.875rem !important;
+}
+
+.fc .fc-button:focus {
+  box-shadow: none !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #cfe5ff !important;
+}
+
+.fc .fc-event {
+  border: none !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.75rem !important;
+  padding: 2px 4px !important;
+}
+
+@layer utilities {
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    40%       { transform: translateX(6px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+  }
+
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.4s ease both;
+  }
+
+  .animate-shake {
+    animation: shake 0.35s ease both;
+  }
+}

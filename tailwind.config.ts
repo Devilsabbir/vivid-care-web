@@ -65,12 +65,13 @@ const config: Config = {
         full: "0.75rem",
       },
       fontFamily: {
-        headline: ["Manrope", "sans-serif"],
-        body: ["Inter", "sans-serif"],
-        label: ["Inter", "sans-serif"],
+        headline: ["var(--font-headline)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
+        label: ["var(--font-body)", "sans-serif"],
       },
     },
   },
   plugins: [],
 };
+
 export default config;

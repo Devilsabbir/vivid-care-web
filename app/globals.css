@@ -2,14 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(205, 255, 82, 0.75);
+  color: #1a1a18;
+}
+
 body {
-  background-color: #f7f9fb;
-  color: #191c1e;
-  font-family: 'Inter', sans-serif;
+  background-color: #edecea;
+  color: #1a1a18;
+  font-family: var(--font-body), sans-serif;
 }
 
 .font-headline {
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-headline), sans-serif;
 }
 
 .material-symbols-outlined {
@@ -31,37 +40,46 @@ body {
 }
 
 .primary-gradient {
-  background: linear-gradient(135deg, #00446f 0%, #225c8a 100%);
+  background: linear-gradient(135deg, #1a1a18 0%, #353530 100%);
 }
 
 .glass-header {
-  background: rgba(247, 249, 251, 0.8);
+  background: rgba(237, 236, 234, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .ghost-border {
-  outline: 1px solid rgba(193, 199, 209, 0.15);
+  outline: 1px solid rgba(26, 26, 24, 0.08);
 }
 
-/* FullCalendar overrides */
 .fc {
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .fc .fc-toolbar-title {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #191c1e;
+  color: #1a1a18;
 }
 
 .fc .fc-button {
-  background: linear-gradient(135deg, #00446f 0%, #225c8a 100%) !important;
+  background: #1a1a18 !important;
   border: none !important;
-  border-radius: 0.5rem !important;
-  font-family: 'Inter', sans-serif !important;
+  border-radius: 9999px !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-family: 'DM Sans', sans-serif !important;
   font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  padding: 0.55rem 1rem !important;
+}
+
+.fc .fc-button:hover,
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: #2d2d28 !important;
 }
 
 .fc .fc-button:focus {
@@ -69,14 +87,23 @@ body {
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-  background-color: #cfe5ff !important;
+  background-color: rgba(205, 255, 82, 0.18) !important;
 }
 
 .fc .fc-event {
   border: none !important;
-  border-radius: 0.25rem !important;
+  border-radius: 9999px !important;
+  background: #cdff52 !important;
+  color: #1a1a18 !important;
   font-size: 0.75rem !important;
+  font-weight: 600 !important;
   padding: 2px 4px !important;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+  border-color: rgba(26, 26, 24, 0.08) !important;
 }
 
 @layer utilities {
@@ -87,10 +114,10 @@ body {
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    20%       { transform: translateX(-6px); }
-    40%       { transform: translateX(6px); }
-    60%       { transform: translateX(-4px); }
-    80%       { transform: translateX(4px); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
   }
 
   .animate-fade-slide-up {

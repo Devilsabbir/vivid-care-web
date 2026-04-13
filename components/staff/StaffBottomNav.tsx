@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation'
 const navItems = [
   { href: '/staff/home', icon: 'calendar_month', label: 'Home' },
   { href: '/staff/clock', icon: 'timer', label: 'Clock' },
-  { href: '/staff/documents', icon: 'folder', label: 'Documents' },
+  { href: '/staff/documentation', icon: 'assignment', label: 'Service' },
+  { href: '/staff/documents', icon: 'folder', label: 'Docs' },
   { href: '/staff/payments', icon: 'payments', label: 'Payments' },
   { href: '/staff/support', icon: 'smart_toy', label: 'Support' },
   { href: '/staff/profile', icon: 'person', label: 'Profile' },
@@ -18,7 +19,7 @@ export default function StaffBottomNav() {
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
       <div className="pointer-events-auto mx-auto mb-4 max-w-lg px-4">
-        <div className="grid h-[76px] grid-cols-6 items-center rounded-[28px] border border-white/10 bg-[#171717]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl">
+        <div className="grid h-[76px] grid-cols-7 items-center rounded-[28px] border border-white/10 bg-[#171717]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl">
         {navItems.map(({ href, icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
           return (

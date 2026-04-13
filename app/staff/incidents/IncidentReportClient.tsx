@@ -6,15 +6,26 @@ import { createClient } from '@/lib/supabase/client'
 import { Badge } from '@/components/ui/Badge'
 
 export default function IncidentReportClient({ shifts, staffId, adminIds, myIncidents }: {
-  shifts: any[]; staffId: string; adminIds: string[]; myIncidents: any[]
+  shifts: any[]
+  staffId: string
+  adminIds: string[]
+  myIncidents: any[]
 }) {
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ title: '', description: '', severity: 'medium', shift_id: '', client_id: '' })
+  const [supabase] = useState(() => createClient())
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    severity: 'medium',
+    shift_id: '',
+    client_id: '',
+  })
   const router = useRouter()
-  const supabase = createClient()
 
-  function set(f: string, v: string) { setForm(p => ({ ...p, [f]: v })) }
+  function set(field: string, value: string) {
+    setForm(current => ({ ...current, [field]: value }))
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -29,103 +40,174 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
       severity: form.severity,
     })
 
-    if (error) { alert(error.message); setSaving(false); return }
+    if (error) {
+      alert(error.message)
+      setSaving(false)
+      return
+    }
 
-    // Notify admins
     await Promise.all(adminIds.map(adminId =>
       supabase.from('notifications').insert({
-        user_id: adminId, type: 'incident',
+        user_id: adminId,
+        type: 'incident',
         title: `Incident Reported: ${form.severity.toUpperCase()}`,
         message: form.title,
         related_id: staffId,
-      })
+      }),
     ))
 
-    setSaving(false); setShowForm(false)
+    setSaving(false)
+    setShowForm(false)
     setForm({ title: '', description: '', severity: 'medium', shift_id: '', client_id: '' })
     router.refresh()
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
+      <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+        <div className="flex items-start gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#cdff52]">
+            <span className="material-symbols-outlined text-[20px]">shield</span>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#171716]">Safety first</p>
+            <p className="mt-1 text-sm leading-6 text-[#666258]">
+              Use emergency procedures first for immediate danger. This report is for documentation and coordinator follow-up.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
-          className="w-full py-4 rounded-2xl bg-error-container text-error font-bold font-headline text-base flex items-center justify-center gap-3 hover:opacity-90 transition-all"
+          className="flex w-full items-center justify-center gap-3 rounded-[24px] bg-[#171717] px-4 py-4 font-headline text-base font-semibold text-white shadow-[0_16px_28px_rgba(23,23,22,0.14)]"
         >
-          <span className="material-symbols-outlined text-2xl">report_problem</span>
-          Report an Incident
+          <span className="material-symbols-outlined text-[22px]">report_problem</span>
+          Report an incident
         </button>
       ) : (
-        <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm">
-          <h3 className="font-bold font-headline text-on-surface mb-4">New Incident Report</h3>
+        <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
+          <div className="mb-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">New report</p>
+            <h2 className="mt-2 font-headline text-xl font-semibold text-[#171716]">Capture the details</h2>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Title *</label>
-              <input required value={form.title} onChange={e => set('title', e.target.value)} placeholder="Brief description of incident"
-                className="w-full bg-surface-container-highest rounded-lg px-4 py-3 text-sm focus:outline-none" />
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Title *</label>
+              <input
+                required
+                value={form.title}
+                onChange={e => set('title', e.target.value)}
+                placeholder="Brief summary of what happened"
+                className="w-full rounded-xl border border-[#e7e1d7] bg-[#fbfaf7] px-4 py-3 text-sm focus:outline-none"
+              />
             </div>
+
             <div>
-              <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Severity *</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Severity *</label>
               <div className="grid grid-cols-4 gap-2">
-                {['low', 'medium', 'high', 'emergency'].map(s => (
-                  <button type="button" key={s} onClick={() => set('severity', s)}
-                    className={`py-2 rounded-lg text-xs font-bold capitalize transition-all ${form.severity === s ? (s === 'emergency' ? 'bg-error text-white' : 'primary-gradient text-white') : 'bg-surface-container text-on-surface'}`}>
-                    {s}
+                {['low', 'medium', 'high', 'emergency'].map(value => (
+                  <button
+                    type="button"
+                    key={value}
+                    onClick={() => set('severity', value)}
+                    className={`rounded-xl py-2.5 text-xs font-semibold capitalize transition ${
+                      form.severity === value
+                        ? value === 'emergency'
+                          ? 'bg-[#a33131] text-white'
+                          : 'bg-[#171717] text-white'
+                        : 'bg-[#f4f1ea] text-[#171716]'
+                    }`}
+                  >
+                    {value}
                   </button>
                 ))}
               </div>
             </div>
-            {shifts.length > 0 && (
+
+            {shifts.length > 0 ? (
               <div>
-                <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Related Shift</label>
-                <select value={form.shift_id} onChange={e => {
-                  const shift = shifts.find(s => s.id === e.target.value)
-                  setForm(p => ({ ...p, shift_id: e.target.value, client_id: shift?.clients?.id ?? '' }))
-                }} className="w-full bg-surface-container-highest rounded-lg px-4 py-3 text-sm focus:outline-none">
-                  <option value="">Select shift…</option>
-                  {shifts.map((s: any) => <option key={s.id} value={s.id}>{s.clients?.full_name ?? 'Shift'}</option>)}
+                <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Related shift</label>
+                <select
+                  value={form.shift_id}
+                  onChange={e => {
+                    const shift = shifts.find(value => value.id === e.target.value)
+                    setForm(current => ({
+                      ...current,
+                      shift_id: e.target.value,
+                      client_id: shift?.clients?.id ?? '',
+                    }))
+                  }}
+                  className="w-full rounded-xl border border-[#e7e1d7] bg-[#fbfaf7] px-4 py-3 text-sm focus:outline-none"
+                >
+                  <option value="">Select shift...</option>
+                  {shifts.map((shift: any) => <option key={shift.id} value={shift.id}>{shift.clients?.full_name ?? 'Shift'}</option>)}
                 </select>
               </div>
-            )}
+            ) : null}
+
             <div>
-              <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Description</label>
-              <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={4}
-                placeholder="Provide detailed information about the incident…"
-                className="w-full bg-surface-container-highest rounded-lg px-4 py-3 text-sm focus:outline-none resize-none" />
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Description</label>
+              <textarea
+                value={form.description}
+                onChange={e => set('description', e.target.value)}
+                rows={5}
+                placeholder="Explain what happened, who was involved, and any immediate action taken."
+                className="w-full resize-none rounded-xl border border-[#e7e1d7] bg-[#fbfaf7] px-4 py-3 text-sm focus:outline-none"
+              />
             </div>
-            <div className="flex gap-3">
-              <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-xl bg-surface-container text-on-surface font-semibold text-sm">Cancel</button>
-              <button type="submit" disabled={saving}
-                className="flex-1 py-3 rounded-xl bg-error text-white font-bold text-sm disabled:opacity-60 flex items-center justify-center gap-2">
-                {saving ? <><span className="material-symbols-outlined text-base animate-spin">progress_activity</span>Submitting…</> : 'Submit Report'}
+
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setShowForm(false)} className="flex-1 rounded-xl bg-[#f4f1ea] py-3 text-sm font-semibold text-[#171716]">
+                Cancel
+              </button>
+              <button type="submit" disabled={saving} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#171717] py-3 text-sm font-semibold text-white disabled:opacity-60">
+                {saving ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
+                    Submitting...
+                  </>
+                ) : 'Submit report'}
               </button>
             </div>
           </form>
-        </div>
+        </section>
       )}
 
-      {/* Past incidents */}
-      {myIncidents.length > 0 && (
-        <div>
-          <p className="text-xs font-black uppercase tracking-widest text-on-surface-variant font-label mb-3">My Reports</p>
+      {myIncidents.length > 0 ? (
+        <section className="space-y-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">My reports</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#171716]">Recent incident history</h2>
+          </div>
+
           <div className="space-y-3">
-            {myIncidents.map(inc => (
-              <div key={inc.id} className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-sm font-headline text-on-surface">{inc.title}</p>
-                  <p className="text-xs text-on-surface-variant">
-                    {inc.clients?.full_name ?? '—'} • {new Date(inc.reported_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
-                  </p>
+            {myIncidents.map(incident => (
+              <article key={incident.id} className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[#171716]">{incident.title}</p>
+                    <p className="mt-1 text-xs text-[#8b867b]">
+                      {incident.clients?.full_name ?? 'Unlinked client'} - {new Date(incident.reported_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Badge variant={incident.severity} />
+                    <Badge variant={incident.status} />
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Badge variant={inc.severity} />
-                  <Badge variant={inc.status} />
-                </div>
-              </div>
+              </article>
             ))}
           </div>
-        </div>
+        </section>
+      ) : (
+        <section className="rounded-[28px] border border-dashed border-[#d7d1c6] bg-white px-6 py-12 text-center">
+          <span className="material-symbols-outlined text-[40px] text-[#b5afa5]">assignment</span>
+          <p className="mt-3 text-sm font-semibold text-[#171716]">No incidents reported yet</p>
+          <p className="mt-1 text-xs text-[#8b867b]">If something happens during a shift, create a report here so admins are alerted immediately.</p>
+        </section>
       )}
     </div>
   )

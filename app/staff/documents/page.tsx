@@ -5,7 +5,6 @@ export default async function StaffDocumentsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Personal docs
   const { data: myDocs } = await supabase
     .from('documents')
     .select('*')
@@ -13,7 +12,6 @@ export default async function StaffDocumentsPage() {
     .eq('owner_type', 'staff')
     .order('created_at', { ascending: false })
 
-  // Clients assigned to this staff
   const { data: shifts } = await supabase
     .from('shifts')
     .select('client_id, clients(id, full_name)')
@@ -21,24 +19,27 @@ export default async function StaffDocumentsPage() {
     .not('client_id', 'is', null)
 
   const uniqueClients = Object.values(
-    (shifts ?? []).reduce((acc: any, s: any) => {
-      if (s.clients) acc[s.client_id] = s.clients
+    (shifts ?? []).reduce((acc: any, shift: any) => {
+      if (shift.clients) acc[shift.client_id] = shift.clients
       return acc
-    }, {})
+    }, {}),
   )
 
-  // Client docs
-  const clientIds = uniqueClients.map((c: any) => c.id)
+  const clientIds = uniqueClients.map((client: any) => client.id)
   const { data: clientDocs } = clientIds.length > 0
     ? await supabase.from('documents').select('*').in('owner_id', clientIds).eq('owner_type', 'client').order('created_at', { ascending: false })
     : { data: [] }
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="mb-6">
-        <h2 className="text-2xl font-extrabold font-headline text-on-surface">Documents</h2>
-        <p className="text-on-surface-variant text-sm mt-0.5">Your compliance documents & client agreements</p>
-      </div>
+    <div className="space-y-5">
+      <section className="rounded-[28px] bg-[#171717] px-5 py-5 text-white shadow-[0_24px_44px_rgba(23,23,22,0.18)]">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Documents</p>
+        <h1 className="mt-3 font-headline text-[1.85rem] font-semibold leading-none tracking-[-0.05em]">Stay compliance ready</h1>
+        <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
+          Upload your own certificates and review client-facing paperwork in one place.
+        </p>
+      </section>
+
       <DocumentsClient
         myDocs={myDocs ?? []}
         clientDocs={clientDocs ?? []}

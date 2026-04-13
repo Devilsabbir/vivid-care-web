@@ -1,17 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { ExpiryBadge } from '@/components/ui/Badge'
+import { ExpiryBadge, Badge } from '@/components/ui/Badge'
 
 type Tab = 'overview' | 'documents' | 'shifts'
 
-export default function ClientDetailClient({ client, documents, shifts }: {
-  client: any; documents: any[]; shifts: any[]
+export default function ClientDetailClient({
+  client,
+  documents,
+  shifts,
+}: {
+  client: any
+  documents: any[]
+  shifts: any[]
 }) {
   const [tab, setTab] = useState<Tab>('overview')
   const [deleting, setDeleting] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [docType, setDocType] = useState('')
+  const [expiryDate, setExpiryDate] = useState('')
+  const [file, setFile] = useState<File | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -22,196 +32,310 @@ export default function ClientDetailClient({ client, documents, shifts }: {
     router.push('/admin/clients')
   }
 
+  async function handleUpload(event: React.FormEvent) {
+    event.preventDefault()
+    if (!file || !docType) return
+    setUploading(true)
+
+    const path = `client/${client.id}/${docType}/${Date.now()}_${file.name}`
+    const { error: uploadError } = await supabase.storage.from('documents').upload(path, file)
+    if (uploadError) {
+      setUploading(false)
+      alert(uploadError.message)
+      return
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('documents').getPublicUrl(path)
+
+    await supabase.from('documents').insert({
+      owner_id: client.id,
+      owner_type: 'client',
+      doc_type: docType,
+      file_url: publicUrl,
+      file_name: file.name,
+      expiry_date: expiryDate || null,
+    })
+
+    setUploading(false)
+    setDocType('')
+    setExpiryDate('')
+    setFile(null)
+    router.refresh()
+  }
+
+  const summary = useMemo(() => {
+    return {
+      documents: documents.length,
+      shifts: shifts.length,
+      assignedStaff: new Set(shifts.map((shift: any) => shift.staff_id).filter(Boolean)).size,
+      geoReady: Boolean(client.lat && client.lng),
+    }
+  }, [client.lat, client.lng, documents.length, shifts])
+
   return (
     <div className="space-y-6">
-      {/* Profile card */}
-      <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-wrap gap-6 items-start">
-        <div className="w-16 h-16 primary-gradient rounded-2xl flex items-center justify-center text-white text-2xl font-bold font-headline flex-shrink-0">
-          {client.full_name?.charAt(0)}
-        </div>
-        <div className="flex-1 min-w-0 grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { label: 'NDIS Number', value: client.ndis_number },
-            { label: 'Date of Birth', value: client.date_of_birth ? new Date(client.date_of_birth).toLocaleDateString('en-AU') : null },
-            { label: 'Age', value: client.age },
-            { label: 'Phone', value: client.phone },
-            { label: 'Email', value: client.email },
-            { label: 'Emergency Contact', value: client.emergency_contact },
-          ].map(({ label, value }) => (
-            <div key={label}>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">{label}</p>
-              <p className="text-sm text-on-surface mt-0.5">{value ?? '—'}</p>
-            </div>
-          ))}
-          {client.address && (
-            <div className="col-span-2 md:col-span-3">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">Address</p>
-              <p className="text-sm text-on-surface mt-0.5">{client.address}</p>
-            </div>
-          )}
-          {client.notes && (
-            <div className="col-span-2 md:col-span-3">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">Notes</p>
-              <p className="text-sm text-on-surface mt-0.5">{client.notes}</p>
-            </div>
-          )}
-        </div>
-        <button onClick={handleDelete} disabled={deleting} className="text-error text-sm font-semibold flex items-center gap-1 hover:underline disabled:opacity-50">
-          <span className="material-symbols-outlined text-base">delete</span>
-          Delete
-        </button>
-      </div>
+      <section className="grid gap-4 md:grid-cols-4">
+        <MetricCard label="Documents" value={summary.documents} sub="Client-facing records" />
+        <MetricCard label="Assigned staff" value={summary.assignedStaff} sub="Across recent shifts" />
+        <MetricCard label="Recent shifts" value={summary.shifts} sub="Latest support visits" />
+        <MetricCard label="Geofence" value={summary.geoReady ? 1 : 0} sub={summary.geoReady ? 'Configured' : 'Missing coordinates'} accent={!summary.geoReady} />
+      </section>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-surface-container-low rounded-xl p-1 w-fit">
-        {(['overview', 'documents', 'shifts'] as Tab[]).map(t => (
+      <div className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
+        {(['overview', 'documents', 'shifts'] as Tab[]).map(item => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold font-headline capitalize transition-all ${tab === t ? 'bg-white text-sky-900 shadow-sm' : 'text-slate-600 hover:text-sky-800'}`}
+            key={item}
+            type="button"
+            onClick={() => setTab(item)}
+            className={tab === item ? 'rounded-full bg-[#1a1a18] px-4 py-2 text-white' : 'rounded-full px-4 py-2 text-[#6d6b64]'}
           >
-            {t}
+            {item === 'overview' ? 'Profile' : item === 'documents' ? 'Documents' : 'Shift history'}
           </button>
         ))}
       </div>
 
-      {tab === 'overview' && (
-        <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm">
-          <p className="text-sm text-on-surface-variant">
-            {client.notes ?? 'No additional notes for this client.'}
-          </p>
+      {tab === 'overview' ? (
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+            <h3 className="text-sm font-semibold text-[#1a1a18]">Client profile</h3>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <Field label="Full name" value={client.full_name ?? 'Unnamed client'} />
+              <Field label="NDIS number" value={client.ndis_number ?? 'Not recorded'} />
+              <Field label="Date of birth" value={client.date_of_birth ? new Date(client.date_of_birth).toLocaleDateString('en-AU') : 'Not recorded'} />
+              <Field label="Age" value={client.age ? String(client.age) : 'Not recorded'} />
+              <Field label="Phone" value={client.phone ?? 'Not recorded'} />
+              <Field label="Email" value={client.email ?? 'Not recorded'} />
+              <Field label="Emergency contact" value={client.emergency_contact ?? 'Not recorded'} />
+              <Field label="Geofence" value={summary.geoReady ? `${client.lat}, ${client.lng}` : 'Coordinates not configured'} />
+            </div>
+
+            {client.address ? (
+              <div className="mt-4 rounded-[18px] bg-[#faf9f6] p-4">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Address</p>
+                <p className="mt-2 text-sm font-medium text-[#1a1a18]">{client.address}</p>
+              </div>
+            ) : null}
+
+            {client.notes ? (
+              <div className="mt-4 rounded-[18px] bg-[#faf9f6] p-4">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Notes</p>
+                <p className="mt-2 text-sm leading-6 text-[#4f4c45]">{client.notes}</p>
+              </div>
+            ) : null}
+          </section>
+
+          <aside className="space-y-4">
+            <RailCard title="Record health">
+              <div className="space-y-2 text-[12px] leading-6 text-[#66635b]">
+                <p>{summary.documents} document records are stored against this client.</p>
+                <p>{summary.shifts} recent rostered visits are available for review.</p>
+                <p>{summary.geoReady ? 'Clock-in geofence can be enforced for this address.' : 'Add latitude and longitude to enable geofenced attendance.'}</p>
+              </div>
+            </RailCard>
+
+            <div className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+              <div className="border-b border-[#f0ece5] px-4 py-3">
+                <h3 className="text-sm font-semibold text-[#1a1a18]">Danger zone</h3>
+              </div>
+              <div className="px-4 py-4">
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="w-full rounded-2xl bg-[#fee2e2] px-4 py-3 text-sm font-semibold text-[#991b1b] disabled:opacity-60"
+                >
+                  {deleting ? 'Deleting...' : 'Delete client record'}
+                </button>
+              </div>
+            </div>
+          </aside>
         </div>
-      )}
+      ) : null}
 
-      {tab === 'documents' && (
-        <DocumentsTab documents={documents} ownerId={client.id} ownerType="client" />
-      )}
+      {tab === 'documents' ? (
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <section className="space-y-4">
+            <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <h3 className="text-sm font-semibold text-[#1a1a18]">Upload client document</h3>
+              <p className="mt-1 text-xs text-[#8a877f]">Store agreements, support plans, and care records against this client profile</p>
 
-      {tab === 'shifts' && (
-        <div className="bg-surface-container-lowest rounded-2xl shadow-sm">
-          <div className="px-6 py-4 border-b border-outline-variant/10">
-            <h3 className="font-bold font-headline text-on-surface">Shift History</h3>
-          </div>
-          {shifts.length > 0 ? (
-            <div className="divide-y divide-outline-variant/10">
-              {shifts.map((shift: any) => (
-                <div key={shift.id} className="px-6 py-4 flex items-center justify-between">
+              <form onSubmit={handleUpload} className="mt-5 grid gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Document type</label>
+                  <input
+                    value={docType}
+                    onChange={event => setDocType(event.target.value)}
+                    required
+                    placeholder="Client agreement, care plan, roster confirmation..."
+                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Expiry date</label>
+                  <input
+                    type="date"
+                    value={expiryDate}
+                    onChange={event => setExpiryDate(event.target.value)}
+                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">File</label>
+                  <input
+                    type="file"
+                    required
+                    onChange={event => setFile(event.target.files?.[0] ?? null)}
+                    className="mt-2 w-full rounded-2xl border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-4 py-3 text-sm text-[#66635b] outline-none"
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={uploading}
+                    className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                  >
+                    {uploading ? 'Uploading...' : 'Upload document'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {documents.length > 0 ? (
+              <div className="space-y-3">
+                {documents.map(doc => (
+                  <article key={doc.id} className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#6f6b63]">
+                          <span className="material-symbols-outlined text-[18px]">description</span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-[#1a1a18]">{doc.doc_type}</h4>
+                          <p className="text-[11px] text-[#8a877f]">{doc.file_name ?? 'Document file'}</p>
+                        </div>
+                      </div>
+                      <div className="md:ml-auto flex items-center gap-3">
+                        <ExpiryBadge expiryDate={doc.expiry_date} />
+                        {doc.file_url ? (
+                          <a href={doc.file_url} target="_blank" rel="noreferrer" className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45]">
+                            Open file
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <EmptyState icon="folder_open" title="No client documents uploaded" copy="Use this page to store plans, agreements, and compliance records." />
+            )}
+          </section>
+
+          <RailCard title="Document guidance">
+            <div className="space-y-2 text-[12px] leading-6 text-[#66635b]">
+              <p>Client documents stored here feed directly into the compliance and audit workflow.</p>
+              <p>Use expiry dates for agreements and plan windows so renewal reminders can be triggered later.</p>
+            </div>
+          </RailCard>
+        </div>
+      ) : null}
+
+      {tab === 'shifts' ? (
+        shifts.length > 0 ? (
+          <div className="space-y-3">
+            {shifts.map((shift: any) => (
+              <article key={shift.id} className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center">
                   <div>
-                    <p className="font-semibold text-sm text-on-surface">{shift.profiles?.full_name ?? 'Staff'}</p>
-                    <p className="text-xs text-on-surface-variant">
-                      {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} •{' '}
-                      {new Date(shift.start_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })} –{' '}
+                    <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.profiles?.full_name ?? 'Staff record'}</h4>
+                    <p className="text-[12px] text-[#7d7a73]">
+                      {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
+                      {' / '}
+                      {new Date(shift.start_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
+                      {' - '}
                       {new Date(shift.end_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
-                  <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full font-label ${
-                    shift.status === 'completed' ? 'bg-secondary-container/40 text-secondary' :
-                    shift.status === 'active' ? 'bg-primary-fixed text-primary' :
-                    shift.status === 'cancelled' ? 'bg-surface-container-highest text-outline' :
-                    'bg-tertiary-fixed/60 text-tertiary'
-                  }`}>{shift.status}</span>
+                  <div className="md:ml-auto">
+                    <Badge variant={shift.status} />
+                  </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-on-surface-variant">
-              <span className="material-symbols-outlined text-4xl mb-2 block">calendar_today</span>
-              <p className="text-sm">No shifts recorded</p>
-            </div>
-          )}
-        </div>
-      )}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <EmptyState icon="calendar_today" title="No shifts recorded" copy="Recent visits for this client will appear here." />
+        )
+      ) : null}
     </div>
   )
 }
 
-function DocumentsTab({ documents, ownerId, ownerType }: { documents: any[]; ownerId: string; ownerType: string }) {
-  const [uploading, setUploading] = useState(false)
-  const [docType, setDocType] = useState('')
-  const [expiryDate, setExpiryDate] = useState('')
-  const [file, setFile] = useState<File | null>(null)
-  const supabase = createClient()
-  const router = useRouter()
-
-  async function handleUpload(e: React.FormEvent) {
-    e.preventDefault()
-    if (!file || !docType) return
-    setUploading(true)
-
-    const path = `${ownerType}/${ownerId}/${docType}/${Date.now()}_${file.name}`
-    const { error: upErr } = await supabase.storage.from('documents').upload(path, file)
-    if (upErr) { setUploading(false); alert(upErr.message); return }
-
-    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
-
-    await supabase.from('documents').insert({
-      owner_id: ownerId, owner_type: ownerType, doc_type: docType,
-      file_url: publicUrl, file_name: file.name,
-      expiry_date: expiryDate || null,
-    })
-    setUploading(false)
-    setDocType(''); setExpiryDate(''); setFile(null)
-    router.refresh()
-  }
-
+function MetricCard({
+  label,
+  value,
+  sub,
+  accent,
+}: {
+  label: string
+  value: number
+  sub: string
+  accent?: boolean
+}) {
   return (
-    <div className="space-y-4">
-      {/* Upload form */}
-      <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm">
-        <h3 className="font-bold font-headline text-on-surface mb-4">Upload Document</h3>
-        <form onSubmit={handleUpload} className="flex flex-wrap gap-4 items-end">
-          <div className="flex-1 min-w-[160px]">
-            <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Document Type</label>
-            <input value={docType} onChange={e => setDocType(e.target.value)} required placeholder="e.g. Client Agreement"
-              className="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:outline-none" />
-          </div>
-          <div className="min-w-[160px]">
-            <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Expiry Date</label>
-            <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)}
-              className="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:outline-none" />
-          </div>
-          <div className="flex-1 min-w-[160px]">
-            <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">File</label>
-            <input type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm text-on-surface-variant" />
-          </div>
-          <button type="submit" disabled={uploading}
-            className="px-5 py-2.5 rounded-xl primary-gradient text-white font-bold text-sm disabled:opacity-60 flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">upload</span>
-            {uploading ? 'Uploading…' : 'Upload'}
-          </button>
-        </form>
-      </div>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.2rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{sub}</p>
+    </div>
+  )
+}
 
-      {/* Documents list */}
-      {documents.length > 0 ? (
-        <div className="bg-surface-container-lowest rounded-2xl shadow-sm divide-y divide-outline-variant/10">
-          {documents.map((doc: any) => (
-            <div key={doc.id} className="px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-on-surface-variant">description</span>
-                <div>
-                  <p className="font-semibold text-sm text-on-surface">{doc.doc_type}</p>
-                  <p className="text-xs text-on-surface-variant">{doc.file_name}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <ExpiryBadge expiryDate={doc.expiry_date} />
-                {doc.file_url && (
-                  <a href={doc.file_url} target="_blank" rel="noopener" className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline">
-                    <span className="material-symbols-outlined text-xl">open_in_new</span>
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-10 text-on-surface-variant">
-          <span className="material-symbols-outlined text-4xl mb-2 block">folder_open</span>
-          <p className="text-sm">No documents uploaded yet</p>
-        </div>
-      )}
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[18px] bg-[#faf9f6] p-4">
+      <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">{label}</p>
+      <p className="mt-2 text-sm font-medium text-[#1a1a18]">{value}</p>
+    </div>
+  )
+}
+
+function RailCard({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0ece5] px-4 py-3">
+        <h3 className="text-sm font-semibold text-[#1a1a18]">{title}</h3>
+      </div>
+      <div className="px-4 py-4">{children}</div>
+    </section>
+  )
+}
+
+function EmptyState({
+  icon,
+  title,
+  copy,
+}: {
+  icon: string
+  title: string
+  copy: string
+}) {
+  return (
+    <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
+      <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">{icon}</span>
+      <p className="mt-3 text-sm font-medium text-[#1a1a18]">{title}</p>
+      <p className="mt-1 text-xs text-[#8a877f]">{copy}</p>
     </div>
   )
 }

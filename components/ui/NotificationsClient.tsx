@@ -32,9 +32,11 @@ const TYPE_LABELS: Record<string, string> = {
 export default function NotificationsClient({
   initialNotifications,
   userId,
+  variant = 'admin',
 }: {
   initialNotifications: NotificationRow[]
   userId: string
+  variant?: 'admin' | 'staff'
 }) {
   const [notifications, setNotifications] = useState(initialNotifications)
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
@@ -86,6 +88,86 @@ export default function NotificationsClient({
     setNotifications(current => current.map(notification => ({ ...notification, read: true })))
   }
 
+  if (variant === 'staff') {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <FilterPill active={filter === 'all'} label="All" onClick={() => setFilter('all')} dark />
+          <FilterPill active={filter === 'unread'} label="Unread" onClick={() => setFilter('unread')} dark />
+          <button
+            type="button"
+            onClick={markAllRead}
+            disabled={!unreadCount}
+            className="ml-auto rounded-full bg-[#cdff52] px-4 py-2 text-xs font-semibold text-[#171716] disabled:opacity-50"
+          >
+            Mark all read
+          </button>
+        </div>
+
+        {visibleNotifications.length > 0 ? (
+          <div className="space-y-3">
+            {visibleNotifications.map(notification => (
+              <article
+                key={notification.id}
+                className={`rounded-[24px] border p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] ${
+                  notification.read
+                    ? 'border-[#e8e2d8] bg-white'
+                    : 'border-[#dfe9c1] bg-[#fcfff2]'
+                }`}
+              >
+                <div className="flex gap-3">
+                  <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${
+                    notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#171717] text-[#cdff52]'
+                  }`}>
+                    <span className="material-symbols-outlined text-[20px]">
+                      {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
+                    </span>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-semibold text-[#171716]">{notification.title}</p>
+                          <span className="rounded-full bg-[#f4f1ea] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6a665f]">
+                            {TYPE_LABELS[notification.type] ?? 'General'}
+                          </span>
+                          {!notification.read ? (
+                            <span className="rounded-full bg-[#cdff52] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#171716]">
+                              New
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className="mt-2 text-sm leading-6 text-[#5c5953]">{notification.message}</p>
+                        <p className="mt-2 text-[11px] text-[#8a877f]">{formatNotificationDate(notification.created_at)}</p>
+                      </div>
+
+                      {!notification.read ? (
+                        <button
+                          type="button"
+                          onClick={() => markRead(notification.id)}
+                          className="rounded-full bg-[#171717] px-3 py-1.5 text-[11px] font-medium text-white"
+                        >
+                          Mark read
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
+            <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">notifications_none</span>
+            <p className="mt-3 text-sm font-medium text-[#171716]">No notifications in this view</p>
+            <p className="mt-1 text-xs text-[#8a877f]">Switch filters or wait for new roster and compliance activity.</p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
       <section className="space-y-4">
@@ -95,20 +177,8 @@ export default function NotificationsClient({
             <p className="text-xs text-[#8a877f]">Realtime inserts are shown here as rostering, attendance, and compliance activity happens.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setFilter('all')}
-              className={`rounded-full px-4 py-2 text-xs font-medium ${filter === 'all' ? 'bg-[#1a1a18] text-white' : 'bg-[#f4f2ed] text-[#5f5c55]'}`}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('unread')}
-              className={`rounded-full px-4 py-2 text-xs font-medium ${filter === 'unread' ? 'bg-[#1a1a18] text-white' : 'bg-[#f4f2ed] text-[#5f5c55]'}`}
-            >
-              Unread
-            </button>
+            <FilterPill active={filter === 'all'} label="All" onClick={() => setFilter('all')} />
+            <FilterPill active={filter === 'unread'} label="Unread" onClick={() => setFilter('unread')} />
             <button
               type="button"
               onClick={markAllRead}
@@ -203,6 +273,32 @@ export default function NotificationsClient({
         </section>
       </aside>
     </div>
+  )
+}
+
+function FilterPill({
+  active,
+  label,
+  onClick,
+  dark,
+}: {
+  active: boolean
+  label: string
+  onClick: () => void
+  dark?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full px-4 py-2 text-xs font-medium ${
+        active
+          ? dark ? 'bg-[#171717] text-white' : 'bg-[#1a1a18] text-white'
+          : 'bg-[#f4f2ed] text-[#5f5c55]'
+      }`}
+    >
+      {label}
+    </button>
   )
 }
 

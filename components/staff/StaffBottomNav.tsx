@@ -16,26 +16,32 @@ export default function StaffBottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 glass-header border-t border-outline-variant/20">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
+    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
+      <div className="pointer-events-auto mx-auto mb-4 max-w-lg px-4">
+        <div className="grid h-[76px] grid-cols-6 items-center rounded-[28px] border border-white/10 bg-[#171717]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl">
         {navItems.map(({ href, icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
           return (
             <Link
               key={href}
               href={href}
-              className={`flex flex-col items-center gap-0.5 px-4 py-2 transition-all ${active ? 'text-primary' : 'text-outline hover:text-on-surface'}`}
+              className={`flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-center transition ${
+                active ? 'text-[#171717]' : 'text-[#989389] hover:text-white'
+              }`}
             >
-              <span
-                className="material-symbols-outlined text-2xl"
-                style={active ? { fontVariationSettings: "'FILL' 1" } : {}}
-              >
-                {icon}
+              <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${active ? 'bg-[#cdff52]' : 'bg-transparent'}`}>
+                <span
+                  className="material-symbols-outlined text-[20px]"
+                  style={active ? { fontVariationSettings: "'FILL' 1" } : {}}
+                >
+                  {icon}
+                </span>
               </span>
-              <span className="text-[10px] font-bold font-label">{label}</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em]">{label}</span>
             </Link>
           )
         })}
+        </div>
       </div>
     </nav>
   )

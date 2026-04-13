@@ -18,29 +18,41 @@ export default async function StaffLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-surface pb-20">
-      {/* Top Header */}
-      <header className="glass-header sticky top-0 z-40 h-14 flex items-center justify-between px-5 border-b border-outline-variant/10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 primary-gradient rounded-lg flex items-center justify-center text-white">
-            <span className="material-symbols-outlined text-sm material-symbols-filled">favorite</span>
-          </div>
-          <span className="font-bold font-headline text-sky-900 text-base">Vivid Care</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href="/staff/notifications" className="relative p-2 rounded-full hover:bg-surface-container transition-colors text-outline">
-            <span className="material-symbols-outlined text-xl">notifications</span>
-            {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border-2 border-surface" />
-            )}
+    <div className="min-h-screen bg-[#f6f2ea] text-[#171716]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(205,255,82,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#171717]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-lg items-center justify-between px-4">
+          <Link href="/staff/home" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#cdff52] text-[#171717] shadow-[0_8px_24px_rgba(205,255,82,0.28)]">
+              <span className="material-symbols-outlined material-symbols-filled text-[20px]">favorite</span>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8f8a80]">Staff workspace</p>
+              <p className="font-headline text-sm font-semibold text-white">Vivid Care</p>
+            </div>
           </Link>
-          <div className="w-8 h-8 bg-secondary-fixed rounded-full flex items-center justify-center text-secondary font-bold text-sm">
-            {staffName?.charAt(0) ?? 'S'}
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/staff/notifications"
+              className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-[#f6f2ea] transition hover:bg-white/10"
+            >
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
+              {unreadCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#cdff52] px-1 text-[10px] font-bold text-[#171717]">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              ) : null}
+            </Link>
+
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sm font-bold text-white">
+              {staffName?.charAt(0).toUpperCase() ?? 'S'}
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="px-5 py-6">
+      <main className="relative mx-auto max-w-lg px-4 pb-28 pt-5">
         {children}
       </main>
 

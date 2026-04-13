@@ -10,10 +10,13 @@ const navItems = [
   { href: '/admin/staff', icon: 'badge', label: 'Staff' },
   { href: '/admin/clients', icon: 'group', label: 'Clients' },
   { href: '/admin/compliance', icon: 'description', label: 'Documents' },
+  { href: '/admin/service-documentation', icon: 'fact_check', label: 'Service docs' },
+  { href: '/admin/agreements', icon: 'draw', label: 'Agreements' },
   { href: '/admin/incidents', icon: 'warning', label: 'Incidents' },
   { href: '/admin/notifications', icon: 'notifications', label: 'Notifications' },
   { href: '/admin/active-shifts', icon: 'location_on', label: 'Live shifts' },
   { href: '/admin/shift-history', icon: 'history', label: 'History' },
+  { href: '/admin/settings', icon: 'tune', label: 'Settings' },
 ]
 
 export default function AdminSidebar({ adminName }: { adminName?: string }) {

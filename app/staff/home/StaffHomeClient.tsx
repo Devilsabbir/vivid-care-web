@@ -80,8 +80,8 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
       <section className="grid grid-cols-4 gap-3">
         <QuickAction href="/staff/clock" icon="timer" label="Clock" />
         <QuickAction href="/staff/documents" icon="folder" label="Docs" />
+        <QuickAction href="/staff/documentation" icon="fact_check" label="Service" />
         <QuickAction href="/staff/incidents" icon="warning" label="Incidents" />
-        <QuickAction href="/staff/support" icon="smart_toy" label="Support" />
       </section>
 
       {activeShift ? (

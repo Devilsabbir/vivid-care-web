@@ -20,6 +20,8 @@ type ShiftRow = {
   staff_id: string | null
   client_id: string | null
   title: string | null
+  support_type_key: string | null
+  documentation_status: string | null
   start_time: string
   end_time: string
   notes: string | null
@@ -41,6 +43,11 @@ type ClientOption = {
   lng: number | null
 }
 
+type SupportTypeOption = {
+  key: string
+  title: string | null
+}
+
 type SelectedShift = {
   id: string
   title: string | null
@@ -55,6 +62,8 @@ type SelectedShift = {
   end: string
   notes: string | null
   status: ShiftStatus
+  supportTypeKey: string | null
+  documentationStatus: string | null
 }
 
 type CalendarBundle = {
@@ -68,6 +77,7 @@ type CreateShiftForm = {
   staff_id: string
   client_id: string
   title: string
+  support_type_key: string
   start_time: string
   end_time: string
   notes: string
@@ -77,6 +87,7 @@ const EMPTY_FORM: CreateShiftForm = {
   staff_id: '',
   client_id: '',
   title: '',
+  support_type_key: 'general_support',
   start_time: '',
   end_time: '',
   notes: '',
@@ -93,10 +104,12 @@ export default function RosterClient({
   shifts,
   staff,
   clients,
+  supportTypes,
 }: {
   shifts: ShiftRow[]
   staff: StaffOption[]
   clients: ClientOption[]
+  supportTypes: SupportTypeOption[]
 }) {
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -127,6 +140,8 @@ export default function RosterClient({
           end: shift.end_time,
           notes: shift.notes,
           status: shift.status ?? 'scheduled',
+          supportTypeKey: shift.support_type_key,
+          documentationStatus: shift.documentation_status,
         }
       })
   }, [shifts])
@@ -233,9 +248,11 @@ export default function RosterClient({
         staff_id: form.staff_id || null,
         client_id: form.client_id,
         title: form.title || null,
+        support_type_key: form.support_type_key || 'general_support',
         start_time: form.start_time,
         end_time: form.end_time,
         notes: form.notes || null,
+        published_at: new Date().toISOString(),
       })
       .select('id')
       .single()
@@ -426,6 +443,9 @@ export default function RosterClient({
                   <p className="mt-1 text-[12px] text-[#7d7a73]">
                     {selectedShift.clientAddress ?? 'Address not yet configured'}
                   </p>
+                  <p className="mt-1 text-[12px] text-[#7d7a73]">
+                    Support type: {labelSupportType(selectedShift.supportTypeKey)} / Documentation: {copyDocumentationStatus(selectedShift.documentationStatus)}
+                  </p>
                 </div>
 
                 <div className="rounded-[18px] bg-[#faf9f6] p-4">
@@ -566,6 +586,21 @@ export default function RosterClient({
               placeholder="Morning support, community access, medication round..."
               className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
             />
+          </div>
+
+          <div>
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Support type</label>
+            <select
+              value={form.support_type_key}
+              onChange={event => setField(setForm, 'support_type_key', event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+            >
+              {supportTypes.map(type => (
+                <option key={type.key} value={type.key}>
+                  {type.title ?? type.key}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -778,6 +813,18 @@ function statusLabel(status: ShiftStatus) {
   if (status === 'completed') return 'Completed'
   if (status === 'cancelled') return 'Cancelled'
   return 'Scheduled'
+}
+
+function labelSupportType(value: string | null) {
+  return value ? value.replace(/_/g, ' ') : 'general support'
+}
+
+function copyDocumentationStatus(value: string | null) {
+  if (value === 'documented') return 'documented'
+  if (value === 'in_progress') return 'in progress'
+  if (value === 'overdue') return 'overdue'
+  if (value === 'not_required') return 'not required'
+  return 'pending'
 }
 
 function checklistRows(shift: SelectedShift) {

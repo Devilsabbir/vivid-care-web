@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import DocumentsClient from './DocumentsClient'
 
 export default async function StaffDocumentsPage() {
@@ -38,6 +39,13 @@ export default async function StaffDocumentsPage() {
         <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
           Upload your own certificates and review client-facing paperwork in one place.
         </p>
+        <Link
+          href="/staff/documentation"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-2 text-sm font-semibold text-[#171716]"
+        >
+          Open service documentation
+          <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </Link>
       </section>
 
       <DocumentsClient

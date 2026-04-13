@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "supabase:link": "npx supabase link --project-ref webjxotmlmutyivemvbd",
+    "supabase:link": "npx supabase link --project-ref qkywluziqjokvypghquu",
     "supabase:db:push": "npx supabase db push",
     "supabase:functions:deploy:geofence": "npx supabase functions deploy geofence",
     "supabase:functions:deploy:expiry": "npx supabase functions deploy expiry-cron",

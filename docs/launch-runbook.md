@@ -18,7 +18,7 @@ $env:SUPABASE_ACCESS_TOKEN="your-token-here"
 
 ## 2. Link the hosted project
 
-The current hosted Supabase project ref is `webjxotmlmutyivemvbd`.
+The current hosted Supabase project ref is `qkywluziqjokvypghquu`.
 
 ```powershell
 npm run supabase:link
@@ -41,9 +41,11 @@ Expected migrations:
 At minimum, set:
 
 ```powershell
-npx supabase secrets set SUPABASE_URL=https://webjxotmlmutyivemvbd.supabase.co
+npx supabase secrets set SUPABASE_URL=https://qkywluziqjokvypghquu.supabase.co
 npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+Before doing that, update [C:\Users\sabbi\vivid_care_web\.env.local](C:/Users/sabbi/vivid_care_web/.env.local) so it matches the same hosted project. The current file still points at a different Supabase project and must be replaced with the API URL, anon key, and service-role key for `qkywluziqjokvypghquu`.
 
 Optional integrations:
 

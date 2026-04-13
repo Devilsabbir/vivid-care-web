@@ -42,6 +42,7 @@ At minimum, set:
 
 ```powershell
 npx supabase secrets set SUPABASE_URL=https://qkywluziqjokvypghquu.supabase.co
+npx supabase secrets set SUPABASE_SECRET_KEY=your-secret-key
 npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 

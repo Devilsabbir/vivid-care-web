@@ -57,52 +57,84 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
-.fc .fc-toolbar-title {
-  font-family: 'Space Grotesk', sans-serif;
+.vivid-roster-calendar .fc {
+  font-family: var(--font-body), sans-serif;
+}
+
+.vivid-roster-calendar .fc .fc-toolbar {
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.vivid-roster-calendar .fc .fc-toolbar-title {
+  font-family: var(--font-headline), sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
   color: #1a1a18;
+  letter-spacing: -0.03em;
 }
 
-.fc .fc-button {
+.vivid-roster-calendar .fc .fc-button {
   background: #1a1a18 !important;
   border: none !important;
   border-radius: 9999px !important;
   box-shadow: none !important;
   color: #ffffff !important;
-  font-family: 'DM Sans', sans-serif !important;
-  font-size: 0.875rem !important;
+  font-family: var(--font-body), sans-serif !important;
+  font-size: 0.8125rem !important;
   font-weight: 600 !important;
-  padding: 0.55rem 1rem !important;
+  padding: 0.55rem 0.95rem !important;
 }
 
-.fc .fc-button:hover,
-.fc .fc-button-primary:not(:disabled):active,
-.fc .fc-button-primary:not(:disabled).fc-button-active {
+.vivid-roster-calendar .fc .fc-button:hover,
+.vivid-roster-calendar .fc .fc-button-primary:not(:disabled):active,
+.vivid-roster-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
   background: #2d2d28 !important;
 }
 
-.fc .fc-button:focus {
+.vivid-roster-calendar .fc .fc-button:focus {
   box-shadow: none !important;
 }
 
-.fc .fc-daygrid-day.fc-day-today {
-  background-color: rgba(205, 255, 82, 0.18) !important;
+.vivid-roster-calendar .fc .fc-daygrid-day.fc-day-today,
+.vivid-roster-calendar .fc .fc-timegrid-col.fc-day-today {
+  background-color: rgba(205, 255, 82, 0.16) !important;
 }
 
-.fc .fc-event {
-  border: none !important;
-  border-radius: 9999px !important;
-  background: #cdff52 !important;
-  color: #1a1a18 !important;
+.vivid-roster-calendar .fc .fc-timegrid-slot-label-cushion,
+.vivid-roster-calendar .fc .fc-col-header-cell-cushion {
+  color: #8a877f;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.vivid-roster-calendar .fc .fc-col-header-cell-cushion {
+  padding: 0.85rem 0;
+}
+
+.vivid-roster-calendar .fc .fc-timegrid-slot {
+  height: 3.6rem;
+}
+
+.vivid-roster-calendar .fc .fc-event {
+  border-radius: 16px !important;
+  border-width: 1px !important;
+  box-shadow: none !important;
   font-size: 0.75rem !important;
   font-weight: 600 !important;
-  padding: 2px 4px !important;
+  padding: 0 !important;
 }
 
-.fc-theme-standard td,
-.fc-theme-standard th,
-.fc-theme-standard .fc-scrollgrid {
+.vivid-roster-calendar .fc .fc-timegrid-event-harness {
+  margin-inline: 0.12rem;
+}
+
+.vivid-roster-calendar .fc-theme-standard td,
+.vivid-roster-calendar .fc-theme-standard th,
+.vivid-roster-calendar .fc-theme-standard .fc-scrollgrid {
   border-color: rgba(26, 26, 24, 0.08) !important;
 }
 

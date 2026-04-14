@@ -242,18 +242,18 @@ export type AgreementPDFProps = {
   commencementDate: string
   expiryDate?: string | null
   signerName: string
-  signatureDataUrl: string
+  signatureDataUrl: string | null
   signedAt: string
 }
 
-const FUNDING_CLAUSES: Record<string, string> = {
+const FUNDING_CLAUSES: Record<'self' | 'nominee' | 'ndia' | 'plan_manager', string> = {
   self: 'The participant has chosen to self-manage the funding for NDIS supports provided under this Service Agreement. After providing supports, Vivid Care will send the participant an invoice for those supports. The participant will pay by EFT/cheque/cash within 7 days.',
   nominee: "The participant's Nominee manages the funding for supports under this Service Agreement. After providing supports, Vivid Care will send the Nominee an invoice. The Nominee will pay by EFT within 7 days.",
   ndia: 'The participant has nominated the NDIA to manage the funding for supports under this Service Agreement. After providing supports, Vivid Care will claim payment directly from the NDIS.',
   plan_manager: 'The participant has nominated a Registered Plan Management Provider to manage the funding for NDIS supports under this Service Agreement. After providing supports, Vivid Care will claim payment from the Plan Management Provider.',
 }
 
-const PAYMENT_LABELS: Record<string, string> = {
+const PAYMENT_LABELS: Record<'eft' | 'cheque' | 'cash', string> = {
   eft: 'Electronic Funds Transfer (EFT)',
   cheque: 'Cheque',
   cash: 'Cash',
@@ -492,6 +492,7 @@ export default function AgreementPDF({
           ) : null}
           <View style={styles.partiesRowLast}>
             <Text style={styles.partiesLabel}>Phone / Email</Text>
+            {/* Left blank — participant fills in their own contact details on the paper copy */}
             <Text style={styles.partiesValue}></Text>
           </View>
         </View>

@@ -23,8 +23,8 @@ The MVP codebase is fully built. All admin and staff routes exist, 3 Supabase mi
 
 ## Supabase Project
 
-- **Project ref:** `rvkoxsnjcazhdveaylm`
-- **URL:** `https://rvkoxsnjcazhdveaylm.supabase.co`
+- **Project ref:** `rvkoxsnjcazhdveaylfm`
+- **URL:** `https://rvkoxsnjcazhdveaylfm.supabase.co`
 
 ---
 
@@ -34,7 +34,7 @@ These go into `.env.local` locally and into Netlify's environment variable setti
 
 | Variable | Value |
 |----------|-------|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://rvkoxsnjcazhdveaylm.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://rvkoxsnjcazhdveaylfm.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon JWT (provided) |
 | `SUPABASE_SERVICE_ROLE_KEY` | service_role JWT (provided) |
 | `SUPABASE_SECRET_KEY` | `[REDACTED_SECRET_KEY]` |
@@ -46,14 +46,14 @@ These go into `.env.local` locally and into Netlify's environment variable setti
 
 ### Stage 1 — Update `.env.local`
 
-Replace the existing `.env.local` with the 5 variables above pointing at `rvkoxsnjcazhdveaylm`.
+Replace the existing `.env.local` with the 5 variables above pointing at `rvkoxsnjcazhdveaylfm`.
 
 ### Stage 2 — Update project ref in package.json
 
 The `supabase:link` script still points at the old project. Update it:
 
 ```json
-"supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylm"
+"supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylfm"
 ```
 
 Then link:
@@ -87,7 +87,7 @@ Create 5 private buckets in the Supabase dashboard (Storage tab) or via CLI:
 ### Stage 5 — Configure Edge Function secrets
 
 ```bash
-npx supabase secrets set SUPABASE_URL=https://rvkoxsnjcazhdveaylm.supabase.co
+npx supabase secrets set SUPABASE_URL=https://rvkoxsnjcazhdveaylfm.supabase.co
 npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your_service_role_jwt
 npx supabase secrets set SUPABASE_SECRET_KEY=[REDACTED_SECRET_KEY]
 ```

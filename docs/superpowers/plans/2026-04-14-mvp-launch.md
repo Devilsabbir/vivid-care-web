@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Deploy VividCare MVP to production using a fresh Supabase project (`rvkoxsnjcazhdveaylm`) and Netlify free tier.
+**Goal:** Deploy VividCare MVP to production using a fresh Supabase project (`rvkoxsnjcazhdveaylfm`) and Netlify free tier.
 
 **Architecture:** Next.js 14 App Router deployed to Netlify via `@netlify/plugin-nextjs`. Database, auth, storage, and Edge Functions all run on Supabase. No custom domain — live on Netlify subdomain for now.
 
@@ -14,8 +14,8 @@
 
 | Variable | Value |
 |----------|-------|
-| Project ref | `rvkoxsnjcazhdveaylm` |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://rvkoxsnjcazhdveaylm.supabase.co` |
+| Project ref | `rvkoxsnjcazhdveaylfm` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://rvkoxsnjcazhdveaylfm.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `[REDACTED_ANON_KEY]` |
 | `SUPABASE_SERVICE_ROLE_KEY` | `[REDACTED_SERVICE_ROLE_KEY]` |
 | `SUPABASE_SECRET_KEY` | `[REDACTED_SECRET_KEY]` |
@@ -44,7 +44,7 @@
 Overwrite the entire file with:
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://rvkoxsnjcazhdveaylm.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://rvkoxsnjcazhdveaylfm.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[REDACTED_PUBLISHABLE_KEY]
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[REDACTED_ANON_KEY]
 SUPABASE_SECRET_KEY=[REDACTED_SECRET_KEY]
@@ -54,7 +54,7 @@ SUPABASE_SERVICE_ROLE_KEY=[REDACTED_SERVICE_ROLE_KEY]
 - [ ] **Step 2: Verify**
 
 ```bash
-grep "rvkoxsnjcazhdveaylm" .env.local
+grep "rvkoxsnjcazhdveaylfm" .env.local
 ```
 
 Expected output: 2 lines (URL and anon key both reference the new ref).
@@ -79,22 +79,22 @@ In `package.json`, change:
 to:
 
 ```json
-"supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylm",
+"supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylfm",
 ```
 
 - [ ] **Step 2: Verify**
 
 ```bash
-grep "rvkoxsnjcazhdveaylm" package.json
+grep "rvkoxsnjcazhdveaylfm" package.json
 ```
 
-Expected: `"supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylm"`
+Expected: `"supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylfm"`
 
 - [ ] **Step 3: Commit**
 
 ```bash
 git add package.json
-git commit -m "Update Supabase project ref to rvkoxsnjcazhdveaylm"
+git commit -m "Update Supabase project ref to rvkoxsnjcazhdveaylfm"
 ```
 
 ---
@@ -190,7 +190,7 @@ After creation, the Storage tab should list all 5 buckets.
 Run each command:
 
 ```bash
-npx supabase secrets set SUPABASE_URL=https://rvkoxsnjcazhdveaylm.supabase.co
+npx supabase secrets set SUPABASE_URL=https://rvkoxsnjcazhdveaylfm.supabase.co
 ```
 
 ```bash
@@ -227,7 +227,7 @@ npm run supabase:functions:deploy:notifications
 
 Each should output:
 ```
-Deployed Functions <name> on project rvkoxsnjcazhdveaylm
+Deployed Functions <name> on project rvkoxsnjcazhdveaylfm
 ```
 
 - [ ] **Step 2: Verify in Supabase dashboard**
@@ -324,7 +324,7 @@ Before deploying, go to Site configuration → Environment variables → Add a v
 
 | Key | Value |
 |-----|-------|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://rvkoxsnjcazhdveaylm.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://rvkoxsnjcazhdveaylfm.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `[REDACTED_ANON_KEY]` |
 | `SUPABASE_SERVICE_ROLE_KEY` | `[REDACTED_SERVICE_ROLE_KEY]` |
 | `SUPABASE_SECRET_KEY` | `[REDACTED_SECRET_KEY]` |

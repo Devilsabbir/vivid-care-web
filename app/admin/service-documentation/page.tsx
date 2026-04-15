@@ -13,7 +13,7 @@ export default async function ServiceDocumentationPage() {
   ] = await Promise.all([
     supabase
       .from('shifts')
-      .select('id, staff_id, client_id, title, start_time, end_time, status, support_type_key, documentation_status, profiles(full_name), clients(full_name)')
+      .select('id, staff_id, client_id, title, start_time, end_time, status, support_type_key, documentation_status, profiles!shifts_staff_id_fkey(full_name), clients(full_name)')
       .order('start_time', { ascending: false })
       .limit(50),
     supabase
@@ -33,7 +33,7 @@ export default async function ServiceDocumentationPage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
             <span className="font-headline">Service documentation</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">fact_check</span>
               NDIS engine
             </span>

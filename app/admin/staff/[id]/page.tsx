@@ -23,7 +23,7 @@ export default async function StaffDetailPage({ params }: { params: { id: string
             Back to staff
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1a1a18] text-xl font-semibold uppercase tracking-[0.14em] text-[#cdff52]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1a1a18] text-xl font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
               {(member.full_name ?? 'S')
                 .split(' ')
                 .filter(Boolean)

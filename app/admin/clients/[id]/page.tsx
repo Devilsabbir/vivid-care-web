@@ -23,7 +23,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
             Back to clients
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#cdff52] text-xl font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#c852ff] text-xl font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
               {(client.full_name ?? 'C')
                 .split(' ')
                 .filter(Boolean)

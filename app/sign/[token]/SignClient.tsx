@@ -76,7 +76,7 @@ export default function SignClient({
       {/* Header */}
       <div className="mb-8 flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1a1a18]">
-          <span className="material-symbols-outlined material-symbols-filled text-[22px] text-[#cdff52]">favorite</span>
+          <span className="material-symbols-outlined material-symbols-filled text-[22px] text-[#c852ff]">favorite</span>
         </div>
         <div>
           <p className="text-[11px] uppercase tracking-[0.16em] text-[#8a877f]">Vivid Care · NDIS Service Provider</p>
@@ -157,7 +157,7 @@ function StatusScreen({ title, message, icon }: { title: string; message: string
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-[28px] border border-[#e8e4dc] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1a1a18]">
-          <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#cdff52]">{icon}</span>
+          <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#c852ff]">{icon}</span>
         </div>
         <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#1a1a18]">{title}</h2>
         <p className="mt-3 text-sm leading-6 text-[#67635c]">{message}</p>

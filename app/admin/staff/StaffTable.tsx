@@ -52,7 +52,7 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
               className="rounded-[22px] border border-[#e8e4dc] bg-[#faf9f6] p-5 transition-colors hover:bg-[#f4f2ed]"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#cdff52]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
                   {initials(member.full_name)}
                 </div>
                 <div className="min-w-0">

@@ -66,7 +66,7 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
     <div className="space-y-4">
       <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#cdff52]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
             <span className="material-symbols-outlined text-[20px]">shield</span>
           </div>
           <div>

@@ -38,7 +38,7 @@ export default async function IncidentsPage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
             <span className="font-headline">Incidents</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">warning</span>
               response board
             </span>
@@ -134,8 +134,8 @@ function SummaryCard({
   danger?: 'red' | 'amber'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'lime' ? 'text-[#627100]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'lime' ? 'text-[#5e0087]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#1a1a18]'}`}>{value}</p>
     </div>
   )
@@ -145,7 +145,7 @@ function formatIncidentDate(value: string) {
   const date = new Date(value)
   return date.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) +
     ' · ' +
-    date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
+    date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function severityBar(severity: IncidentRow['severity']) {

@@ -93,14 +93,14 @@ export default async function AdminDashboard() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
             <span className="font-headline">Managing</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">group</span>
               your team
             </span>
             <span className="font-headline">and</span>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">neurology</span>
               workflows
             </span>
@@ -151,19 +151,19 @@ export default async function AdminDashboard() {
           <p className="mt-3 text-xs text-[#9a978f]">Across {clientCount ?? 0} active clients</p>
         </div>
 
-        <div className="rounded-[24px] bg-[#cdff52] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[24px] bg-[#c852ff] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
           <div className="flex items-start justify-between">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10">
               <span className="material-symbols-outlined text-[20px]">badge</span>
             </span>
             <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-[#1a1a18]">{percent(liveStaff, staffCount ?? 0)}%</span>
           </div>
-          <p className="mt-5 text-[12px] text-[#627100]">Staff on shift</p>
+          <p className="mt-5 text-[12px] text-[#5e0087]">Staff on shift</p>
           <div className="mt-2 flex items-end gap-2">
             <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{liveStaff}</span>
-            <span className="pb-1 text-xs text-[#627100]">/ {staffCount ?? 0}</span>
+            <span className="pb-1 text-xs text-[#5e0087]">/ {staffCount ?? 0}</span>
           </div>
-          <p className="mt-3 text-xs text-[#627100]">Live clock-in coverage right now</p>
+          <p className="mt-3 text-xs text-[#5e0087]">Live clock-in coverage right now</p>
         </div>
 
         <div className="relative overflow-hidden rounded-[24px] bg-[#1a1a18] p-6 text-white">
@@ -197,7 +197,7 @@ export default async function AdminDashboard() {
                   Completed
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#cdff52]" />
+                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#c852ff]" />
                   Upcoming
                 </span>
               </div>
@@ -215,7 +215,7 @@ export default async function AdminDashboard() {
                   <div key={day.label} className="flex flex-col items-center gap-3">
                     <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
                       <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#cfcac1] bg-[#efebe4]' : 'bg-[#1a1a18]'}`} style={{ height: `${completeHeight}px` }} />
-                      <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#cdff52]'}`} style={{ height: `${upcomingHeight}px` }} />
+                      <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#c852ff]'}`} style={{ height: `${upcomingHeight}px` }} />
                     </div>
                     <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#1a1a18]' : 'text-[#97938a]'}`}>{day.label}</span>
                   </div>
@@ -240,7 +240,7 @@ export default async function AdminDashboard() {
                 {liveBoard.map(shift => (
                   <article key={shift.id} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#cdff52]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
                         {initials(shift.profiles?.full_name)}
                       </div>
                       <div>
@@ -354,7 +354,7 @@ function initials(name?: string | null) {
 }
 
 function clock(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' })
+  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function dayStart(date: Date) {

@@ -19,11 +19,11 @@ export default async function StaffLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-[#f6f2ea] text-[#171716]">
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(205,255,82,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(200,82,255,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#171717]/95 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-lg items-center justify-between px-4">
           <Link href="/staff/home" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#cdff52] text-[#171717] shadow-[0_8px_24px_rgba(205,255,82,0.28)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c852ff] text-[#171717] shadow-[0_8px_24px_rgba(200,82,255,0.28)]">
               <span className="material-symbols-outlined material-symbols-filled text-[20px]">favorite</span>
             </div>
             <div>
@@ -39,7 +39,7 @@ export default async function StaffLayout({ children }: { children: React.ReactN
             >
               <span className="material-symbols-outlined text-[20px]">notifications</span>
               {unreadCount > 0 ? (
-                <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#cdff52] px-1 text-[10px] font-bold text-[#171717]">
+                <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#c852ff] px-1 text-[10px] font-bold text-[#171717]">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               ) : null}

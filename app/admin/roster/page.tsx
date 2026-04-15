@@ -7,7 +7,7 @@ export default async function RosterPage() {
   const [{ data: shifts }, { data: staff }, { data: clients }, { data: supportTypes }] = await Promise.all([
     supabase
       .from('shifts')
-      .select('id, staff_id, client_id, title, support_type_key, documentation_status, start_time, end_time, notes, status, profiles(full_name), clients(full_name, address, lat, lng)')
+      .select('id, staff_id, client_id, title, support_type_key, documentation_status, start_time, end_time, notes, status, profiles!shifts_staff_id_fkey(full_name), clients(full_name, address, lat, lng)')
       .order('start_time', { ascending: true }),
     supabase
       .from('profiles')

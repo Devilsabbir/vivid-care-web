@@ -73,7 +73,7 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
             <InfoTile label="Client" value={client} sub="Linked care recipient" />
             <InfoTile
               label="Reported at"
-              value={new Date(incident.reported_at).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
+              value={new Date(incident.reported_at).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
               sub={new Date(incident.reported_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
               accent
             />
@@ -162,10 +162,10 @@ function InfoTile({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 text-lg font-semibold text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
     </div>
   )
 }
@@ -213,11 +213,11 @@ function formatReportedAt(value: string) {
   const date = new Date(value)
   return date.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) +
     ' at ' +
-    date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
+    date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
+  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function responseChecklist(

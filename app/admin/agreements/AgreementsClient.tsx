@@ -169,7 +169,7 @@ export default function AgreementsClient({
       ) : null}
 
       {message ? (
-        <section className="rounded-[24px] border border-[#dfe9c1] bg-[#f8ffea] p-4 text-sm text-[#4f6200]">
+        <section className="rounded-[24px] border border-[#e4c1f5] bg-[#f9f0ff] p-4 text-sm text-[#4a006f]">
           {message}
         </section>
       ) : null}
@@ -248,7 +248,7 @@ export default function AgreementsClient({
                         <button
                           type="button"
                           onClick={() => router.push(`/sign-inperson/${agreement.id}`)}
-                          className="rounded-2xl bg-[#cdff52] px-4 py-2 text-sm font-semibold text-[#1a1a18]"
+                          className="rounded-2xl bg-[#c852ff] px-4 py-2 text-sm font-semibold text-[#1a1a18]"
                         >
                           Sign in person
                         </button>
@@ -401,10 +401,10 @@ function MetricCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
     </div>
   )
 }

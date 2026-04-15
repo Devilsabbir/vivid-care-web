@@ -109,7 +109,7 @@ export default function ClockClient({ shifts, adminIds }: {
       {message ? (
         <div className={`flex items-start gap-3 rounded-[22px] px-4 py-4 text-sm shadow-[0_10px_24px_rgba(23,23,22,0.05)] ${
           message.type === 'success'
-            ? 'border border-[#dfe9c1] bg-[#f8ffea] text-[#4f6200]'
+            ? 'border border-[#e4c1f5] bg-[#f9f0ff] text-[#4a006f]'
             : 'border border-[#f3d7d7] bg-[#fff1f1] text-[#9b3434]'
         }`}>
           <span className="material-symbols-outlined mt-0.5 text-[18px]">
@@ -174,7 +174,7 @@ export default function ClockClient({ shifts, adminIds }: {
               <button
                 onClick={() => handleClockIn(shift)}
                 disabled={!!loading}
-                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#cdff52] px-4 py-4 font-headline text-base font-semibold text-[#171716] transition hover:brightness-95 disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#c852ff] px-4 py-4 font-headline text-base font-semibold text-[#171716] transition hover:brightness-95 disabled:opacity-60"
               >
                 {isThisLoading ? (
                   <span className="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>
@@ -198,5 +198,5 @@ export default function ClockClient({ shifts, adminIds }: {
 }
 
 function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
+  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }

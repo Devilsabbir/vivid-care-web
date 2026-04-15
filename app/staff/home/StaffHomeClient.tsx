@@ -85,12 +85,12 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
       </section>
 
       {activeShift ? (
-        <section className="rounded-[28px] bg-[#cdff52] p-5 shadow-[0_18px_36px_rgba(205,255,82,0.2)]">
+        <section className="rounded-[28px] bg-[#c852ff] p-5 shadow-[0_18px_36px_rgba(200,82,255,0.2)]">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#627100]">Live shift</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#5e0087]">Live shift</p>
               <h2 className="mt-2 font-headline text-xl font-semibold text-[#171717]">{activeShift.clients?.full_name ?? 'Current shift'}</h2>
-              <p className="mt-1 text-sm text-[#435100]">
+              <p className="mt-1 text-sm text-[#3d0061]">
                 {formatTime(activeShift.start_time)} to {formatTime(activeShift.end_time)}
               </p>
             </div>
@@ -98,7 +98,7 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
           </div>
 
           {activeShift.clients?.address ? (
-            <p className="mt-4 flex items-center gap-2 text-sm text-[#435100]">
+            <p className="mt-4 flex items-center gap-2 text-sm text-[#3d0061]">
               <span className="material-symbols-outlined text-[18px]">location_on</span>
               {activeShift.clients.address}
             </p>
@@ -216,7 +216,7 @@ function ShiftCard({ shift }: { shift: any }) {
           <div>
             <p className="font-headline text-sm font-semibold text-[#171716]">{shift.clients?.full_name ?? 'Client'}</p>
             <p className="mt-1 text-xs text-[#666258]">
-              {start.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })} to {end.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
+              {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()} to {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
             </p>
           </div>
           <Badge variant={shift.status} />
@@ -239,7 +239,7 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
       href={href}
       className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e0d7] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#cdff52]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
         <span className="material-symbols-outlined text-[20px]">{icon}</span>
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#171716]">{label}</span>
@@ -249,8 +249,8 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
 
 function MetricCard({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#cdff52] text-[#171717]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#627100]' : 'text-[#8f8a80]'}`}>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#c852ff] text-[#171717]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>
         {label}
       </p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>
@@ -259,7 +259,7 @@ function MetricCard({ label, value, accent }: { label: string; value: number; ac
 }
 
 function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
+  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function formatDay(value: string) {

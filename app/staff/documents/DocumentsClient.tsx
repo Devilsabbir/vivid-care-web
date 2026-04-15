@@ -126,7 +126,7 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       <div className="flex justify-end">
         <button
           onClick={() => setUploadOpen(true)}
-          className="flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-2.5 text-sm font-semibold text-[#171716] shadow-[0_12px_24px_rgba(205,255,82,0.16)]"
+          className="flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-2.5 text-sm font-semibold text-[#171716] shadow-[0_12px_24px_rgba(200,82,255,0.16)]"
         >
           <span className="material-symbols-outlined text-base">upload</span>
           Upload
@@ -228,7 +228,7 @@ function DocList({ docs, emptyText }: { docs: any[]; emptyText: string }) {
       {docs.map(doc => (
         <article key={doc.id} className="flex items-center justify-between gap-3 rounded-[24px] border border-[#e9e3d8] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#cdff52]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
               <span className="material-symbols-outlined text-[20px]">description</span>
             </div>
             <div>
@@ -268,8 +268,8 @@ function SummaryCard({
   accent?: boolean
 }) {
   return (
-    <section className={`rounded-[24px] px-4 py-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] ${accent ? 'bg-[#cdff52]' : 'border border-[#e6e0d7] bg-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#627100]' : 'text-[#8b867b]'}`}>{label}</p>
+    <section className={`rounded-[24px] px-4 py-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e6e0d7] bg-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8b867b]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em] text-[#171716]">{value}</p>
       <p className={`mt-2 text-[11px] ${accent ? 'text-[#4b5900]' : 'text-[#8b867b]'}`}>{sub}</p>
     </section>

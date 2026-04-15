@@ -283,10 +283,10 @@ function StatCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
     </div>
   )
 }
@@ -339,7 +339,7 @@ function shiftProgress(shift: NormalizedShift) {
 }
 
 function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
+  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function formatDate(value: string) {
@@ -348,7 +348,7 @@ function formatDate(value: string) {
 
 function Avatar({ name, tone }: { name: string; tone: 'dark' | 'lime' }) {
   return (
-    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#1a1a18] text-[#cdff52]' : 'bg-[#cdff52] text-[#1a1a18]'}`}>
+    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#1a1a18] text-[#c852ff]' : 'bg-[#c852ff] text-[#1a1a18]'}`}>
       {name
         .split(' ')
         .filter(Boolean)

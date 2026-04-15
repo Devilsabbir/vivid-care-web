@@ -224,9 +224,11 @@ export default function RosterClient({
       textColor: tone.text,
       classNames: ['vivid-roster-event'],
       extendedProps: {
+        staffName: shift.staffName,
         clientName: shift.clientName,
+        clientAddress: shift.clientAddress,
+        supportTypeKey: shift.supportTypeKey,
         status: shift.status,
-        shiftTitle: shift.title,
       },
     }
   })
@@ -249,8 +251,8 @@ export default function RosterClient({
         client_id: form.client_id,
         title: form.title || null,
         support_type_key: form.support_type_key || 'general_support',
-        start_time: form.start_time,
-        end_time: form.end_time,
+        start_time: new Date(form.start_time).toISOString(),
+        end_time: new Date(form.end_time).toISOString(),
         notes: form.notes || null,
         published_at: new Date().toISOString(),
       })
@@ -285,7 +287,7 @@ export default function RosterClient({
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
             <span className="font-headline">Roster</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#cdff52] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">calendar_month</span>
               planner
             </span>
@@ -698,14 +700,24 @@ function CalendarSurface({
 }
 
 function renderEventContent(arg: any) {
-  const shiftTitle = arg.event.extendedProps.shiftTitle as string | null
+  const staffName = arg.event.extendedProps.staffName as string
   const clientName = arg.event.extendedProps.clientName as string
+  const supportTypeKey = arg.event.extendedProps.supportTypeKey as string | null
+  const clientAddress = arg.event.extendedProps.clientAddress as string | null
+
+  const serviceLabel = supportTypeKey ? supportTypeKey.replace(/_/g, ' ') : null
+  const locationCity = clientAddress ? clientAddress.split(',').pop()?.trim() ?? clientAddress : null
 
   return (
-    <div className="min-w-0 px-1.5 py-1">
-      <div className="truncate text-[11px] font-semibold">{arg.event.title}</div>
-      <div className="truncate text-[10px] opacity-80">{arg.timeText}</div>
-      <div className="truncate text-[10px] opacity-70">{shiftTitle ?? clientName}</div>
+    <div className="min-w-0 px-1.5 py-1 space-y-0.5">
+      <div className="truncate text-[11px] font-bold leading-tight">{staffName}</div>
+      <div className="truncate text-[10px] font-medium opacity-90 leading-tight">{clientName}</div>
+      <div className="truncate text-[10px] opacity-70 leading-tight">{arg.timeText}</div>
+      {(serviceLabel || locationCity) ? (
+        <div className="truncate text-[10px] opacity-60 leading-tight">
+          {[serviceLabel, locationCity].filter(Boolean).join(' · ')}
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -726,7 +738,7 @@ function StatCard({
   return (
     <div
       className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${
-        accent ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'
+        accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'
       }`}
     >
       <div
@@ -736,9 +748,9 @@ function StatCard({
       >
         <span className="material-symbols-outlined text-[18px]">{icon}</span>
       </div>
-      <p className={`mt-4 text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>
+      <p className={`mt-4 text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
     </div>
   )
 }
@@ -782,10 +794,7 @@ function formatLongDate(value: string) {
 }
 
 function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function statusTone(status: ShiftStatus) {

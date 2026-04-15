@@ -25,7 +25,7 @@ export default function StaffProfileClient({
     <div className="space-y-5">
       <section className="overflow-hidden rounded-[30px] bg-[#171717] px-5 py-6 text-white shadow-[0_24px_44px_rgba(23,23,22,0.18)]">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#cdff52] font-headline text-2xl font-semibold text-[#171716]">
+          <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#c852ff] font-headline text-2xl font-semibold text-[#171716]">
             {fullName.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -85,7 +85,7 @@ function QuickLink({ href, icon, label }: { href: string; icon: string; label: s
       href={href}
       className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e0d7] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)]"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#cdff52]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
         <span className="material-symbols-outlined text-[20px]">{icon}</span>
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#171716]">{label}</span>

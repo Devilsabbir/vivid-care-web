@@ -36,7 +36,7 @@ export default async function StaffPaymentsPage() {
 
       <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#cdff52] text-[#171716]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#c852ff] text-[#171716]">
             <span className="material-symbols-outlined text-[20px]">info</span>
           </div>
           <p className="text-sm leading-6 text-[#666258]">
@@ -65,7 +65,7 @@ export default async function StaffPaymentsPage() {
                     <div>
                       <p className="text-sm font-semibold text-[#171716]">{shift.clients?.full_name ?? 'Client'}</p>
                       <p className="mt-1 text-xs text-[#8b867b]">
-                        {start.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} - {new Date(shift.start_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })} to {new Date(shift.end_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
+                        {start.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} - {new Date(shift.start_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()} to {new Date(shift.end_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
                       </p>
                     </div>
 
@@ -94,8 +94,8 @@ export default async function StaffPaymentsPage() {
 
 function MiniStat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#cdff52] text-[#171716]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#627100]' : 'text-[#8f8a80]'}`}>{label}</p>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#c852ff] text-[#171716]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>
     </div>
   )

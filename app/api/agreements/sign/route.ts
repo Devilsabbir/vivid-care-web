@@ -52,6 +52,27 @@ export async function POST(request: NextRequest) {
   }
 
   const service = createServiceClient()
+
+  // Read provider details from organization_settings; fall back to constant if absent
+  const { data: orgSettings } = await service
+    .from('organization_settings')
+    .select('org_name, abn, address, business_phone, business_email, contact_name, website, ndis_provider_number')
+    .eq('id', 1)
+    .maybeSingle()
+
+  const provider = orgSettings
+    ? {
+        name: orgSettings.org_name ?? undefined,
+        abn: orgSettings.abn ?? undefined,
+        address: orgSettings.address ?? undefined,
+        phone: orgSettings.business_phone ?? undefined,
+        email: orgSettings.business_email ?? undefined,
+        contactName: orgSettings.contact_name ?? undefined,
+        website: orgSettings.website ?? undefined,
+        ndisRegistration: orgSettings.ndis_provider_number ?? undefined,
+      }
+    : undefined
+
   let agreement: Record<string, any>
 
   if (token) {
@@ -119,6 +140,7 @@ export async function POST(request: NextRequest) {
         signerName: signerName.trim(),
         signatureDataUrl,
         signedAt: formatDateTime(signedAt),
+        provider,
       }) as any
     )
   } catch (err) {

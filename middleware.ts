@@ -25,6 +25,19 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
+  const isLocalDemo =
+    process.env.NODE_ENV === 'development' &&
+    (request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1')
+
+  if (isLocalDemo && !user) {
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    }
+
+    if (pathname.startsWith('/admin')) {
+      return supabaseResponse
+    }
+  }
 
   // Public routes
   if (pathname.startsWith('/login') || pathname.startsWith('/api')) {

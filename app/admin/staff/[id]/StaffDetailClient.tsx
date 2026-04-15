@@ -1,20 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ExpiryBadge, Badge } from '@/components/ui/Badge'
+import { getExpiryStatus } from '@/lib/utils/expiry'
 
 const DOC_TYPES = [
-  'Passport', 'Police Clearance', 'Visa Document', 'CPR Certificate',
-  'Manual Handling Certificate', 'Elder Care Licence', 'Child Care Licence',
-  'Education Certificate', 'Working With Children Check', 'Other'
+  'Passport',
+  'Police Clearance',
+  'Visa Document',
+  'CPR Certificate',
+  'Manual Handling Certificate',
+  'Elder Care Licence',
+  'Child Care Licence',
+  'Education Certificate',
+  'Working With Children Check',
+  'Other',
 ]
 
 type Tab = 'overview' | 'documents' | 'shifts'
 
-export default function StaffDetailClient({ member, documents, shifts }: {
-  member: any; documents: any[]; shifts: any[]
+export default function StaffDetailClient({
+  member,
+  documents,
+  shifts,
+}: {
+  member: any
+  documents: any[]
+  shifts: any[]
 }) {
   const [tab, setTab] = useState<Tab>('overview')
   const [uploading, setUploading] = useState(false)
@@ -24,177 +38,322 @@ export default function StaffDetailClient({ member, documents, shifts }: {
   const router = useRouter()
   const supabase = createClient()
 
-  async function handleUpload(e: React.FormEvent) {
-    e.preventDefault()
+  async function handleUpload(event: React.FormEvent) {
+    event.preventDefault()
     if (!file || !docType) return
     setUploading(true)
 
     const path = `staff/${member.id}/${docType}/${Date.now()}_${file.name}`
-    const { error: upErr } = await supabase.storage.from('documents').upload(path, file)
-    if (upErr) { setUploading(false); alert(upErr.message); return }
+    const { error: uploadError } = await supabase.storage.from('documents').upload(path, file)
+    if (uploadError) {
+      setUploading(false)
+      alert(uploadError.message)
+      return
+    }
 
-    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('documents').getPublicUrl(path)
 
     await supabase.from('documents').insert({
-      owner_id: member.id, owner_type: 'staff', doc_type: docType,
-      file_url: publicUrl, file_name: file.name,
+      owner_id: member.id,
+      owner_type: 'staff',
+      doc_type: docType,
+      file_url: publicUrl,
+      file_name: file.name,
       expiry_date: expiryDate || null,
     })
+
     setUploading(false)
-    setDocType(''); setExpiryDate(''); setFile(null)
+    setDocType('')
+    setExpiryDate('')
+    setFile(null)
     router.refresh()
   }
 
-  const completedShifts = shifts.filter(s => s.status === 'completed')
-  const totalHours = completedShifts.reduce((sum, s) => {
-    const h = (new Date(s.clock_out_time || s.end_time).getTime() - new Date(s.clock_in_time || s.start_time).getTime()) / 3600000
-    return sum + h
+  const completedShifts = shifts.filter((shift: any) => shift.status === 'completed')
+  const totalHours = completedShifts.reduce((sum: number, shift: any) => {
+    const hours = (
+      new Date(shift.clock_out_time || shift.end_time).getTime() -
+      new Date(shift.clock_in_time || shift.start_time).getTime()
+    ) / 3600000
+    return sum + hours
   }, 0)
+
+  const docSummary = useMemo(() => {
+    const statuses = documents.map(doc => getExpiryStatus(doc.expiry_date))
+    return {
+      total: documents.length,
+      expired: statuses.filter(status => status === 'expired').length,
+      attention: statuses.filter(status => status === 'near_expiry').length,
+      valid: statuses.filter(status => status === 'active').length,
+    }
+  }, [documents])
 
   return (
     <div className="space-y-6">
-      <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex gap-6 items-start">
-        <div className="w-16 h-16 bg-secondary-fixed rounded-2xl flex items-center justify-center text-secondary text-2xl font-bold font-headline flex-shrink-0">
-          {member.full_name?.charAt(0)}
-        </div>
-        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { label: 'Phone', value: member.phone },
-            { label: 'Role', value: 'Staff' },
-            { label: 'Total Shifts', value: shifts.length },
-            { label: 'Completed Shifts', value: completedShifts.length },
-            { label: 'Total Hours', value: `${totalHours.toFixed(1)}h` },
-          ].map(({ label, value }) => (
-            <div key={label}>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">{label}</p>
-              <p className="text-sm text-on-surface mt-0.5">{value ?? '—'}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <section className="grid gap-4 md:grid-cols-4">
+        <MetricCard label="Documents" value={docSummary.total} sub={`${docSummary.valid} current`} />
+        <MetricCard label="Needs review" value={docSummary.expired + docSummary.attention} sub="Expired or approaching expiry" accent={docSummary.expired + docSummary.attention > 0} />
+        <MetricCard label="Completed shifts" value={completedShifts.length} sub={`${shifts.length} total assigned`} />
+        <MetricCard label="Hours logged" value={Number(totalHours.toFixed(1))} sub="Across completed work" />
+      </section>
 
-      <div className="flex gap-1 bg-surface-container-low rounded-xl p-1 w-fit">
-        {(['overview', 'documents', 'shifts'] as Tab[]).map(t => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold font-headline capitalize transition-all ${tab === t ? 'bg-white text-sky-900 shadow-sm' : 'text-slate-600 hover:text-sky-800'}`}>
-            {t}
+      <div className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
+        {(['overview', 'documents', 'shifts'] as Tab[]).map(item => (
+          <button
+            key={item}
+            type="button"
+            onClick={() => setTab(item)}
+            className={tab === item ? 'rounded-full bg-[#1a1a18] px-4 py-2 text-white' : 'rounded-full px-4 py-2 text-[#6d6b64]'}
+          >
+            {item === 'overview' ? 'Profile' : item === 'documents' ? 'Compliance docs' : 'Shift history'}
           </button>
         ))}
       </div>
 
-      {tab === 'overview' && (
-        <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm">
-          <p className="text-sm text-on-surface-variant font-semibold mb-3">Compliance Summary</p>
-          {documents.length > 0 ? (
-            <div className="space-y-2">
-              {documents.map(doc => (
-                <div key={doc.id} className="flex items-center justify-between py-2">
-                  <span className="text-sm text-on-surface">{doc.doc_type}</span>
-                  <ExpiryBadge expiryDate={doc.expiry_date} />
-                </div>
-              ))}
+      {tab === 'overview' ? (
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+            <h3 className="text-sm font-semibold text-[#1a1a18]">Staff profile</h3>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <Field label="Full name" value={member.full_name ?? 'Unnamed staff'} />
+              <Field label="Phone" value={member.phone ?? 'No phone recorded'} />
+              <Field label="Email" value={member.email ?? 'Email not stored in profile'} />
+              <Field label="Role" value="Support worker" />
             </div>
-          ) : (
-            <p className="text-sm text-on-surface-variant">No compliance documents uploaded yet.</p>
-          )}
-        </div>
-      )}
+          </section>
 
-      {tab === 'documents' && (
-        <div className="space-y-4">
-          <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold font-headline text-on-surface mb-4">Upload Document</h3>
-            <form onSubmit={handleUpload} className="flex flex-wrap gap-4 items-end">
-              <div className="flex-1 min-w-[160px]">
-                <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Document Type</label>
-                <select value={docType} onChange={e => setDocType(e.target.value)} required
-                  className="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:outline-none">
-                  <option value="">Select type…</option>
-                  {DOC_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <div className="min-w-[160px]">
-                <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Expiry Date</label>
-                <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)}
-                  className="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:outline-none" />
-              </div>
-              <div className="flex-1 min-w-[160px]">
-                <label className="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">File</label>
-                <input type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="w-full text-sm text-on-surface-variant" />
-              </div>
-              <button type="submit" disabled={uploading}
-                className="px-5 py-2.5 rounded-xl primary-gradient text-white font-bold text-sm disabled:opacity-60 flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">upload</span>
-                {uploading ? 'Uploading…' : 'Upload'}
-              </button>
-            </form>
-          </div>
-
-          {documents.length > 0 ? (
-            <div className="bg-surface-container-lowest rounded-2xl shadow-sm divide-y divide-outline-variant/10">
-              {documents.map(doc => (
-                <div key={doc.id} className="px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-on-surface-variant">description</span>
-                    <div>
-                      <p className="font-semibold text-sm text-on-surface">{doc.doc_type}</p>
-                      <p className="text-xs text-on-surface-variant">{doc.file_name}</p>
+          <aside className="space-y-4">
+            <RailCard title="Compliance snapshot">
+              {documents.length > 0 ? (
+                <div className="space-y-2">
+                  {documents.slice(0, 4).map(doc => (
+                    <div key={doc.id} className="flex items-center justify-between gap-3 rounded-[16px] bg-[#faf9f6] px-3 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-[#1a1a18]">{doc.doc_type}</p>
+                        <p className="truncate text-[11px] text-[#8a877f]">{doc.file_name ?? 'Document file'}</p>
+                      </div>
+                      <ExpiryBadge expiryDate={doc.expiry_date} />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <ExpiryBadge expiryDate={doc.expiry_date} />
-                    {doc.file_url && (
-                      <a href={doc.file_url} target="_blank" rel="noopener" className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline">
-                        <span className="material-symbols-outlined text-xl">open_in_new</span>
-                      </a>
-                    )}
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-10 text-on-surface-variant">
-              <span className="material-symbols-outlined text-4xl mb-2 block">folder_open</span>
-              <p className="text-sm">No documents uploaded yet</p>
-            </div>
-          )}
-        </div>
-      )}
+              ) : (
+                <p className="text-[12px] leading-6 text-[#66635b]">No compliance documents have been uploaded for this staff member yet.</p>
+              )}
+            </RailCard>
 
-      {tab === 'shifts' && (
-        <div className="bg-surface-container-lowest rounded-2xl shadow-sm">
-          <div className="px-6 py-4 border-b border-outline-variant/10">
-            <h3 className="font-bold font-headline text-on-surface">Shift History</h3>
-          </div>
-          {shifts.length > 0 ? (
-            <div className="divide-y divide-outline-variant/10">
-              {shifts.map(s => {
-                const hours = s.clock_out_time && s.clock_in_time
-                  ? ((new Date(s.clock_out_time).getTime() - new Date(s.clock_in_time).getTime()) / 3600000).toFixed(1)
+            <RailCard title="Recent work">
+              <div className="space-y-2 text-[12px] text-[#66635b]">
+                <p>{completedShifts.length} completed shifts are available for auditing.</p>
+                <p>{Number(totalHours.toFixed(1))} total hours have been logged across finished work.</p>
+                <p>Use the shift history tab to review recent clients and attendance outcomes.</p>
+              </div>
+            </RailCard>
+          </aside>
+        </div>
+      ) : null}
+
+      {tab === 'documents' ? (
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <section className="space-y-4">
+            <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-[#1a1a18]">Upload compliance document</h3>
+                  <p className="text-xs text-[#8a877f]">Add identification, screening, and certification records to the staff profile</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleUpload} className="mt-5 grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Document type</label>
+                  <select
+                    value={docType}
+                    onChange={event => setDocType(event.target.value)}
+                    required
+                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  >
+                    <option value="">Select document</option>
+                    {DOC_TYPES.map(type => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Expiry date</label>
+                  <input
+                    type="date"
+                    value={expiryDate}
+                    onChange={event => setExpiryDate(event.target.value)}
+                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">File</label>
+                  <input
+                    type="file"
+                    required
+                    onChange={event => setFile(event.target.files?.[0] ?? null)}
+                    className="mt-2 w-full rounded-2xl border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-4 py-3 text-sm text-[#66635b] outline-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={uploading}
+                    className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                  >
+                    {uploading ? 'Uploading...' : 'Upload document'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {documents.length > 0 ? (
+              <div className="space-y-3">
+                {documents.map(doc => (
+                  <article key={doc.id} className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#6f6b63]">
+                          <span className="material-symbols-outlined text-[18px]">description</span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-[#1a1a18]">{doc.doc_type}</h4>
+                          <p className="text-[11px] text-[#8a877f]">{doc.file_name ?? 'Document file'}</p>
+                        </div>
+                      </div>
+                      <div className="md:ml-auto flex items-center gap-3">
+                        <ExpiryBadge expiryDate={doc.expiry_date} />
+                        {doc.file_url ? (
+                          <a href={doc.file_url} target="_blank" rel="noreferrer" className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45]">
+                            Open file
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <EmptyState icon="folder_open" title="No documents uploaded yet" copy="Upload worker screening, identification, and compliance records here." />
+            )}
+          </section>
+
+          <RailCard title="Document guidance">
+            <div className="space-y-2 text-[12px] leading-6 text-[#66635b]">
+              <p>Use expiry dates for screening and certification documents so the compliance hub can monitor renewals.</p>
+              <p>Uploads from this page immediately appear in the staff compliance and roster readiness views.</p>
+            </div>
+          </RailCard>
+        </div>
+      ) : null}
+
+      {tab === 'shifts' ? (
+        shifts.length > 0 ? (
+          <div className="space-y-3">
+            {shifts.map((shift: any) => {
+              const hours =
+                shift.clock_out_time && shift.clock_in_time
+                  ? ((new Date(shift.clock_out_time).getTime() - new Date(shift.clock_in_time).getTime()) / 3600000).toFixed(1)
                   : null
-                return (
-                  <div key={s.id} className="px-6 py-4 flex items-center justify-between">
+
+              return (
+                <article key={shift.id} className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center">
                     <div>
-                      <p className="font-semibold text-sm text-on-surface">{s.clients?.full_name ?? 'Client'}</p>
-                      <p className="text-xs text-on-surface-variant">
-                        {new Date(s.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} •{' '}
-                        {new Date(s.start_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })} – {new Date(s.end_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
-                        {hours ? ` • ${hours}h` : ''}
+                      <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.clients?.full_name ?? 'Client record'}</h4>
+                      <p className="text-[12px] text-[#7d7a73]">
+                        {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
+                        {' / '}
+                        {new Date(shift.start_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
+                        {' - '}
+                        {new Date(shift.end_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
+                        {hours ? ` / ${hours}h` : ''}
                       </p>
                     </div>
-                    <Badge variant={s.status} />
+                    <div className="md:ml-auto flex items-center gap-3">
+                      <Badge variant={shift.status} />
+                    </div>
                   </div>
-                )
-              })}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-on-surface-variant">
-              <span className="material-symbols-outlined text-4xl mb-2 block">calendar_today</span>
-              <p className="text-sm">No shifts recorded</p>
-            </div>
-          )}
-        </div>
-      )}
+                </article>
+              )
+            })}
+          </div>
+        ) : (
+          <EmptyState icon="calendar_today" title="No shifts recorded" copy="Recent client visits for this worker will appear here." />
+        )
+      ) : null}
+    </div>
+  )
+}
+
+function MetricCard({
+  label,
+  value,
+  sub,
+  accent,
+}: {
+  label: string
+  value: number
+  sub: string
+  accent?: boolean
+}) {
+  return (
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.2rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    </div>
+  )
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[18px] bg-[#faf9f6] p-4">
+      <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">{label}</p>
+      <p className="mt-2 text-sm font-medium text-[#1a1a18]">{value}</p>
+    </div>
+  )
+}
+
+function RailCard({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0ece5] px-4 py-3">
+        <h3 className="text-sm font-semibold text-[#1a1a18]">{title}</h3>
+      </div>
+      <div className="px-4 py-4">{children}</div>
+    </section>
+  )
+}
+
+function EmptyState({
+  icon,
+  title,
+  copy,
+}: {
+  icon: string
+  title: string
+  copy: string
+}) {
+  return (
+    <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
+      <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">{icon}</span>
+      <p className="mt-3 text-sm font-medium text-[#1a1a18]">{title}</p>
+      <p className="mt-1 text-xs text-[#8a877f]">{copy}</p>
     </div>
   )
 }

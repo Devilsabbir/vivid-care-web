@@ -1,78 +1,121 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
-export default function StaffTable({ staff }: { staff: any[] }) {
+type StaffCard = {
+  id: string
+  full_name: string
+  phone: string | null
+  shiftsThisWeek: number
+  hoursThisWeek: number
+  docState: 'expired' | 'near_expiry' | 'active' | 'missing'
+}
+
+export default function StaffTable({ staff }: { staff: StaffCard[] }) {
   const [search, setSearch] = useState('')
 
-  const filtered = staff.filter(s =>
-    s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    s.phone?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = useMemo(() => {
+    const query = search.toLowerCase()
+    return staff.filter(member =>
+      member.full_name.toLowerCase().includes(query) ||
+      member.phone?.toLowerCase().includes(query)
+    )
+  }, [search, staff])
 
   return (
-    <div className="bg-surface-container-lowest rounded-2xl shadow-sm">
-      <div className="px-6 py-4 border-b border-outline-variant/10">
-        <div className="flex items-center bg-surface-container-highest rounded-lg px-4 py-2.5 max-w-sm">
-          <span className="material-symbols-outlined text-outline text-xl mr-2">search</span>
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search staff..."
-            className="bg-transparent text-sm text-on-surface placeholder:text-outline focus:outline-none flex-1"
-          />
+    <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0ece5] px-5 py-4 md:px-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-[#1a1a18]">Team directory</h3>
+            <p className="text-xs text-[#8a877f]">Search the workforce and review roster load and document readiness</p>
+          </div>
+          <div className="flex items-center gap-2 rounded-2xl border border-[#e5e1d9] bg-[#faf9f6] px-4 py-2.5 md:w-[320px]">
+            <span className="material-symbols-outlined text-[18px] text-[#918d85]">search</span>
+            <input
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              placeholder="Search staff..."
+              className="w-full bg-transparent text-sm text-[#1a1a18] placeholder:text-[#9d998f] outline-none"
+            />
+          </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-12 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant font-label">
-        <div className="col-span-5">Staff Member</div>
-        <div className="col-span-3">Phone</div>
-        <div className="col-span-3">Status</div>
-        <div className="col-span-1"></div>
       </div>
 
       {filtered.length > 0 ? (
-        <div>
-          {filtered.map((s, i) => (
-            <div
-              key={s.id}
-              className={`grid grid-cols-12 px-6 py-4 items-center hover:bg-surface-container-low/50 transition-colors ${i % 2 === 1 ? 'bg-surface-container-low/20' : ''}`}
+        <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-3 md:p-6">
+          {filtered.map(member => (
+            <Link
+              key={member.id}
+              href={`/admin/staff/${member.id}`}
+              className="rounded-[22px] border border-[#e8e4dc] bg-[#faf9f6] p-5 transition-colors hover:bg-[#f4f2ed]"
             >
-              <div className="col-span-5 flex items-center gap-3">
-                <div className="w-9 h-9 bg-secondary-fixed rounded-xl flex items-center justify-center text-secondary font-bold text-sm flex-shrink-0">
-                  {s.full_name?.charAt(0) ?? '?'}
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
+                  {initials(member.full_name)}
                 </div>
-                <div>
-                  <p className="font-bold text-sm font-headline text-on-surface">{s.full_name}</p>
-                  <p className="text-xs text-on-surface-variant">{s.id.slice(0, 8)}…</p>
+                <div className="min-w-0">
+                  <h4 className="truncate text-sm font-semibold text-[#1a1a18]">{member.full_name}</h4>
+                  <p className="truncate text-xs text-[#8a877f]">{member.phone ?? 'Care team member'}</p>
                 </div>
               </div>
-              <div className="col-span-3 text-sm text-on-surface-variant">{s.phone ?? '—'}</div>
-              <div className="col-span-3">
-                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-secondary-container/40 text-secondary font-label">
-                  Active
-                </span>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <StatBox label="Shifts this week" value={String(member.shiftsThisWeek)} />
+                <StatBox label="Hours" value={`${member.hoursThisWeek.toFixed(1)}h`} />
               </div>
-              <div className="col-span-1 flex justify-end">
-                <Link href={`/admin/staff/${s.id}`} className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline">
-                  <span className="material-symbols-outlined text-xl">chevron_right</span>
-                </Link>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-semibold text-[#3b5bdb]">Rostered</span>
+                <span className={statusClass(member.docState)}>{statusLabel(member.docState)}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-on-surface-variant">
-          <span className="material-symbols-outlined text-5xl mb-3 block">badge</span>
-          <p className="text-sm font-semibold">{search ? 'No staff match your search' : 'No staff yet'}</p>
-          {!search && (
-            <Link href="/admin/staff/new" className="inline-block mt-3 text-primary text-sm font-bold hover:underline">
-              Add your first staff member →
-            </Link>
-          )}
+        <div className="px-6 py-16 text-center">
+          <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">badge</span>
+          <p className="mt-3 text-sm font-medium text-[#1a1a18]">
+            {search ? 'No staff match your search' : 'No staff records yet'}
+          </p>
+          <p className="mt-1 text-xs text-[#8a877f]">
+            {search ? 'Try a different name or phone number.' : 'Add your first team member to start rostering.'}
+          </p>
         </div>
       )}
+    </section>
+  )
+}
+
+function StatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[14px] bg-white px-3 py-3">
+      <p className="text-[10px] text-[#9b988f]">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-[#1a1a18]">{value}</p>
     </div>
   )
+}
+
+function initials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase())
+    .join('')
+}
+
+function statusLabel(state: StaffCard['docState']) {
+  if (state === 'expired') return 'Doc expired'
+  if (state === 'near_expiry') return 'Doc expiring'
+  if (state === 'active') return 'Docs current'
+  return 'Docs missing'
+}
+
+function statusClass(state: StaffCard['docState']) {
+  if (state === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
+  if (state === 'near_expiry') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
+  if (state === 'active') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
+  return 'rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6c6860]'
 }

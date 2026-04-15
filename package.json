@@ -6,13 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "supabase:link": "npx supabase link --project-ref rvkoxsnjcazhdveaylfm",
+    "supabase:db:push": "npx supabase db push",
+    "supabase:functions:deploy:geofence": "npx supabase functions deploy geofence",
+    "supabase:functions:deploy:expiry": "npx supabase functions deploy expiry-cron",
+    "supabase:functions:deploy:ndis": "npx supabase functions deploy ndis-compliance",
+    "supabase:functions:deploy:payments": "npx supabase functions deploy payments",
+    "supabase:functions:deploy:notifications": "npx supabase functions deploy notifications"
   },
   "dependencies": {
+    "@fontsource-variable/material-symbols-outlined": "^5.2.41",
     "@fullcalendar/daygrid": "^6.1.20",
     "@fullcalendar/interaction": "^6.1.20",
     "@fullcalendar/react": "^6.1.20",
     "@fullcalendar/timegrid": "^6.1.20",
+    "@react-pdf/renderer": "^4.4.1",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.102.1",
     "@types/react-signature-canvas": "^1.0.7",
@@ -22,6 +31,7 @@
     "react-signature-canvas": "^1.1.0-alpha.2"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

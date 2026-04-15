@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     const data = await res.json()
     const content = data.content?.[0]?.text ?? 'Sorry, I could not process your request.'
     return NextResponse.json({ content })
-  } catch (err) {
+  } catch {
     return NextResponse.json({ content: 'Something went wrong. Please try again.' })
   }
 }

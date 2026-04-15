@@ -1,95 +1,116 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
-export default function ClientsTable({ clients }: { clients: any[] }) {
+type ClientCard = {
+  id: string
+  full_name: string
+  ndis_number: string | null
+  address: string | null
+  phone: string | null
+  shiftsThisWeek: number
+  assignedStaff: number
+  hasGeofence: boolean
+}
+
+export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
   const [search, setSearch] = useState('')
 
-  const filtered = clients.filter(c =>
-    c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    c.ndis_number?.toLowerCase().includes(search.toLowerCase()) ||
-    c.address?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = useMemo(() => {
+    const query = search.toLowerCase()
+    return clients.filter(client =>
+      client.full_name.toLowerCase().includes(query) ||
+      client.ndis_number?.toLowerCase().includes(query) ||
+      client.address?.toLowerCase().includes(query)
+    )
+  }, [search, clients])
 
   return (
-    <div className="bg-surface-container-lowest rounded-2xl shadow-sm">
-      {/* Search bar */}
-      <div className="px-6 py-4 border-b border-outline-variant/10">
-        <div className="flex items-center bg-surface-container-highest rounded-lg px-4 py-2.5 max-w-sm">
-          <span className="material-symbols-outlined text-outline text-xl mr-2">search</span>
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search clients..."
-            className="bg-transparent text-sm text-on-surface placeholder:text-outline focus:outline-none flex-1"
-          />
+    <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0ece5] px-5 py-4 md:px-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-[#1a1a18]">Client registry</h3>
+            <p className="text-xs text-[#8a877f]">Browse funded clients, addresses, and weekly service allocation at a glance</p>
+          </div>
+          <div className="flex items-center gap-2 rounded-2xl border border-[#e5e1d9] bg-[#faf9f6] px-4 py-2.5 md:w-[340px]">
+            <span className="material-symbols-outlined text-[18px] text-[#918d85]">search</span>
+            <input
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              placeholder="Search clients..."
+              className="w-full bg-transparent text-sm text-[#1a1a18] placeholder:text-[#9d998f] outline-none"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Table header */}
-      <div className="grid grid-cols-12 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant font-label">
-        <div className="col-span-4">Client</div>
-        <div className="col-span-2">NDIS Number</div>
-        <div className="col-span-3">Address</div>
-        <div className="col-span-2">Phone</div>
-        <div className="col-span-1"></div>
-      </div>
-
-      {/* Rows */}
       {filtered.length > 0 ? (
-        <div>
-          {filtered.map((client, i) => (
-            <div
+        <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-3 md:p-6">
+          {filtered.map(client => (
+            <Link
               key={client.id}
-              className={`grid grid-cols-12 px-6 py-4 items-center hover:bg-surface-container-low/50 transition-colors ${i % 2 === 1 ? 'bg-surface-container-low/20' : ''}`}
+              href={`/admin/clients/${client.id}`}
+              className="rounded-[22px] border border-[#e8e4dc] bg-[#faf9f6] p-5 transition-colors hover:bg-[#f4f2ed]"
             >
-              <div className="col-span-4 flex items-center gap-3">
-                <div className="w-9 h-9 bg-primary-fixed rounded-xl flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
-                  {client.full_name?.charAt(0) ?? '?'}
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4338ca] text-sm font-semibold uppercase tracking-[0.14em] text-white">
+                  {initials(client.full_name)}
                 </div>
-                <div>
-                  <p className="font-bold text-sm font-headline text-on-surface">{client.full_name}</p>
-                  {client.date_of_birth && (
-                    <p className="text-xs text-on-surface-variant">
-                      Age {new Date().getFullYear() - new Date(client.date_of_birth).getFullYear()}
-                    </p>
-                  )}
+                <div className="min-w-0">
+                  <h4 className="truncate text-sm font-semibold text-[#1a1a18]">{client.full_name}</h4>
+                  <p className="truncate text-xs text-[#8a877f]">{client.address ?? client.phone ?? 'Client profile'}</p>
                 </div>
               </div>
-              <div className="col-span-2 text-sm text-on-surface-variant font-label">
-                {client.ndis_number ?? '—'}
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <StatBox label="Shifts this week" value={String(client.shiftsThisWeek)} />
+                <StatBox label="Assigned staff" value={String(client.assignedStaff)} />
               </div>
-              <div className="col-span-3 text-sm text-on-surface-variant truncate pr-4">
-                {client.address ?? '—'}
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {client.ndis_number ? (
+                  <span className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-semibold text-[#3b5bdb]">NDIS</span>
+                ) : (
+                  <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6c6860]">Private</span>
+                )}
+                <span className={client.hasGeofence ? 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
+                  {client.hasGeofence ? 'Geofence ready' : 'Address review'}
+                </span>
               </div>
-              <div className="col-span-2 text-sm text-on-surface-variant">
-                {client.phone ?? '—'}
-              </div>
-              <div className="col-span-1 flex justify-end">
-                <Link
-                  href={`/admin/clients/${client.id}`}
-                  className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline"
-                >
-                  <span className="material-symbols-outlined text-xl">chevron_right</span>
-                </Link>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-on-surface-variant">
-          <span className="material-symbols-outlined text-5xl mb-3 block">group</span>
-          <p className="text-sm font-semibold">
-            {search ? 'No clients match your search' : 'No clients yet'}
+        <div className="px-6 py-16 text-center">
+          <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">group</span>
+          <p className="mt-3 text-sm font-medium text-[#1a1a18]">
+            {search ? 'No clients match your search' : 'No client records yet'}
           </p>
-          {!search && (
-            <Link href="/admin/clients/new" className="inline-block mt-3 text-primary text-sm font-bold hover:underline">
-              Add your first client →
-            </Link>
-          )}
+          <p className="mt-1 text-xs text-[#8a877f]">
+            {search ? 'Try a different name, address, or NDIS number.' : 'Add your first client to start scheduling support.'}
+          </p>
         </div>
       )}
+    </section>
+  )
+}
+
+function StatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[14px] bg-white px-3 py-3">
+      <p className="text-[10px] text-[#9b988f]">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-[#1a1a18]">{value}</p>
     </div>
   )
+}
+
+function initials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase())
+    .join('')
 }

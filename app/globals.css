@@ -2,14 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(205, 255, 82, 0.75);
+  color: #1a1a18;
+}
+
 body {
-  background-color: #f7f9fb;
-  color: #191c1e;
-  font-family: 'Inter', sans-serif;
+  background-color: #edecea;
+  color: #1a1a18;
+  font-family: var(--font-body), sans-serif;
 }
 
 .font-headline {
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-headline), sans-serif;
 }
 
 .material-symbols-outlined {
@@ -31,52 +40,102 @@ body {
 }
 
 .primary-gradient {
-  background: linear-gradient(135deg, #00446f 0%, #225c8a 100%);
+  background: linear-gradient(135deg, #1a1a18 0%, #353530 100%);
 }
 
 .glass-header {
-  background: rgba(247, 249, 251, 0.8);
+  background: rgba(237, 236, 234, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .ghost-border {
-  outline: 1px solid rgba(193, 199, 209, 0.15);
+  outline: 1px solid rgba(26, 26, 24, 0.08);
 }
 
-/* FullCalendar overrides */
 .fc {
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
-.fc .fc-toolbar-title {
-  font-family: 'Manrope', sans-serif;
+.vivid-roster-calendar .fc {
+  font-family: var(--font-body), sans-serif;
+}
+
+.vivid-roster-calendar .fc .fc-toolbar {
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.vivid-roster-calendar .fc .fc-toolbar-title {
+  font-family: var(--font-headline), sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #191c1e;
+  color: #1a1a18;
+  letter-spacing: -0.03em;
 }
 
-.fc .fc-button {
-  background: linear-gradient(135deg, #00446f 0%, #225c8a 100%) !important;
+.vivid-roster-calendar .fc .fc-button {
+  background: #1a1a18 !important;
   border: none !important;
-  border-radius: 0.5rem !important;
-  font-family: 'Inter', sans-serif !important;
-  font-size: 0.875rem !important;
+  border-radius: 9999px !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-family: var(--font-body), sans-serif !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  padding: 0.55rem 0.95rem !important;
 }
 
-.fc .fc-button:focus {
+.vivid-roster-calendar .fc .fc-button:hover,
+.vivid-roster-calendar .fc .fc-button-primary:not(:disabled):active,
+.vivid-roster-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: #2d2d28 !important;
+}
+
+.vivid-roster-calendar .fc .fc-button:focus {
   box-shadow: none !important;
 }
 
-.fc .fc-daygrid-day.fc-day-today {
-  background-color: #cfe5ff !important;
+.vivid-roster-calendar .fc .fc-daygrid-day.fc-day-today,
+.vivid-roster-calendar .fc .fc-timegrid-col.fc-day-today {
+  background-color: rgba(205, 255, 82, 0.16) !important;
 }
 
-.fc .fc-event {
-  border: none !important;
-  border-radius: 0.25rem !important;
+.vivid-roster-calendar .fc .fc-timegrid-slot-label-cushion,
+.vivid-roster-calendar .fc .fc-col-header-cell-cushion {
+  color: #8a877f;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.vivid-roster-calendar .fc .fc-col-header-cell-cushion {
+  padding: 0.85rem 0;
+}
+
+.vivid-roster-calendar .fc .fc-timegrid-slot {
+  height: 3.6rem;
+}
+
+.vivid-roster-calendar .fc .fc-event {
+  border-radius: 16px !important;
+  border-width: 1px !important;
+  box-shadow: none !important;
   font-size: 0.75rem !important;
-  padding: 2px 4px !important;
+  font-weight: 600 !important;
+  padding: 0 !important;
+}
+
+.vivid-roster-calendar .fc .fc-timegrid-event-harness {
+  margin-inline: 0.12rem;
+}
+
+.vivid-roster-calendar .fc-theme-standard td,
+.vivid-roster-calendar .fc-theme-standard th,
+.vivid-roster-calendar .fc-theme-standard .fc-scrollgrid {
+  border-color: rgba(26, 26, 24, 0.08) !important;
 }
 
 @layer utilities {
@@ -87,10 +146,10 @@ body {
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    20%       { transform: translateX(-6px); }
-    40%       { transform: translateX(6px); }
-    60%       { transform: translateX(-4px); }
-    80%       { transform: translateX(4px); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
   }
 
   .animate-fade-slide-up {

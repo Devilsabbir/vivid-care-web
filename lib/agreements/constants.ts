@@ -2,13 +2,13 @@
 
 export const VIVID_CARE = {
   name: 'Vivid Care',
-  abn: 'XX XXX XXX XXX',         // Update with real ABN
-  address: '123 Example Street, Melbourne VIC 3000',
-  phone: '03 XXXX XXXX',
-  email: 'admin@vividcare.com.au',
-  contactName: 'Vivid Care Administration',
-  website: 'www.vividcare.com.au',
-  ndisRegistration: 'XXXXXXXXX',  // Update with real NDIS registration number
+  abn: '12 345 678 910',
+  address: '41 Eddystone Ave',
+  phone: '123456789',
+  email: 'kemaked@gmail.com',
+  contactName: 'Kemake Dissanayaka',
+  website: 'www.vividcare@demo.com',
+  ndisRegistration: '12345678910',
 }
 
 export const AGREEMENT_VERSION = '1.0'

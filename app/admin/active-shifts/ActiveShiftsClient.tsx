@@ -120,8 +120,8 @@ export default function ActiveShiftsClient({ initialShifts }: { initialShifts: S
               <h3 className="text-sm font-semibold text-[#1a1a18]">Live shift board</h3>
               <p className="text-xs text-[#8a877f]">Staff currently onsite with attendance progress and location readiness</p>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#effbec] px-3 py-1.5 text-[11px] font-medium text-[#166534]">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#22c55e] animate-pulse" />
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#faf5ff] px-3 py-1.5 text-[11px] font-medium text-[#6b21a8]">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#a855f7] animate-pulse" />
               Realtime feed
             </span>
           </div>
@@ -210,7 +210,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
         </div>
 
         <div className="md:ml-auto md:max-w-[14rem] md:text-right">
-          <span className="inline-flex rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#166534]">
+          <span className="inline-flex rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]">
             Live now
           </span>
           <p className="mt-2 text-[12px] text-[#68655e]">{shift.clientAddress ?? 'No client address saved'}</p>
@@ -361,6 +361,6 @@ function Avatar({ name, tone }: { name: string; tone: 'dark' | 'lime' }) {
 
 function pillClass(tone: 'green' | 'amber') {
   return tone === 'green'
-    ? 'rounded-full bg-[#dcfce7] px-3 py-1.5 text-[#166534]'
+    ? 'rounded-full bg-[#f3e8ff] px-3 py-1.5 text-[#6b21a8]'
     : 'rounded-full bg-[#fef9c3] px-3 py-1.5 text-[#92400e]'
 }

@@ -97,7 +97,7 @@ export default async function ShiftHistoryPage() {
                     </td>
                     <td className="px-6 py-4 font-medium text-[#1a1a18]">{hoursLabel(shift)}</td>
                     <td className="px-6 py-4">
-                      <span className={shift.status === 'completed' ? 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]' : 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'}>
+                      <span className={shift.status === 'completed' ? 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]' : 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'}>
                         {shift.status === 'completed' ? 'Completed' : 'Cancelled'}
                       </span>
                     </td>

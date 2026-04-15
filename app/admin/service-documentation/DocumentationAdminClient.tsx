@@ -293,7 +293,7 @@ function labelSupportType(value: string | null) {
 }
 
 function documentationStatusClass(status: string) {
-  if (status === 'documented') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]'
+  if (status === 'documented') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
   if (status === 'in_progress') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
   if (status === 'overdue') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'not_required') return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'
@@ -309,7 +309,7 @@ function copyDocumentationStatus(status: string) {
 }
 
 function docStatusClass(status: DocRow['status']) {
-  if (status === 'approved') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]'
+  if (status === 'approved') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
   if (status === 'submitted') return 'rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold text-[#1d4ed8]'
   if (status === 'amended') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
   return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'

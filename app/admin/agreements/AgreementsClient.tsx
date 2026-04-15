@@ -210,7 +210,7 @@ export default function AgreementsClient({
                     <p className="text-sm font-semibold text-[#1a1a18]">{template.name}</p>
                     <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#8a877f]">{template.target_type}</p>
                   </div>
-                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${template.active ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#e5e7eb] text-[#4b5563]'}`}>
+                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${template.active ? 'bg-[#f3e8ff] text-[#6b21a8]' : 'bg-[#e5e7eb] text-[#4b5563]'}`}>
                     {template.active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
@@ -463,7 +463,7 @@ function SelectField({
 }
 
 function statusClass(status: AgreementRow['status']) {
-  if (status === 'signed') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]'
+  if (status === 'signed') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
   if (status === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'draft') return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'
   return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'

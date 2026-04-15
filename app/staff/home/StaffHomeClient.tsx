@@ -50,7 +50,7 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
     title: shift.clients?.full_name ?? 'Shift',
     start: shift.start_time,
     end: shift.end_time,
-    backgroundColor: shift.status === 'active' ? '#1d5d41' : shift.status === 'completed' ? '#8a867c' : '#171717',
+    backgroundColor: shift.status === 'active' ? '#581c87' : shift.status === 'completed' ? '#8a867c' : '#171717',
     borderColor: 'transparent',
   }))
 

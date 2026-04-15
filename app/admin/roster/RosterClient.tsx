@@ -95,7 +95,7 @@ const EMPTY_FORM: CreateShiftForm = {
 
 const legendItems = [
   { label: 'Scheduled', swatch: '#dbeafe' },
-  { label: 'Active', swatch: '#dcfce7' },
+  { label: 'Active', swatch: '#f3e8ff' },
   { label: 'Completed', swatch: '#ebe7df' },
   { label: 'Cancelled', swatch: '#fee2e2' },
 ]
@@ -799,7 +799,7 @@ function formatTime(value: string) {
 
 function statusTone(status: ShiftStatus) {
   if (status === 'active') {
-    return { background: '#dcfce7', border: '#22c55e', text: '#166534' }
+    return { background: '#f3e8ff', border: '#a855f7', text: '#6b21a8' }
   }
   if (status === 'completed') {
     return { background: '#ebe7df', border: '#b9b3a8', text: '#59554f' }
@@ -811,7 +811,7 @@ function statusTone(status: ShiftStatus) {
 }
 
 function statusBadge(status: ShiftStatus) {
-  if (status === 'active') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#166534]'
+  if (status === 'active') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]'
   if (status === 'completed') return 'rounded-full bg-[#ebe7df] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#59554f]'
   if (status === 'cancelled') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
   return 'rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1d4ed8]'
@@ -845,7 +845,7 @@ function checklistRows(shift: SelectedShift) {
       label: 'Staff assignment ready',
       meta: shift.staffId ? 'A worker has been allocated.' : 'This shift still needs a worker.',
       done: Boolean(shift.staffId),
-      doneClass: 'bg-[#dcfce7] text-[#166534]',
+      doneClass: 'bg-[#f3e8ff] text-[#6b21a8]',
     },
     {
       label: 'Client geofence configured',
@@ -863,7 +863,7 @@ function checklistRows(shift: SelectedShift) {
       label: 'Clock-in recorded',
       meta: shiftStarted ? 'Attendance has started for this shift.' : 'This will unlock once the worker arrives.',
       done: shiftStarted,
-      doneClass: 'bg-[#dcfce7] text-[#166534]',
+      doneClass: 'bg-[#f3e8ff] text-[#6b21a8]',
     },
     {
       label: 'Clock-out completed',

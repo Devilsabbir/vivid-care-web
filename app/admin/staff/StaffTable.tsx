@@ -116,6 +116,6 @@ function statusLabel(state: StaffCard['docState']) {
 function statusClass(state: StaffCard['docState']) {
   if (state === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (state === 'near_expiry') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (state === 'active') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]'
+  if (state === 'active') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
   return 'rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6c6860]'
 }

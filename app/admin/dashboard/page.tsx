@@ -252,7 +252,7 @@ export default async function AdminDashboard() {
                       </div>
                     </div>
                     <div className="md:ml-auto md:text-right">
-                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#166534]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
+                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
                         {shift.status === 'active' ? 'Active now' : 'Scheduled'}
                       </span>
                       <p className="mt-2 text-xs text-[#68655e]">{clock(shift.start_time)} - {clock(shift.end_time)}</p>
@@ -306,7 +306,7 @@ export default async function AdminDashboard() {
                 const left = daysUntilExpiry(doc.expiry_date)
                 return (
                   <div key={doc.id} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3">
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#2b8a3e]'}`}>
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>
                       {doc.owner_type === 'staff' ? 'ST' : 'CL'}
                     </div>
                     <div className="min-w-0 flex-1">

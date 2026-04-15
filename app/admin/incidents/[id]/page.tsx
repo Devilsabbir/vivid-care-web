@@ -187,12 +187,12 @@ function relationRow<T>(value: T | T[] | null): T | null {
 function severityBadge(severity: IncidentDetail['severity']) {
   if (severity === 'emergency' || severity === 'high') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
   if (severity === 'medium') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#166534]'
+  return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]'
 }
 
 function statusBadge(status: IncidentDetail['status']) {
   if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#166534]'
+  if (status === 'resolved') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]'
   return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
 }
 
@@ -248,7 +248,7 @@ function responseChecklist(
       label: 'Linked shift confirmed',
       meta: linkedShift ? 'A related shift window is attached to this record.' : 'No shift window was attached to this case.',
       done: linkedShift,
-      doneClass: 'bg-[#dcfce7] text-[#166534]',
+      doneClass: 'bg-[#f3e8ff] text-[#6b21a8]',
     },
   ]
 }

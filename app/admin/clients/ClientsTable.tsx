@@ -75,7 +75,7 @@ export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
                 ) : (
                   <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6c6860]">Private</span>
                 )}
-                <span className={client.hasGeofence ? 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
+                <span className={client.hasGeofence ? 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
                   {client.hasGeofence ? 'Geofence ready' : 'Address review'}
                 </span>
               </div>

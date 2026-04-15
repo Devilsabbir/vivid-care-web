@@ -151,7 +151,7 @@ function formatIncidentDate(value: string) {
 function severityBar(severity: IncidentRow['severity']) {
   if (severity === 'emergency' || severity === 'high') return 'bg-[#dc2626]'
   if (severity === 'medium') return 'bg-[#ca8a04]'
-  return 'bg-[#16a34a]'
+  return 'bg-[#9333ea]'
 }
 
 function severityLabel(severity: IncidentRow['severity']) {
@@ -169,6 +169,6 @@ function statusLabel(status: IncidentRow['status']) {
 
 function statusClass(status: IncidentRow['status']) {
   if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]'
+  if (status === 'resolved') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
   return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
 }

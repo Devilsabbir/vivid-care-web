@@ -207,7 +207,7 @@ export default function StaffDocumentationClient({
                             <p className="text-sm font-semibold text-[#171716]">{form.label}</p>
                             <p className="mt-1 text-[12px] text-[#8b867b]">{form.form_key.replace(/_/g, ' ')}</p>
                           </div>
-                          <span className={alreadySubmitted ? 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
+                          <span className={alreadySubmitted ? 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
                             {alreadySubmitted ? 'Submitted' : 'Pending'}
                           </span>
                         </div>
@@ -416,7 +416,7 @@ function formatTime(value: string) {
 }
 
 function documentationStatusClass(status: string) {
-  if (status === 'documented') return 'rounded-full bg-[#dcfce7] px-2.5 py-1 text-[10px] font-semibold text-[#166534]'
+  if (status === 'documented') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
   if (status === 'in_progress') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
   if (status === 'overdue') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'not_required') return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'

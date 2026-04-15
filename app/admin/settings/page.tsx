@@ -14,6 +14,9 @@ const DEFAULT_SETTINGS = {
   pay_period: 'fortnightly',
   compliance_email: '',
   ndis_provider_number: '',
+  abn: '',
+  contact_name: '',
+  website: '',
 }
 
 export default async function SettingsPage() {

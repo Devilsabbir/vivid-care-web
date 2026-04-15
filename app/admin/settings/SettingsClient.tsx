@@ -17,6 +17,9 @@ type SettingsRow = {
   pay_period: string
   compliance_email: string | null
   ndis_provider_number: string | null
+  abn: string | null
+  contact_name: string | null
+  website: string | null
 }
 
 type DocumentTypeRow = {
@@ -113,6 +116,9 @@ export default function SettingsClient({
       pay_period: settingsForm.pay_period,
       compliance_email: settingsForm.compliance_email || null,
       ndis_provider_number: settingsForm.ndis_provider_number || null,
+      abn: settingsForm.abn || null,
+      contact_name: settingsForm.contact_name || null,
+      website: settingsForm.website || null,
     })
 
     setSaving(null)
@@ -254,6 +260,9 @@ export default function SettingsClient({
               <Input label="Business phone" value={settingsForm.business_phone ?? ''} onChange={value => setSettingsForm(current => ({ ...current, business_phone: value }))} />
               <Input label="Compliance email" value={settingsForm.compliance_email ?? ''} onChange={value => setSettingsForm(current => ({ ...current, compliance_email: value }))} />
               <Input label="NDIS provider number" value={settingsForm.ndis_provider_number ?? ''} onChange={value => setSettingsForm(current => ({ ...current, ndis_provider_number: value }))} />
+              <Input label="ABN" value={settingsForm.abn ?? ''} onChange={value => setSettingsForm(current => ({ ...current, abn: value }))} />
+              <Input label="Contact name (authorised signatory)" value={settingsForm.contact_name ?? ''} onChange={value => setSettingsForm(current => ({ ...current, contact_name: value }))} />
+              <Input label="Website" value={settingsForm.website ?? ''} onChange={value => setSettingsForm(current => ({ ...current, website: value }))} />
               <Input label="Timezone" value={settingsForm.timezone} onChange={value => setSettingsForm(current => ({ ...current, timezone: value }))} />
               <Input label="Geofence radius (m)" type="number" value={String(settingsForm.geofence_radius_meters)} onChange={value => setSettingsForm(current => ({ ...current, geofence_radius_meters: Number(value) }))} />
               <Input label="Clock-in window (min)" type="number" value={String(settingsForm.clock_in_window_minutes)} onChange={value => setSettingsForm(current => ({ ...current, clock_in_window_minutes: Number(value) }))} />

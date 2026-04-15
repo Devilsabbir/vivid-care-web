@@ -123,7 +123,7 @@ export default async function StaffPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <SummaryCard label="Care team" value={summary.total} sub="Registered staff records" tone="white" />
-        <SummaryCard label="On roster" value={summary.activeThisWeek} sub="Staff with shifts this week" tone="lime" />
+        <SummaryCard label="On roster" value={summary.activeThisWeek} sub="Staff with shifts this week" tone="accent" />
         <SummaryCard label="Needs review" value={summary.expiring} sub="Expiring or overdue compliance" tone="white" danger />
       </section>
 
@@ -142,14 +142,14 @@ function SummaryCard({
   label: string
   value: number
   sub: string
-  tone: 'white' | 'lime'
+  tone: 'white' | 'accent'
   danger?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'lime' ? 'text-[#5e0087]' : danger ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : danger ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#ca8a04]' : 'text-[#1a1a18]'}`}>{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'lime' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
     </div>
   )
 }

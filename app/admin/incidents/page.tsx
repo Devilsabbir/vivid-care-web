@@ -67,7 +67,7 @@ export default async function IncidentsPage() {
         <SummaryCard label="Total incidents" value={counts.total} tone="white" />
         <SummaryCard label="Open" value={counts.open} tone="white" danger="red" />
         <SummaryCard label="Under review" value={counts.investigating} tone="white" danger="amber" />
-        <SummaryCard label="Resolved" value={counts.resolved} tone="lime" />
+        <SummaryCard label="Resolved" value={counts.resolved} tone="accent" />
       </section>
 
       <section className="space-y-3">
@@ -130,12 +130,12 @@ function SummaryCard({
 }: {
   label: string
   value: number
-  tone: 'white' | 'lime'
+  tone: 'white' | 'accent'
   danger?: 'red' | 'amber'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'lime' ? 'text-[#5e0087]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#1a1a18]'}`}>{value}</p>
     </div>
   )

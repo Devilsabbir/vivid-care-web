@@ -248,7 +248,7 @@ function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
   return (
     <article className="flex flex-col gap-4 rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 md:flex-row md:items-center">
       <div className="flex items-center gap-3">
-        <Avatar name={shift.staffName} tone="lime" />
+        <Avatar name={shift.staffName} tone="accent" />
         <div>
           <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.staffName}</h4>
           <p className="text-[12px] text-[#7d7a73]">{shift.clientName}</p>
@@ -346,7 +346,7 @@ function formatDate(value: string) {
   return new Date(value).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
-function Avatar({ name, tone }: { name: string; tone: 'dark' | 'lime' }) {
+function Avatar({ name, tone }: { name: string; tone: 'dark' | 'accent' }) {
   return (
     <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#1a1a18] text-[#c852ff]' : 'bg-[#c852ff] text-[#1a1a18]'}`}>
       {name

@@ -16,7 +16,7 @@ type Owner = { id: string; full_name: string | null }
 
 const policyCards = [
   ['NDIS code of conduct', 'Starter policy card', 'indigo'],
-  ['Incident reporting policy', 'Starter policy card', 'lime'],
+  ['Incident reporting policy', 'Starter policy card', 'accent'],
   ['Staff handbook', 'Starter policy card', 'neutral'],
   ['Privacy and consent', 'Starter policy card', 'neutral'],
   ['Manual handling', 'Starter policy card', 'neutral'],
@@ -79,7 +79,7 @@ export default async function CompliancePage() {
 
       <section className="grid gap-4 xl:grid-cols-4">
         <Tile tone="white" icon="folder" label="Total documents" value={rows.length} sub={`Across staff and client records`} />
-        <Tile tone="lime" icon="verified" label="Valid and current" value={valid.length} sub={`${percent(valid.length, rows.length)}% compliance rate`} />
+        <Tile tone="accent" icon="verified" label="Valid and current" value={valid.length} sub={`${percent(valid.length, rows.length)}% compliance rate`} />
         <Tile tone="white" icon="warning" label="Expiring soon" value={soon.length} sub="Within the 45-day window" badge="Review needed" danger="amber" />
         <Tile tone="white" icon="cancel" label="Expired" value={expired.length} sub={`${blockedStaff} staff currently blocked`} badge="Action required" danger="red" />
       </section>
@@ -97,7 +97,7 @@ export default async function CompliancePage() {
           <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
             <div className="flex items-center justify-between gap-3 border-b border-[#f0ece5] px-5 py-4 md:px-6"><div><h3 className="text-sm font-semibold text-[#1a1a18]">Policy and handbook hub</h3><p className="text-xs text-[#8a877f]">Starter structure for the policy-library module in the next implementation slice</p></div><span className="rounded-xl bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white">Phase 2 ready</span></div>
             <div className="grid gap-3 p-5 md:grid-cols-3 md:p-6">
-              {policyCards.map(([title, meta, tone]) => <div key={title} className={`rounded-[18px] p-4 ${tone === 'dashed' ? 'border border-dashed border-[#dad5cb] bg-[#faf9f6] text-center' : 'border border-[#ece8e1] bg-white'}`}><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'indigo' ? 'bg-[#eef2ff] text-[#3b5bdb]' : tone === 'lime' ? 'bg-[#c852ff] text-[#1a1a18]' : 'bg-[#f0ede7] text-[#88847d]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><p className="mt-4 text-sm font-medium text-[#1a1a18]">{title}</p><p className="mt-1 text-[11px] text-[#9c998f]">{meta}</p></div>)}
+              {policyCards.map(([title, meta, tone]) => <div key={title} className={`rounded-[18px] p-4 ${tone === 'dashed' ? 'border border-dashed border-[#dad5cb] bg-[#faf9f6] text-center' : 'border border-[#ece8e1] bg-white'}`}><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'indigo' ? 'bg-[#eef2ff] text-[#3b5bdb]' : tone === 'accent' ? 'bg-[#c852ff] text-[#1a1a18]' : 'bg-[#f0ede7] text-[#88847d]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><p className="mt-4 text-sm font-medium text-[#1a1a18]">{title}</p><p className="mt-1 text-[11px] text-[#9c998f]">{meta}</p></div>)}
             </div>
           </section>
         </div>
@@ -129,7 +129,7 @@ export default async function CompliancePage() {
 function Tile({
   tone, icon, label, value, sub, badge, danger,
 }: {
-  tone: 'white' | 'lime'
+  tone: 'white' | 'accent'
   icon: string
   label: string
   value: number
@@ -138,11 +138,11 @@ function Tile({
   danger?: 'amber' | 'red'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'lime' ? 'bg-black/10 text-[#1a1a18]' : 'bg-[#f3f1eb] text-[#6c6962]'}`}><span className="material-symbols-outlined text-[18px]">{icon}</span></div>
-      <p className={`mt-4 text-[12px] ${tone === 'lime' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'accent' ? 'bg-black/10 text-[#1a1a18]' : 'bg-[#f3f1eb] text-[#6c6962]'}`}><span className="material-symbols-outlined text-[18px]">{icon}</span></div>
+      <p className={`mt-4 text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'lime' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
       {badge ? <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold ${danger === 'red' ? 'bg-[#fee2e2] text-[#991b1b]' : 'bg-[#fef9c3] text-[#92400e]'}`}>{badge}</span> : null}
     </div>
   )

@@ -5,14 +5,12 @@ import SignatureCanvas from 'react-signature-canvas'
 
 export default function SignClient({
   token,
-  agreementId,
   agreementTitle,
   participantName,
   status,
   expiresOn,
 }: {
   token: string
-  agreementId: string
   agreementTitle: string
   participantName: string
   status: string

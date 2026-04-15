@@ -87,7 +87,7 @@ export default async function ClientsPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <SummaryCard label="Client records" value={summary.total} sub="Active profiles in the system" tone="white" />
-        <SummaryCard label="NDIS-linked" value={summary.ndis} sub="Profiles with NDIS numbers" tone="lime" />
+        <SummaryCard label="NDIS-linked" value={summary.ndis} sub="Profiles with NDIS numbers" tone="accent" />
         <SummaryCard label="Scheduled care" value={summary.activeThisWeek} sub="Clients with shifts this week" tone="white" />
       </section>
 
@@ -105,13 +105,13 @@ function SummaryCard({
   label: string
   value: number
   sub: string
-  tone: 'white' | 'lime'
+  tone: 'white' | 'accent'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'lime' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'lime' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
     </div>
   )
 }

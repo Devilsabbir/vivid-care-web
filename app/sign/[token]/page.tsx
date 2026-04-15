@@ -26,7 +26,6 @@ export default async function PublicSignPage({
     <div className="min-h-screen bg-[#edecea]">
       <SignClient
         token={params.token}
-        agreementId={agreement.id}
         agreementTitle={agreement.title}
         participantName={participantName}
         status={agreement.status}

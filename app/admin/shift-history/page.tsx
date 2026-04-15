@@ -51,7 +51,7 @@ export default async function ShiftHistoryPage() {
 
       <section className="grid gap-4 md:grid-cols-4">
         <SummaryCard label="Historical shifts" value={shifts.length} tone="white" />
-        <SummaryCard label="Completed" value={completedCount} tone="lime" />
+        <SummaryCard label="Completed" value={completedCount} tone="accent" />
         <SummaryCard label="Cancelled" value={cancelledCount} tone="white" danger />
         <SummaryCard label="Clocked hours" value={Number(totalHours.toFixed(1))} suffix="h" tone="white" />
       </section>
@@ -127,13 +127,13 @@ function SummaryCard({
 }: {
   label: string
   value: number
-  tone: 'white' | 'lime'
+  tone: 'white' | 'accent'
   suffix?: string
   danger?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'lime' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'lime' ? 'text-[#5e0087]' : danger ? 'text-[#dc2626]' : 'text-[#8a877f]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : danger ? 'text-[#dc2626]' : 'text-[#8a877f]'}`}>{label}</p>
       <div className="mt-2 flex items-end gap-1">
         <p className={`font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#dc2626]' : 'text-[#1a1a18]'}`}>{value}</p>
         {suffix ? <span className="pb-1 text-xs text-[#8a877f]">{suffix}</span> : null}

@@ -60,6 +60,8 @@ export async function POST(request: NextRequest) {
     .eq('id', 1)
     .maybeSingle()
 
+  // Map null DB columns to undefined so the spread in AgreementPDF
+  // falls back to the VIVID_CARE constant for any unpopulated fields.
   const provider = orgSettings
     ? {
         name: orgSettings.org_name ?? undefined,

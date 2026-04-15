@@ -233,6 +233,17 @@ function Bullet({ text }: { text: string }) {
   )
 }
 
+export type ProviderDetails = {
+  name: string
+  abn: string
+  address: string
+  phone: string
+  email: string
+  contactName: string
+  website: string
+  ndisRegistration: string
+}
+
 export type AgreementPDFProps = {
   participantName: string
   advocateName?: string | null
@@ -244,6 +255,7 @@ export type AgreementPDFProps = {
   signerName: string
   signatureDataUrl: string | null
   signedAt: string
+  provider?: Partial<ProviderDetails>
 }
 
 const FUNDING_CLAUSES: Record<'self' | 'nominee' | 'ndia' | 'plan_manager', string> = {
@@ -270,7 +282,9 @@ export default function AgreementPDF({
   signerName,
   signatureDataUrl,
   signedAt,
+  provider,
 }: AgreementPDFProps) {
+  const p = { ...VIVID_CARE, ...provider }
   return (
     <Document
       title={`Vivid Care Service Agreement — ${participantName}`}
@@ -285,23 +299,23 @@ export default function AgreementPDF({
         <View style={styles.providerBlock}>
           <View style={styles.providerRow}>
             <Text style={styles.providerLabel}>Company Name:</Text>
-            <Text style={styles.providerValue}>{VIVID_CARE.name}</Text>
+            <Text style={styles.providerValue}>{p.name}</Text>
           </View>
           <View style={styles.providerRow}>
             <Text style={styles.providerLabel}>Address:</Text>
-            <Text style={styles.providerValue}>{VIVID_CARE.address}</Text>
+            <Text style={styles.providerValue}>{p.address}</Text>
           </View>
           <View style={styles.providerRow}>
             <Text style={styles.providerLabel}>Phone:</Text>
-            <Text style={styles.providerValue}>{VIVID_CARE.phone}</Text>
+            <Text style={styles.providerValue}>{p.phone}</Text>
           </View>
           <View style={styles.providerRow}>
             <Text style={styles.providerLabel}>Email:</Text>
-            <Text style={styles.providerValue}>{VIVID_CARE.email}</Text>
+            <Text style={styles.providerValue}>{p.email}</Text>
           </View>
           <View style={styles.providerRow}>
             <Text style={styles.providerLabel}>ABN:</Text>
-            <Text style={styles.providerValue}>{VIVID_CARE.abn}</Text>
+            <Text style={styles.providerValue}>{p.abn}</Text>
           </View>
           <View style={styles.providerRow}>
             <Text style={styles.providerLabel}>Version:</Text>
@@ -349,7 +363,7 @@ export default function AgreementPDF({
         <View style={styles.partiesTable}>
           <View style={styles.partiesRowLast}>
             <Text style={styles.partiesLabel}>Provider</Text>
-            <Text style={styles.partiesValue}>{VIVID_CARE.name}</Text>
+            <Text style={styles.partiesValue}>{p.name}</Text>
           </View>
         </View>
 
@@ -455,7 +469,7 @@ export default function AgreementPDF({
 
         <Text style={styles.sectionHeading}>9. Feedback, Complaints and Disputes</Text>
         <Text style={styles.body}>
-          If the participant wishes to give feedback or make a complaint, they can contact: {VIVID_CARE.contactName} at {VIVID_CARE.phone} or {VIVID_CARE.email}.
+          If the participant wishes to give feedback or make a complaint, they can contact: {p.contactName} at {p.phone} or {p.email}.
         </Text>
         <Text style={styles.body}>
           If the participant is not satisfied or does not wish to talk to Vivid Care, they can contact the National Disability Insurance Scheme by calling 1800 035 544, visiting one of their offices in person, or visiting ndis.gov.au for further information.
@@ -501,19 +515,19 @@ export default function AgreementPDF({
         <View style={styles.partiesTable}>
           <View style={styles.partiesRow}>
             <Text style={styles.partiesLabel}>Contact Name</Text>
-            <Text style={styles.partiesValue}>{VIVID_CARE.contactName}</Text>
+            <Text style={styles.partiesValue}>{p.contactName}</Text>
           </View>
           <View style={styles.partiesRow}>
             <Text style={styles.partiesLabel}>Phone</Text>
-            <Text style={styles.partiesValue}>{VIVID_CARE.phone}</Text>
+            <Text style={styles.partiesValue}>{p.phone}</Text>
           </View>
           <View style={styles.partiesRow}>
             <Text style={styles.partiesLabel}>Email</Text>
-            <Text style={styles.partiesValue}>{VIVID_CARE.email}</Text>
+            <Text style={styles.partiesValue}>{p.email}</Text>
           </View>
           <View style={styles.partiesRowLast}>
             <Text style={styles.partiesLabel}>Address</Text>
-            <Text style={styles.partiesValue}>{VIVID_CARE.address}</Text>
+            <Text style={styles.partiesValue}>{p.address}</Text>
           </View>
         </View>
 
@@ -542,14 +556,14 @@ export default function AgreementPDF({
             <View style={styles.signatureBox}>
               <Text style={styles.signatureLabel}>Authorised Person from Vivid Care</Text>
               <View style={styles.signatureImage} />
-              <Text style={styles.signatureName}>{VIVID_CARE.contactName}</Text>
+              <Text style={styles.signatureName}>{p.contactName}</Text>
               <Text style={styles.signatureDate}>Date: ___________________</Text>
             </View>
           </View>
         </View>
 
         <Text style={styles.footerNote}>
-          Vivid Care · ABN {VIVID_CARE.abn} · {VIVID_CARE.address} · {VIVID_CARE.email}
+          Vivid Care · ABN {p.abn} · {p.address} · {p.email}
           {'\n'}This document was digitally signed on {signedAt}. Generated by Vivid Care platform.
         </Text>
       </Page>

@@ -1,8 +1,7 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import SignatureCanvas from 'react-signature-canvas'
 import Modal from '@/components/ui/Modal'
 import { createClient } from '@/lib/supabase/client'
 
@@ -24,6 +23,13 @@ type AgreementRow = {
   expires_on: string | null
   signed_at: string | null
   signature_data_url: string | null
+  pdf_url: string | null
+  signing_token: string | null
+  signer_name: string | null
+  advocate_name: string | null
+  supports_description: string | null
+  funding_type: 'self' | 'nominee' | 'ndia' | 'plan_manager' | null
+  payment_method: 'eft' | 'cheque' | 'cash' | null
 }
 
 type TargetRow = {
@@ -59,16 +65,18 @@ export default function AgreementsClient({
     target_id: clients[0]?.id ?? '',
     title: '',
     expires_on: '',
+    advocate_name: '',
+    supports_description: '',
+    funding_type: 'ndia',
+    payment_method: 'eft',
   })
   const [templateForm, setTemplateForm] = useState(EMPTY_TEMPLATE)
   const [createOpen, setCreateOpen] = useState(false)
   const [templateOpen, setTemplateOpen] = useState(false)
-  const [signatureAgreementId, setSignatureAgreementId] = useState<string | null>(null)
   const [saving, setSaving] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
   const [supabase] = useState(() => createClient())
-  const signatureRef = useRef<SignatureCanvas | null>(null)
 
   const targetNameMap = useMemo(() => {
     const map = new Map<string, string>()
@@ -91,6 +99,10 @@ export default function AgreementsClient({
 
   async function handleCreateAgreement() {
     if (!createForm.target_id) return
+    if (!createForm.supports_description.trim()) {
+      setMessage('Please enter a description of supports.')
+      return
+    }
     setSaving('agreement')
     setMessage(null)
 
@@ -104,6 +116,10 @@ export default function AgreementsClient({
       status: 'pending_signature',
       expires_on: createForm.expires_on || null,
       created_by: adminId,
+      advocate_name: createForm.advocate_name.trim() || null,
+      supports_description: createForm.supports_description.trim(),
+      funding_type: createForm.funding_type,
+      payment_method: createForm.payment_method,
     })
 
     setSaving(null)
@@ -141,33 +157,6 @@ export default function AgreementsClient({
     setTemplateForm(EMPTY_TEMPLATE)
     setTemplateOpen(false)
     setMessage('Agreement template added.')
-    router.refresh()
-  }
-
-  async function handleSaveSignature() {
-    if (!signatureAgreementId || !signatureRef.current || signatureRef.current.isEmpty()) return
-    setSaving('signature')
-    setMessage(null)
-
-    const { error } = await supabase
-      .from('agreements')
-      .update({
-        status: 'signed',
-        signed_at: new Date().toISOString(),
-        signature_data_url: signatureRef.current.toDataURL('image/png'),
-      })
-      .eq('id', signatureAgreementId)
-
-    setSaving(null)
-
-    if (error) {
-      setMessage(error.message)
-      return
-    }
-
-    setSignatureAgreementId(null)
-    signatureRef.current.clear()
-    setMessage('Signature captured.')
     router.refresh()
   }
 
@@ -254,18 +243,36 @@ export default function AgreementsClient({
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    {agreement.status !== 'signed' ? (
-                      <button
-                        type="button"
-                        onClick={() => setSignatureAgreementId(agreement.id)}
-                        className="rounded-2xl bg-[#cdff52] px-4 py-2 text-sm font-semibold text-[#1a1a18]"
-                      >
-                        Capture signature
-                      </button>
+                    {agreement.status === 'pending_signature' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => router.push(`/sign-inperson/${agreement.id}`)}
+                          className="rounded-2xl bg-[#cdff52] px-4 py-2 text-sm font-semibold text-[#1a1a18]"
+                        >
+                          Sign in person
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const url = `${window.location.origin}/sign/${agreement.signing_token}`
+                            navigator.clipboard.writeText(url)
+                            setMessage('Signing link copied to clipboard.')
+                          }}
+                          className="rounded-2xl border border-[#dcd7cf] bg-white px-4 py-2 text-sm font-semibold text-[#1a1a18]"
+                        >
+                          Copy link
+                        </button>
+                      </>
                     ) : null}
-                    {agreement.signature_data_url ? (
-                      <a href={agreement.signature_data_url} target="_blank" rel="noreferrer" className="rounded-2xl border border-[#dcd7cf] px-4 py-2 text-sm font-semibold text-[#1a1a18]">
-                        View signature
+                    {agreement.pdf_url ? (
+                      <a
+                        href={agreement.pdf_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-2xl border border-[#dcd7cf] bg-white px-4 py-2 text-sm font-semibold text-[#1a1a18]"
+                      >
+                        Download PDF
                       </a>
                     ) : null}
                   </div>
@@ -298,6 +305,47 @@ export default function AgreementsClient({
           <div className="md:col-span-2">
             <TextField label="Agreement title" value={createForm.title} onChange={value => setCreateForm(current => ({ ...current, title: value }))} />
           </div>
+          <div className="md:col-span-2">
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Advocate / Representative name (optional)</label>
+            <input
+              type="text"
+              value={createForm.advocate_name}
+              onChange={e => setCreateForm(c => ({ ...c, advocate_name: e.target.value }))}
+              placeholder="Leave blank if not applicable"
+              className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Description of supports *</label>
+            <textarea
+              rows={3}
+              value={createForm.supports_description}
+              onChange={e => setCreateForm(c => ({ ...c, supports_description: e.target.value }))}
+              placeholder="e.g. Daily living assistance, community access, and personal care supports."
+              className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+            />
+          </div>
+          <SelectField
+            label="Funding management *"
+            value={createForm.funding_type}
+            onChange={value => setCreateForm(c => ({ ...c, funding_type: value }))}
+            options={[
+              ['ndia', 'NDIA managed'],
+              ['plan_manager', 'Plan manager'],
+              ['nominee', "Participant's nominee"],
+              ['self', 'Self managed'],
+            ]}
+          />
+          <SelectField
+            label="Payment method *"
+            value={createForm.payment_method}
+            onChange={value => setCreateForm(c => ({ ...c, payment_method: value }))}
+            options={[
+              ['eft', 'EFT (bank transfer)'],
+              ['cheque', 'Cheque'],
+              ['cash', 'Cash'],
+            ]}
+          />
         </div>
         <div className="mt-5 flex gap-3">
           <button type="button" onClick={() => setCreateOpen(false)} className="flex-1 rounded-2xl bg-[#f4f2ed] px-4 py-3 text-sm font-semibold text-[#4f4c45]">Cancel</button>
@@ -337,32 +385,6 @@ export default function AgreementsClient({
         </div>
       </Modal>
 
-      <Modal open={!!signatureAgreementId} onClose={() => setSignatureAgreementId(null)} title="Capture signature" wide>
-        <div className="space-y-4">
-          <div className="rounded-[20px] border border-[#ece8de] bg-[#faf9f6] p-4 text-sm text-[#67635c]">
-            Sign on the canvas below, then save to mark the agreement as signed.
-          </div>
-
-          <div className="overflow-hidden rounded-[24px] border border-[#dfd9cf] bg-white">
-            <SignatureCanvas
-              ref={signatureRef}
-              penColor="#1a1a18"
-              canvasProps={{
-                className: 'h-[260px] w-full',
-              }}
-            />
-          </div>
-
-          <div className="flex gap-3">
-            <button type="button" onClick={() => signatureRef.current?.clear()} className="flex-1 rounded-2xl bg-[#f4f2ed] px-4 py-3 text-sm font-semibold text-[#4f4c45]">
-              Clear
-            </button>
-            <button type="button" onClick={handleSaveSignature} disabled={saving === 'signature'} className="flex-1 rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">
-              {saving === 'signature' ? 'Saving...' : 'Save signature'}
-            </button>
-          </div>
-        </div>
-      </Modal>
     </div>
   )
 }

@@ -11,17 +11,18 @@ type Shift = {
 }
 
 type BoardShift = Shift & {
-  profiles: { full_name: string | null } | null
+  staff: { full_name: string | null } | null
   clients: { full_name: string | null; address: string | null } | null
 }
 
 type BoardShiftRow = Shift & {
-  profiles: { full_name: string | null }[] | null
-  clients: { full_name: string | null; address: string | null }[] | null
+  staff: { full_name: string | null } | { full_name: string | null }[] | null
+  clients: { full_name: string | null; address: string | null } | { full_name: string | null; address: string | null }[] | null
 }
 
 type Doc = {
   id: string
+  owner_id: string
   owner_type: 'staff' | 'client'
   doc_type: string
   expiry_date: string | null
@@ -49,8 +50,8 @@ export default async function AdminDashboard() {
     supabase.from('clients').select('*', { count: 'exact', head: true }),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', weekStart.toISOString()).lte('start_time', weekEnd.toISOString()),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', chartStart.toISOString()).lte('start_time', chartEnd.toISOString()),
-    supabase.from('shifts').select('id, staff_id, status, start_time, end_time, profiles(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(6),
-    supabase.from('documents').select('id, owner_type, doc_type, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true }).limit(8),
+    supabase.from('shifts').select('id, staff_id, status, start_time, end_time, staff:profiles!staff_id(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(6),
+    supabase.from('documents').select('id, owner_id, owner_type, doc_type, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true }).limit(8),
     supabase.from('incidents').select('id').neq('status', 'resolved'),
     supabase.from('notifications').select('id').eq('read', false),
   ])
@@ -59,8 +60,8 @@ export default async function AdminDashboard() {
   const chart = (chartShifts ?? []) as Shift[]
   const board = ((boardShifts ?? []) as BoardShiftRow[]).map(shift => ({
     ...shift,
-    profiles: shift.profiles?.[0] ?? null,
-    clients: shift.clients?.[0] ?? null,
+    staff: Array.isArray(shift.staff) ? (shift.staff[0] ?? null) : (shift.staff ?? null),
+    clients: Array.isArray(shift.clients) ? (shift.clients[0] ?? null) : (shift.clients ?? null),
   })) as BoardShift[]
   const urgentDocs = ((docs ?? []) as Doc[]).filter(doc => {
     const status = getExpiryStatus(doc.expiry_date)
@@ -112,14 +113,14 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/compliance" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54]">
-            <span className="material-symbols-outlined text-[20px]">description</span>
+          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
           </Link>
-          <Link href="/admin/notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54]">
-            <span className="material-symbols-outlined text-[20px]">notifications</span>
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span>
           </Link>
-          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white">
-            <span className="material-symbols-outlined text-[18px]">add</span>
+          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2">
+            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
             New shift
           </Link>
         </div>
@@ -131,8 +132,8 @@ export default async function AdminDashboard() {
         <Link href="/admin/clients" className="rounded-full px-4 py-2 text-[#6d6b64]">Clients</Link>
         <Link href="/admin/compliance" className="rounded-full px-4 py-2 text-[#6d6b64]">Documents</Link>
         <Link href="/admin/incidents" className="rounded-full px-4 py-2 text-[#6d6b64]">Incidents</Link>
-        <span className="rounded-full px-4 py-2 text-[#9b988f]">Payroll</span>
-        <span className="rounded-full px-4 py-2 text-[#9b988f]">Settings</span>
+        <Link href="/admin/payments" className="rounded-full px-4 py-2 text-[#6d6b64]">Payroll</Link>
+        <Link href="/admin/settings" className="rounded-full px-4 py-2 text-[#6d6b64]">Settings</Link>
       </nav>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
@@ -238,13 +239,13 @@ export default async function AdminDashboard() {
             {liveBoard.length > 0 ? (
               <div className="space-y-3">
                 {liveBoard.map(shift => (
-                  <article key={shift.id} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center">
+                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
                     <div className="flex items-center gap-3">
                       <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
-                        {initials(shift.profiles?.full_name)}
+                        {initials(shift.staff?.full_name)}
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.profiles?.full_name ?? 'Unassigned staff'}</h4>
+                        <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.staff?.full_name ?? 'Unassigned staff'}</h4>
                         <p className="text-xs text-[#8a877f]">
                           {shift.clients?.full_name ?? 'Client pending'}
                           {shift.clients?.address ? ` · ${shift.clients.address}` : ''}
@@ -257,7 +258,7 @@ export default async function AdminDashboard() {
                       </span>
                       <p className="mt-2 text-xs text-[#68655e]">{clock(shift.start_time)} - {clock(shift.end_time)}</p>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             ) : (
@@ -304,8 +305,11 @@ export default async function AdminDashboard() {
             <div className="mt-4 space-y-3">
               {urgentDocs.length > 0 ? urgentDocs.map(doc => {
                 const left = daysUntilExpiry(doc.expiry_date)
+                const docHref = doc.owner_type === 'staff'
+                  ? `/admin/staff/${doc.owner_id}?tab=documents`
+                  : `/admin/clients/${doc.owner_id}?tab=documents`
                 return (
-                  <div key={doc.id} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3">
+                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3 hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
                     <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>
                       {doc.owner_type === 'staff' ? 'ST' : 'CL'}
                     </div>
@@ -316,7 +320,7 @@ export default async function AdminDashboard() {
                     <span className={getExpiryStatus(doc.expiry_date) === 'expired' ? 'inline-flex rounded-full bg-[#fee2e2] px-2 py-1 text-[10px] font-semibold text-[#991b1b]' : 'inline-flex rounded-full bg-[#fef9c3] px-2 py-1 text-[10px] font-semibold text-[#92400e]'}>
                       {left !== null && left < 0 ? `${Math.abs(left)}d overdue` : `${left ?? 0}d left`}
                     </span>
-                  </div>
+                  </Link>
                 )
               }) : (
                 <div className="rounded-[18px] bg-[#faf9f6] px-4 py-6 text-center text-xs text-[#7c7a72]">No urgent document renewals in the current queue.</div>

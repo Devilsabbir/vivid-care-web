@@ -6,10 +6,12 @@ import ClientDetailClient from './ClientDetailClient'
 export default async function ClientDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
 
-  const [{ data: client }, { data: docs }, { data: shifts }] = await Promise.all([
+  const [{ data: client }, { data: docs }, { data: shifts }, { data: incidents }, { data: agreements }] = await Promise.all([
     supabase.from('clients').select('*').eq('id', params.id).single(),
     supabase.from('documents').select('*').eq('owner_id', params.id).eq('owner_type', 'client').order('created_at', { ascending: false }),
-    supabase.from('shifts').select('*, profiles(full_name)').eq('client_id', params.id).order('start_time', { ascending: false }).limit(10),
+    supabase.from('shifts').select('*, staff:profiles!staff_id(full_name)').eq('client_id', params.id).order('start_time', { ascending: false }).limit(10),
+    supabase.from('incidents').select('id, title, severity, status, reported_at').eq('client_id', params.id).order('reported_at', { ascending: false }).limit(10),
+    supabase.from('agreements').select('id, title, status, created_at').eq('client_id', params.id).order('created_at', { ascending: false }).limit(10),
   ])
 
   if (!client) notFound()
@@ -18,8 +20,8 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-3">
-          <Link href="/admin/clients" className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55]">
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <Link href="/admin/clients" className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+            <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
             Back to clients
           </Link>
           <div className="flex flex-wrap items-center gap-3">
@@ -41,17 +43,23 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54]">
-            <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]" aria-label="Go to scheduler">
+            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
           </Link>
-          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white">
-            <span className="material-symbols-outlined text-[18px]">description</span>
+          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2">
+            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">description</span>
             Document hub
           </Link>
         </div>
       </header>
 
-      <ClientDetailClient client={client} documents={docs ?? []} shifts={shifts ?? []} />
+      <ClientDetailClient
+        client={client}
+        documents={docs ?? []}
+        shifts={shifts ?? []}
+        incidents={incidents ?? []}
+        agreements={agreements ?? []}
+      />
     </div>
   )
 }

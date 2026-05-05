@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
+import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
 
 type Shift = {
   id: string
@@ -90,6 +91,7 @@ export default async function AdminDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DashboardRealtimeRefresh />
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 type ShiftRow = {
@@ -7,23 +8,23 @@ type ShiftRow = {
   end_time: string
   clock_in_time: string | null
   clock_out_time: string | null
-  profiles: { full_name: string | null }[] | null
-  clients: { full_name: string | null }[] | null
+  staff: { full_name: string | null } | null
+  clients: { full_name: string | null } | null
 }
 
 export default async function ShiftHistoryPage() {
   const supabase = await createClient()
   const { data } = await supabase
     .from('shifts')
-    .select('id, status, start_time, end_time, clock_in_time, clock_out_time, profiles(full_name), clients(full_name)')
+    .select('id, status, start_time, end_time, clock_in_time, clock_out_time, staff:profiles!staff_id(full_name), clients(full_name)')
     .in('status', ['completed', 'cancelled'])
     .order('start_time', { ascending: false })
     .limit(100)
 
   const shifts = ((data ?? []) as ShiftRow[]).map(shift => ({
     ...shift,
-    staffName: shift.profiles?.[0]?.full_name ?? 'Staff member',
-    clientName: shift.clients?.[0]?.full_name ?? 'Client record',
+    staffName: shift.staff?.full_name ?? 'Unassigned',
+    clientName: shift.clients?.full_name ?? 'Client record',
   }))
 
   const totalHours = shifts.reduce((sum, shift) => {
@@ -79,14 +80,14 @@ export default async function ShiftHistoryPage() {
               </thead>
               <tbody>
                 {shifts.map(shift => (
-                  <tr key={shift.id} className="border-t border-[#f5f1ea] text-sm text-[#1a1a18]">
+                  <tr key={shift.id} className="border-t border-[#f5f1ea] text-sm text-[#1a1a18] transition-colors hover:bg-[#faf9f6]">
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                      <Link href={`/admin/shifts/${shift.id}`} className="flex items-center gap-3">
                         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a18] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
                           {initials(shift.staffName)}
                         </div>
                         <span className="font-medium">{shift.staffName}</span>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 text-[#5f5c56]">{shift.clientName}</td>
                     <td className="px-6 py-4 text-[#5f5c56]">

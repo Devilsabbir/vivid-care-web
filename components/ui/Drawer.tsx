@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, type ReactNode } from 'react'
 
-interface ModalProps {
+interface DrawerProps {
   open: boolean
   onClose: () => void
   title: string
-  children: React.ReactNode
   wide?: boolean
+  children: ReactNode
 }
 
-export default function Modal({ open, onClose, title, children, wide }: ModalProps) {
+export default function Drawer({ open, onClose, title, wide, children }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<Element | null>(null)
 
@@ -22,12 +22,16 @@ export default function Modal({ open, onClose, title, children, wide }: ModalPro
 
   useEffect(() => {
     if (!open) return
+
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        onClose()
+      }
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [onClose, open])
+  }, [open, onClose])
 
   useEffect(() => {
     if (open) {
@@ -71,34 +75,32 @@ export default function Modal({ open, onClose, title, children, wide }: ModalPro
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-inverse-surface/20 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-
-      {/* Panel */}
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div
+        className="absolute inset-0 bg-[#1a1a18]/20 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden="true"
+      />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby="drawer-title"
         onKeyDown={handleTrapFocus}
-        className={`relative bg-surface-container-lowest rounded-2xl w-full ${wide ? 'max-w-2xl' : 'max-w-lg'} max-h-[90vh] overflow-y-auto`}
-        style={{ boxShadow: '0 20px 40px rgba(25,28,30,0.12)' }}
+        className={`relative flex h-full flex-col bg-white ${wide ? 'w-full max-w-2xl' : 'w-full max-w-md'} shadow-[0_24px_44px_rgba(23,23,22,0.26)] animate-slide-in-right`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20">
-          <h2 id="modal-title" className="text-lg font-bold font-headline text-on-surface">{title}</h2>
+        <div className="flex items-center justify-between border-b border-[#f0ece5] px-6 py-4">
+          <h2 id="drawer-title" className="text-lg font-bold font-headline text-[#1a1a18]">{title}</h2>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
-            aria-label="Close dialog"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-[#8a877f] hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+            aria-label="Close drawer"
           >
             <span className="material-symbols-outlined text-xl" aria-hidden="true">close</span>
           </button>
         </div>
-
-        {/* Body */}
-        <div className="px-6 py-5">{children}</div>
+        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
       </div>
     </div>
   )

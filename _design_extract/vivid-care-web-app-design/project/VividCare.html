@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VividCare — Care operations platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="icons.jsx"></script>
+<script type="text/babel" src="shell.jsx"></script>
+<script type="text/babel" src="roster.jsx"></script>
+<script type="text/babel" src="dashboard.jsx"></script>
+<script type="text/babel" src="drawers.jsx"></script>
+<script type="text/babel" src="staff-app.jsx"></script>
+<script type="text/babel" src="list-screens.jsx"></script>
+<script type="text/babel" src="browser-window.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "primary": "indigo",
+  "density": "comfortable",
+  "rosterView": "day",
+  "dashboardLayout": "balanced",
+  "alerts": true,
+  "dark": false
+}/*EDITMODE-END*/;
+
+const PRIMARY_PRESETS = {
+  teal:    { c: '#0d9488', c700: '#0f766e', c50: '#f0fdfa', c100: '#ccfbf1' },
+  indigo:  { c: '#4f46e5', c700: '#4338ca', c50: '#eef2ff', c100: '#e0e7ff' },
+  emerald: { c: '#059669', c700: '#047857', c50: '#ecfdf5', c100: '#d1fae5' },
+  blue:    { c: '#2563eb', c700: '#1d4ed8', c50: '#eff6ff', c100: '#dbeafe' },
+};
+
+const PAGE_TITLES = {
+  dashboard: { t: 'Operations dashboard', s: "Today's care delivery, compliance, and workforce overview." },
+  roster: { t: 'Roster', s: 'Plan staff coverage and resolve scheduling gaps.' },
+  shifts: { t: 'Shifts', s: 'Track scheduled, active, completed, and missed shifts.' },
+  clients: { t: 'Clients', s: 'Manage client care records, support needs, and service activity.' },
+  staff: { t: 'Staff', s: 'Manage support workers, compliance readiness, and availability.' },
+  incidents: { t: 'Incidents', s: 'Review, resolve, and track care incidents.' },
+  documents: { t: 'Documents & compliance', s: 'Track verification, expiry, and required records.' },
+  agreements: { t: 'Agreements', s: 'Manage service agreements and signing status.' },
+  payments: { t: 'Payments', s: 'Review payment activity and outstanding items.' },
+  notifications: { t: 'Notifications', s: 'Send and review alerts for staff and operations.' },
+  settings: { t: 'Settings', s: 'Configure organisation, support types, and rules.' },
+};
+
+function App() {
+  const [t, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
+  const [page, setPage] = React.useState('roster');
+  const [shiftDrawer, setShiftDrawer] = React.useState(null);
+  const [createDrawer, setCreateDrawer] = React.useState(false);
+  const [incidentDrawer, setIncidentDrawer] = React.useState(false);
+  const [addStaffDrawer, setAddStaffDrawer] = React.useState(false);
+  const [addClientDrawer, setAddClientDrawer] = React.useState(false);
+  const [staffList, setStaffList] = React.useState(window.VC_STAFF);
+  const [clientList, setClientList] = React.useState(window.VC_CLIENTS);
+  const [staffTab, setStaffTab] = React.useState('home');
+  const [clockState, setClockState] = React.useState('out'); // out | in | done
+  const [geofenceState, setGeofenceState] = React.useState('inside');
+  const [toast, setToast] = React.useState(null);
+
+  // Apply theme
+  React.useEffect(() => {
+    const p = PRIMARY_PRESETS[t.primary] || PRIMARY_PRESETS.teal;
+    document.documentElement.style.setProperty('--vc-primary', p.c);
+    document.documentElement.style.setProperty('--vc-primary-700', p.c700);
+    document.documentElement.style.setProperty('--vc-primary-50', p.c50);
+    document.documentElement.style.setProperty('--vc-primary-100', p.c100);
+    document.documentElement.dataset.theme = t.dark ? 'dark' : 'light';
+    document.documentElement.dataset.density = t.density === 'compact' ? 'compact' : 'comfortable';
+  }, [t.primary, t.dark, t.density]);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2400);
+  };
+
+  const I = window.Icons;
+  const pageMeta = PAGE_TITLES[page];
+
+  const renderAdminBody = () => {
+    if (page === 'roster') {
+      const shifts = window.VC_SHIFTS;
+      const View = t.rosterView === 'day' ? window.RosterDayView
+                 : t.rosterView === 'staff' ? window.RosterStaffView
+                 : window.RosterWeekView;
+      return (
+        <>
+          <window.RosterFilterBar view={t.rosterView} setView={(v) => setTweak('rosterView', v)} showCompliance={t.alerts}/>
+          <View shifts={shifts} alerts={t.alerts} onShiftClick={setShiftDrawer}/>
+        </>
+      );
+    }
+    if (page === 'dashboard') return <window.Dashboard alerts={t.alerts} layoutVariant={t.dashboardLayout} onNav={setPage} onShiftClick={setShiftDrawer}/>;
+    if (page === 'clients') return <window.ClientsPage clients={clientList} onAdd={() => setAddClientDrawer(true)}/>;
+    if (page === 'staff') return <window.StaffPage staff={staffList} alerts={t.alerts} onAdd={() => setAddStaffDrawer(true)}/>;
+    if (page === 'incidents') return <window.IncidentsPage alerts={t.alerts} onResolve={() => setIncidentDrawer(true)}/>;
+    if (page === 'documents') return <window.DocumentsPage alerts={t.alerts}/>;
+    if (page === 'shifts') return <window.PlaceholderPage title="Shifts" subtitle="Use the Roster view for visual planning, or filter all shifts here." icon={I.clock}/>;
+    return <window.PlaceholderPage title={pageMeta.t} subtitle={pageMeta.s} icon={I.cog}/>;
+  };
+
+  const renderStaffBody = () => {
+    if (staffTab === 'home') return <window.StaffHome alerts={t.alerts} clockState={clockState} onClock={() => setStaffTab('clock')}/>;
+    if (staffTab === 'roster') return <window.StaffRoster alerts={t.alerts}/>;
+    if (staffTab === 'clock') return <window.StaffClock alerts={t.alerts} clockState={clockState} setClockState={setClockState} geofenceState={geofenceState}/>;
+    if (staffTab === 'docs') return <window.StaffDocs alerts={t.alerts}/>;
+    if (staffTab === 'alerts') return <window.StaffAlerts alerts={t.alerts}/>;
+    return null;
+  };
+
+  return (
+    <div style={{ width: '100vw', height: '100vh', display: 'flex', overflow: 'hidden', background: '#e7eaee' }}>
+      {/* Admin */}
+      <div style={{ flex: '1 1 1100px', minWidth: 0, height: '100%', padding: '24px 12px 24px 24px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, minHeight: 0, borderRadius: 14, overflow: 'hidden', boxShadow: '0 20px 60px rgba(15,23,42,0.18), 0 4px 12px rgba(15,23,42,0.08)', background: '#202124' }}>
+          <window.ChromeWindow tabs={[{ title: 'VividCare — ' + pageMeta.t }]} url={`app.vividcare.au/admin/${page}`}>
+            <div style={{ display: 'flex', height: '100%', background: 'var(--vc-bg)' }}>
+              <window.Sidebar active={page} onNav={setPage} alerts={t.alerts}/>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                <window.TopBar title={pageMeta.t} subtitle={pageMeta.s} alerts={t.alerts}
+                  actions={
+                    page === 'staff' ? (
+                      <>
+                        <button className="vc-btn vc-btn-secondary"><I.download size={13}/>Export</button>
+                        <button className="vc-btn vc-btn-primary" onClick={() => setAddStaffDrawer(true)}><I.plus size={13}/>Add staff</button>
+                      </>
+                    ) : page === 'clients' ? (
+                      <>
+                        <button className="vc-btn vc-btn-secondary"><I.download size={13}/>Export</button>
+                        <button className="vc-btn vc-btn-primary" onClick={() => setAddClientDrawer(true)}><I.plus size={13}/>Add client</button>
+                      </>
+                    ) : (
+                      <>
+                        <button className="vc-btn vc-btn-secondary"><I.download size={13}/>Export</button>
+                        <button className="vc-btn vc-btn-primary" onClick={() => setCreateDrawer(true)}><I.plus size={13}/>Create shift</button>
+                      </>
+                    )
+                  }/>
+                {renderAdminBody()}
+              </div>
+            </div>
+            <window.ShiftDetailDrawer shift={shiftDrawer} onClose={() => setShiftDrawer(null)} alerts={t.alerts}/>
+            <window.CreateShiftDrawer open={createDrawer} onClose={() => setCreateDrawer(false)} onCreate={() => showToast('Shift created and notification sent')}/>
+            <window.IncidentDrawer open={incidentDrawer} onClose={() => setIncidentDrawer(false)} onResolve={() => showToast('Incident updated')}/>
+            <window.AddStaffDrawer open={addStaffDrawer} onClose={() => setAddStaffDrawer(false)}
+              onCreate={(s) => { setStaffList(prev => [s, ...prev]); showToast(`${s.name} added · invitation sent`); }}/>
+            <window.AddClientDrawer open={addClientDrawer} onClose={() => setAddClientDrawer(false)}
+              onCreate={(c) => { setClientList(prev => [c, ...prev]); showToast(`${c.name} added`); }}/>
+            {toast && (
+              <div style={{
+                position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+                background: '#0f172a', color: '#fff', padding: '10px 16px', borderRadius: 10,
+                fontSize: 13, fontWeight: 500, boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                display: 'flex', alignItems: 'center', gap: 8, zIndex: 100,
+              }}>
+                <I.check size={14} stroke={2.5} style={{ color: '#10b981' }}/>{toast}
+              </div>
+            )}
+          </window.ChromeWindow>
+        </div>
+      </div>
+
+      {/* Staff phone */}
+      <div style={{ flex: '0 0 auto', height: '100%', padding: '24px 24px 24px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ transform: 'scale(0.92)', transformOrigin: 'center' }}>
+          <window.IOSDevice color="silver">
+            <window.IOSStatusBar/>
+            <div style={{ position: 'absolute', top: 54, left: 0, right: 0, bottom: 0 }}>
+              <window.StaffShell tab={staffTab} setTab={setStaffTab} alerts={t.alerts}>
+                {renderStaffBody()}
+              </window.StaffShell>
+            </div>
+          </window.IOSDevice>
+        </div>
+      </div>
+
+      <window.TweaksPanel title="VividCare tweaks">
+        <window.TweakSection label="Operations state"/>
+        <window.TweakToggle label="Show demo alerts" value={t.alerts} onChange={(v) => setTweak('alerts', v)}/>
+
+        <window.TweakSection label="Roster"/>
+        <window.TweakRadio label="View" value={t.rosterView}
+          options={[{ value: 'week', label: 'Week' }, { value: 'day', label: 'Day' }, { value: 'staff', label: 'Staff' }]}
+          onChange={(v) => { setTweak('rosterView', v); setPage('roster'); }}/>
+
+        <window.TweakSection label="Theme"/>
+        <window.TweakRadio label="Primary" value={t.primary}
+          options={[{ value: 'teal', label: 'Teal' }, { value: 'indigo', label: 'Indigo' }, { value: 'emerald', label: 'Green' }, { value: 'blue', label: 'Blue' }]}
+          onChange={(v) => setTweak('primary', v)}/>
+        <window.TweakRadio label="Density" value={t.density}
+          options={[{ value: 'comfortable', label: 'Comfortable' }, { value: 'compact', label: 'Compact' }]}
+          onChange={(v) => setTweak('density', v)}/>
+        <window.TweakToggle label="Dark mode" value={t.dark} onChange={(v) => setTweak('dark', v)}/>
+
+        <window.TweakSection label="Dashboard"/>
+        <window.TweakRadio label="Layout" value={t.dashboardLayout}
+          options={[{ value: 'balanced', label: 'Balanced' }, { value: 'wide', label: 'Wide' }]}
+          onChange={(v) => { setTweak('dashboardLayout', v); setPage('dashboard'); }}/>
+
+        <window.TweakSection label="Demo flows"/>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+          <window.TweakButton label="Create shift" onClick={() => setCreateDrawer(true)} secondary/>
+          <window.TweakButton label="Resolve incident" onClick={() => setIncidentDrawer(true)} secondary/>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+          <window.TweakButton label="Add staff" onClick={() => { setPage('staff'); setAddStaffDrawer(true); }} secondary/>
+          <window.TweakButton label="Add client" onClick={() => { setPage('clients'); setAddClientDrawer(true); }} secondary/>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+          <window.TweakButton label={clockState === 'in' ? 'Clock out' : 'Clock in'} onClick={() => { setStaffTab('clock'); setClockState(clockState === 'in' ? 'done' : 'in'); }} secondary/>
+          <window.TweakButton label="Reset clock" onClick={() => setClockState('out')} secondary/>
+        </div>
+        <window.TweakRadio label="Geofence" value={geofenceState}
+          options={[{ value: 'inside', label: 'Inside' }, { value: 'outside', label: 'Outside' }, { value: 'early', label: 'Too early' }]}
+          onChange={setGeofenceState}/>
+      </window.TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

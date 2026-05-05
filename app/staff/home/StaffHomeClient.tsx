@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 
 export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; staffName: string }) {
   const [FC, setFC] = useState<any>(null)
   const [plugins, setPlugins] = useState<any[]>([])
+  const router = useRouter()
 
   useEffect(() => {
     Promise.all([
@@ -86,34 +88,36 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
 
       {activeShift ? (
         <section className="rounded-[28px] bg-[#c852ff] p-5 shadow-[0_18px_36px_rgba(200,82,255,0.2)]">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#5e0087]">Live shift</p>
-              <h2 className="mt-2 font-headline text-xl font-semibold text-[#171717]">{activeShift.clients?.full_name ?? 'Current shift'}</h2>
-              <p className="mt-1 text-sm text-[#3d0061]">
-                {formatTime(activeShift.start_time)} to {formatTime(activeShift.end_time)}
-              </p>
+          <Link href={`/staff/shifts/${activeShift.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717] rounded-xl">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#5e0087]">Live shift</p>
+                <h2 className="mt-2 font-headline text-xl font-semibold text-[#171717]">{activeShift.clients?.full_name ?? 'Current shift'}</h2>
+                <p className="mt-1 text-sm text-[#3d0061]">
+                  {formatTime(activeShift.start_time)} to {formatTime(activeShift.end_time)}
+                </p>
+              </div>
+              <Badge variant="active" />
             </div>
-            <Badge variant="active" />
-          </div>
 
-          {activeShift.clients?.address ? (
-            <p className="mt-4 flex items-center gap-2 text-sm text-[#3d0061]">
-              <span className="material-symbols-outlined text-[18px]">location_on</span>
-              {activeShift.clients.address}
-            </p>
-          ) : null}
+            {activeShift.clients?.address ? (
+              <p className="mt-4 flex items-center gap-2 text-sm text-[#3d0061]">
+                <span className="material-symbols-outlined text-[18px]">location_on</span>
+                {activeShift.clients.address}
+              </p>
+            ) : null}
+          </Link>
 
           <Link
             href="/staff/clock"
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#171717] px-4 py-2 text-sm font-semibold text-white"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#171717] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#cdff52]"
           >
             Open clock screen
-            <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
           </Link>
         </section>
       ) : nextShift ? (
-        <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
+        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Next up</p>
@@ -131,7 +135,7 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
               {nextShift.clients.address}
             </p>
           ) : null}
-        </section>
+        </Link>
       ) : null}
 
       {todayShifts.length > 0 ? (
@@ -166,6 +170,10 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
             headerToolbar={{ left: 'prev,next', center: 'title', right: '' }}
             events={events}
             height="auto"
+            eventClick={(info: any) => {
+              info.jsEvent.preventDefault()
+              router.push(`/staff/shifts/${info.event.id}`)
+            }}
           />
         ) : (
           <div className="flex h-64 items-center justify-center text-[#8b867b]">
@@ -205,7 +213,10 @@ function ShiftCard({ shift }: { shift: any }) {
   const end = new Date(shift.end_time)
 
   return (
-    <article className="flex items-center gap-4 rounded-[24px] border border-[#ebe5db] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+    <Link
+      href={`/staff/shifts/${shift.id}`}
+      className="flex items-center gap-4 rounded-[24px] border border-[#ebe5db] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+    >
       <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-2xl bg-[#f4f1ea] py-3">
         <p className="font-headline text-xl font-semibold leading-none text-[#171716]">{start.getDate()}</p>
         <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8b867b]">{start.toLocaleDateString('en-AU', { month: 'short' })}</p>
@@ -229,7 +240,7 @@ function ShiftCard({ shift }: { shift: any }) {
           </p>
         ) : null}
       </div>
-    </article>
+    </Link>
   )
 }
 

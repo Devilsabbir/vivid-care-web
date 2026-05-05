@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import Tabs from '@/components/ui/Tabs'
 
 type NotificationRow = {
   id: string
@@ -40,6 +41,10 @@ export default function NotificationsClient({
 }) {
   const [notifications, setNotifications] = useState(initialNotifications)
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
+  const [activeTab, setActiveTab] = useState('history')
+  const [composeForm, setComposeForm] = useState({ audience: 'all_staff', type: 'roster', title: '', message: '' })
+  const [composeSending, setComposeSending] = useState(false)
+  const [composeMessage, setComposeMessage] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
 
   useEffect(() => {
@@ -86,6 +91,32 @@ export default function NotificationsClient({
 
     await supabase.from('notifications').update({ read: true }).in('id', unreadIds)
     setNotifications(current => current.map(notification => ({ ...notification, read: true })))
+  }
+
+  async function handleComposeSend() {
+    if (!composeForm.title.trim() || !composeForm.message.trim()) return
+    setComposeSending(true)
+    setComposeMessage(null)
+
+    // TODO: In production, this would fan out to all staff/clients based on audience selector.
+    // For now, insert a single notification for the current admin as a proof-of-concept.
+    const { error } = await supabase.from('notifications').insert({
+      user_id: userId,
+      type: composeForm.type,
+      title: composeForm.title.trim(),
+      message: composeForm.message.trim(),
+      read: false,
+    })
+
+    setComposeSending(false)
+
+    if (error) {
+      setComposeMessage(error.message)
+      return
+    }
+
+    setComposeForm({ audience: 'all_staff', type: 'roster', title: '', message: '' })
+    setComposeMessage('Notification sent successfully.')
   }
 
   if (variant === 'staff') {
@@ -169,109 +200,218 @@ export default function NotificationsClient({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
-      <section className="space-y-4">
-        <div className="flex flex-col gap-4 rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:flex-row md:items-center md:justify-between md:p-6">
-          <div>
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Live notification feed</h3>
-            <p className="text-xs text-[#8a877f]">Realtime inserts are shown here as rostering, attendance, and compliance activity happens.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterPill active={filter === 'all'} label="All" onClick={() => setFilter('all')} />
-            <FilterPill active={filter === 'unread'} label="Unread" onClick={() => setFilter('unread')} />
-            <button
-              type="button"
-              onClick={markAllRead}
-              disabled={!unreadCount}
-              className="rounded-full bg-[#cdff52] px-4 py-2 text-xs font-semibold text-[#1a1a18] disabled:opacity-50"
-            >
-              Mark all read
-            </button>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <Tabs
+        items={[
+          { key: 'history', label: 'History' },
+          { key: 'compose', label: 'Compose' },
+        ]}
+        active={activeTab}
+        onChange={setActiveTab}
+      />
 
-        {visibleNotifications.length > 0 ? (
-          <div className="space-y-3">
-            {visibleNotifications.map(notification => (
-              <article
-                key={notification.id}
-                className={`rounded-[22px] border p-5 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors ${
-                  notification.read
-                    ? 'border-[#e8e4dc] bg-white'
-                    : 'border-[#dfe8bf] bg-[#fcfff2]'
-                }`}
-              >
-                <div className="flex gap-4">
-                  <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#1a1a18] text-[#cdff52]'}`}>
-                    <span className="material-symbols-outlined text-[20px]">
-                      {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
-                    </span>
-                  </div>
+      {activeTab === 'history' && (
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <section className="space-y-4">
+            <div className="flex flex-col gap-4 rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:flex-row md:items-center md:justify-between md:p-6">
+              <div>
+                <h3 className="text-sm font-semibold text-[#1a1a18]">Live notification feed</h3>
+                <p className="text-xs text-[#8a877f]">Realtime inserts are shown here as rostering, attendance, and compliance activity happens.</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <FilterPill active={filter === 'all'} label="All" onClick={() => setFilter('all')} />
+                <FilterPill active={filter === 'unread'} label="Unread" onClick={() => setFilter('unread')} />
+                <button
+                  type="button"
+                  onClick={markAllRead}
+                  disabled={!unreadCount}
+                  className="rounded-full bg-[#cdff52] px-4 py-2 text-xs font-semibold text-[#1a1a18] disabled:opacity-50"
+                >
+                  Mark all read
+                </button>
+              </div>
+            </div>
 
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h4 className="text-sm font-semibold text-[#1a1a18]">{notification.title}</h4>
-                          <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6a665f]">
-                            {TYPE_LABELS[notification.type] ?? 'General'}
-                          </span>
-                          {!notification.read ? (
-                            <span className="rounded-full bg-[#cdff52] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
-                              New
-                            </span>
-                          ) : null}
+            {visibleNotifications.length > 0 ? (
+              <div className="space-y-3">
+                {visibleNotifications.map(notification => (
+                  <article
+                    key={notification.id}
+                    className={`rounded-[22px] border p-5 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors ${
+                      notification.read
+                        ? 'border-[#e8e4dc] bg-white'
+                        : 'border-[#dfe8bf] bg-[#fcfff2]'
+                    }`}
+                  >
+                    <div className="flex gap-4">
+                      <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#1a1a18] text-[#cdff52]'}`}>
+                        <span className="material-symbols-outlined text-[20px]">
+                          {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
+                        </span>
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="text-sm font-semibold text-[#1a1a18]">{notification.title}</h4>
+                              <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6a665f]">
+                                {TYPE_LABELS[notification.type] ?? 'General'}
+                              </span>
+                              {!notification.read ? (
+                                <span className="rounded-full bg-[#cdff52] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
+                                  New
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="mt-2 text-sm leading-6 text-[#5c5953]">{notification.message}</p>
+                          </div>
+
+                          <div className="text-right text-[11px] text-[#8a877f]">
+                            <p>{formatNotificationDate(notification.created_at)}</p>
+                            {!notification.read ? (
+                              <button
+                                type="button"
+                                onClick={() => markRead(notification.id)}
+                                className="mt-3 rounded-full bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white"
+                              >
+                                Mark read
+                              </button>
+                            ) : (
+                              <span className="mt-3 inline-flex rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#6a665f]">
+                                Read
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-[#5c5953]">{notification.message}</p>
                       </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
+                <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">notifications_none</span>
+                <p className="mt-3 text-sm font-medium text-[#1a1a18]">No notifications in this view</p>
+                <p className="mt-1 text-xs text-[#8a877f]">Switch filters or wait for new roster and compliance activity.</p>
+              </div>
+            )}
+          </section>
 
-                      <div className="text-right text-[11px] text-[#8a877f]">
-                        <p>{formatNotificationDate(notification.created_at)}</p>
-                        {!notification.read ? (
-                          <button
-                            type="button"
-                            onClick={() => markRead(notification.id)}
-                            className="mt-3 rounded-full bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white"
-                          >
-                            Mark read
-                          </button>
-                        ) : (
-                          <span className="mt-3 inline-flex rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#6a665f]">
-                            Read
-                          </span>
-                        )}
-                      </div>
+          <aside className="space-y-4">
+            <SummaryPanel label="Unread items" value={unreadCount} sub="Needs acknowledgement" accent />
+            <SummaryPanel label="Incident alerts" value={incidentCount} sub="Watch for open investigations" />
+            <SummaryPanel label="Compliance alerts" value={complianceCount} sub="Expiry and document reminders" />
+
+            <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+              <div className="border-b border-[#f0ece5] px-4 py-3">
+                <h3 className="text-sm font-semibold text-[#1a1a18]">Feed notes</h3>
+              </div>
+              <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#66635b]">
+                <p>Roster assignment notifications are generated as soon as a shift is published to a worker.</p>
+                <p>Incident and compliance alerts are the highest-value signals to keep unread.</p>
+                <p>Realtime delivery is powered by Supabase channel subscriptions for the signed-in admin.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+      )}
+
+      {activeTab === 'compose' && (
+        <div className="mx-auto max-w-2xl">
+          <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Broadcast</p>
+              <h3 className="mt-2 text-lg font-semibold text-[#1a1a18]">Compose notification</h3>
+              <p className="mt-1 text-xs text-[#8a877f]">Send a notification to staff members. Delivered via realtime feed.</p>
+            </div>
+
+            {composeMessage && (
+              <div className="mt-4 rounded-2xl border border-[#e4c1f5] bg-[#f9f0ff] px-4 py-3 text-sm text-[#4a006f]">
+                {composeMessage}
+              </div>
+            )}
+
+            <div className="mt-5 grid gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Audience</label>
+                  <select
+                    value={composeForm.audience}
+                    onChange={e => setComposeForm(c => ({ ...c, audience: e.target.value }))}
+                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  >
+                    <option value="all_staff">All staff</option>
+                    <option value="active_staff">Active staff only</option>
+                    <option value="admins">Admins</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Type</label>
+                  <select
+                    value={composeForm.type}
+                    onChange={e => setComposeForm(c => ({ ...c, type: e.target.value }))}
+                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  >
+                    <option value="roster">Roster</option>
+                    <option value="incident">Incident</option>
+                    <option value="doc_expiry">Compliance</option>
+                    <option value="clock_in">Clock event</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Title</label>
+                <input
+                  type="text"
+                  value={composeForm.title}
+                  onChange={e => setComposeForm(c => ({ ...c, title: e.target.value }))}
+                  placeholder="e.g. Roster update for next week"
+                  className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Message</label>
+                <textarea
+                  rows={4}
+                  value={composeForm.message}
+                  onChange={e => setComposeForm(c => ({ ...c, message: e.target.value }))}
+                  placeholder="Write the notification body..."
+                  className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                />
+              </div>
+
+              {composeForm.title.trim() && composeForm.message.trim() && (
+                <div className="rounded-[20px] border border-[#efebe4] bg-[#faf9f6] p-4">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Preview</p>
+                  <div className="mt-3 flex gap-3">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-[#1a1a18] text-[#cdff52]">
+                      <span className="material-symbols-outlined text-[20px]">
+                        {TYPE_ICONS[composeForm.type] ?? TYPE_ICONS.default}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[#1a1a18]">{composeForm.title}</p>
+                      <p className="mt-1 text-sm text-[#5c5953]">{composeForm.message}</p>
                     </div>
                   </div>
                 </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
-            <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">notifications_none</span>
-            <p className="mt-3 text-sm font-medium text-[#1a1a18]">No notifications in this view</p>
-            <p className="mt-1 text-xs text-[#8a877f]">Switch filters or wait for new roster and compliance activity.</p>
-          </div>
-        )}
-      </section>
+              )}
 
-      <aside className="space-y-4">
-        <SummaryPanel label="Unread items" value={unreadCount} sub="Needs acknowledgement" accent />
-        <SummaryPanel label="Incident alerts" value={incidentCount} sub="Watch for open investigations" />
-        <SummaryPanel label="Compliance alerts" value={complianceCount} sub="Expiry and document reminders" />
-
-        <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-          <div className="border-b border-[#f0ece5] px-4 py-3">
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Feed notes</h3>
+              <button
+                type="button"
+                onClick={handleComposeSend}
+                disabled={composeSending || !composeForm.title.trim() || !composeForm.message.trim()}
+                className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+              >
+                {composeSending ? 'Sending...' : 'Send notification'}
+              </button>
+            </div>
           </div>
-          <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#66635b]">
-            <p>Roster assignment notifications are generated as soon as a shift is published to a worker.</p>
-            <p>Incident and compliance alerts are the highest-value signals to keep unread.</p>
-            <p>Realtime delivery is powered by Supabase channel subscriptions for the signed-in admin.</p>
-          </div>
-        </section>
-      </aside>
+        </div>
+      )}
     </div>
   )
 }

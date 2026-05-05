@@ -1,25 +1,36 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useMemo, useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { ExpiryBadge, Badge } from '@/components/ui/Badge'
 import { getExpiryStatus } from '@/lib/utils/expiry'
+import MetricCard from '@/components/ui/MetricCard'
+import Field from '@/components/ui/Field'
+import { RailCard } from '@/components/ui/Card'
+import EmptyState from '@/components/ui/EmptyState'
+import Tabs from '@/components/ui/Tabs'
+import ComplianceSummary from '@/components/compliance/ComplianceSummary'
+import ReadinessBadge from '@/components/compliance/ReadinessBadge'
+import DocumentCard from '@/components/compliance/DocumentCard'
+import StatusBadge from '@/components/ui/StatusBadge'
 
 const DOC_TYPES = [
-  'Passport',
-  'Police Clearance',
-  'Visa Document',
-  'CPR Certificate',
-  'Manual Handling Certificate',
-  'Elder Care Licence',
-  'Child Care Licence',
-  'Education Certificate',
-  'Working With Children Check',
-  'Other',
+  'Passport', 'Police Clearance', 'Visa Document', 'CPR Certificate',
+  'Manual Handling Certificate', 'Elder Care Licence', 'Child Care Licence',
+  'Education Certificate', 'Working With Children Check', 'Other',
 ]
 
-type Tab = 'overview' | 'documents' | 'shifts'
+type Tab = 'overview' | 'documents' | 'roster' | 'availability' | 'activity'
+
+const TAB_ITEMS = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'documents', label: 'Documents' },
+  { key: 'roster', label: 'Roster' },
+  { key: 'availability', label: 'Availability' },
+  { key: 'activity', label: 'Activity' },
+]
 
 export default function StaffDetailClient({
   member,
@@ -30,13 +41,22 @@ export default function StaffDetailClient({
   documents: any[]
   shifts: any[]
 }) {
-  const [tab, setTab] = useState<Tab>('overview')
+  const searchParams = useSearchParams()
+  const initialTab = (searchParams.get('tab') as Tab) || 'overview'
+  const [tab, setTab] = useState<Tab>(initialTab)
   const [uploading, setUploading] = useState(false)
   const [docType, setDocType] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const urlTab = searchParams.get('tab') as Tab | null
+    if (urlTab && TAB_ITEMS.some(t => t.key === urlTab)) {
+      setTab(urlTab)
+    }
+  }, [searchParams])
 
   async function handleUpload(event: React.FormEvent) {
     event.preventDefault()
@@ -51,9 +71,7 @@ export default function StaffDetailClient({
       return
     }
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('documents').getPublicUrl(path)
+    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
 
     await supabase.from('documents').insert({
       owner_id: member.id,
@@ -71,12 +89,9 @@ export default function StaffDetailClient({
     router.refresh()
   }
 
-  const completedShifts = shifts.filter((shift: any) => shift.status === 'completed')
-  const totalHours = completedShifts.reduce((sum: number, shift: any) => {
-    const hours = (
-      new Date(shift.clock_out_time || shift.end_time).getTime() -
-      new Date(shift.clock_in_time || shift.start_time).getTime()
-    ) / 3600000
+  const completedShifts = shifts.filter((s: any) => s.status === 'completed')
+  const totalHours = completedShifts.reduce((sum: number, s: any) => {
+    const hours = (new Date(s.clock_out_time || s.end_time).getTime() - new Date(s.clock_in_time || s.start_time).getTime()) / 3600000
     return sum + hours
   }, 0)
 
@@ -84,14 +99,15 @@ export default function StaffDetailClient({
     const statuses = documents.map(doc => getExpiryStatus(doc.expiry_date))
     return {
       total: documents.length,
-      expired: statuses.filter(status => status === 'expired').length,
-      attention: statuses.filter(status => status === 'near_expiry').length,
-      valid: statuses.filter(status => status === 'active').length,
+      expired: statuses.filter(s => s === 'expired').length,
+      attention: statuses.filter(s => s === 'near_expiry').length,
+      valid: statuses.filter(s => s === 'active').length,
     }
   }, [documents])
 
   return (
     <div className="space-y-6">
+      {/* Metrics row */}
       <section className="grid gap-4 md:grid-cols-4">
         <MetricCard label="Documents" value={docSummary.total} sub={`${docSummary.valid} current`} />
         <MetricCard label="Needs review" value={docSummary.expired + docSummary.attention} sub="Expired or approaching expiry" accent={docSummary.expired + docSummary.attention > 0} />
@@ -99,30 +115,59 @@ export default function StaffDetailClient({
         <MetricCard label="Hours logged" value={Number(totalHours.toFixed(1))} sub="Across completed work" />
       </section>
 
-      <div className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
-        {(['overview', 'documents', 'shifts'] as Tab[]).map(item => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => setTab(item)}
-            className={tab === item ? 'rounded-full bg-[#1a1a18] px-4 py-2 text-white' : 'rounded-full px-4 py-2 text-[#6d6b64]'}
-          >
-            {item === 'overview' ? 'Profile' : item === 'documents' ? 'Compliance docs' : 'Shift history'}
-          </button>
-        ))}
+      {/* Readiness badge */}
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-[#8a877f]">Roster readiness:</span>
+        <ReadinessBadge documents={documents} />
       </div>
 
-      {tab === 'overview' ? (
+      {/* Tabs */}
+      <Tabs items={TAB_ITEMS} active={tab} onChange={k => setTab(k as Tab)} ariaLabel="Staff profile sections" />
+
+      {/* Overview tab */}
+      {tab === 'overview' && (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Staff profile</h3>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <Field label="Full name" value={member.full_name ?? 'Unnamed staff'} />
-              <Field label="Phone" value={member.phone ?? 'No phone recorded'} />
-              <Field label="Email" value={member.email ?? 'Email not stored in profile'} />
-              <Field label="Role" value="Support worker" />
-            </div>
-          </section>
+          <div className="space-y-6">
+            <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <h3 className="text-sm font-semibold text-[#1a1a18]">Staff profile</h3>
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <Field label="Full name" value={member.full_name ?? 'Unnamed staff'} />
+                <Field label="Phone" value={member.phone ?? 'No phone recorded'} />
+                <Field label="Email" value={member.email ?? 'Email not stored in profile'} />
+                <Field label="Role" value="Support worker" />
+              </div>
+            </section>
+
+            {/* Compliance summary */}
+            <section className="space-y-3">
+              <h3 className="text-sm font-semibold text-[#1a1a18]">Compliance overview</h3>
+              <ComplianceSummary documents={documents} />
+            </section>
+
+            {/* Upcoming shifts */}
+            {shifts.filter((s: any) => s.status === 'scheduled').length > 0 && (
+              <section className="space-y-3">
+                <h3 className="text-sm font-semibold text-[#1a1a18]">Upcoming shifts</h3>
+                <div className="space-y-2">
+                  {shifts.filter((s: any) => s.status === 'scheduled').slice(0, 3).map((shift: any) => (
+                    <Link
+                      key={shift.id}
+                      href={`/admin/shifts/${shift.id}`}
+                      className="flex items-center justify-between rounded-[18px] border border-[#e8e4dc] bg-white px-4 py-3 hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                    >
+                      <div>
+                        <p className="text-sm font-medium text-[#1a1a18]">{shift.clients?.full_name ?? 'Client'}</p>
+                        <p className="text-[11px] text-[#8a877f]">
+                          {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
+                        </p>
+                      </div>
+                      <StatusBadge status="scheduled" />
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
 
           <aside className="space-y-4">
             <RailCard title="Compliance snapshot">
@@ -147,68 +192,37 @@ export default function StaffDetailClient({
               <div className="space-y-2 text-[12px] text-[#66635b]">
                 <p>{completedShifts.length} completed shifts are available for auditing.</p>
                 <p>{Number(totalHours.toFixed(1))} total hours have been logged across finished work.</p>
-                <p>Use the shift history tab to review recent clients and attendance outcomes.</p>
               </div>
             </RailCard>
           </aside>
         </div>
-      ) : null}
+      )}
 
-      {tab === 'documents' ? (
+      {/* Documents tab */}
+      {tab === 'documents' && (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
           <section className="space-y-4">
             <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-semibold text-[#1a1a18]">Upload compliance document</h3>
-                  <p className="text-xs text-[#8a877f]">Add identification, screening, and certification records to the staff profile</p>
-                </div>
-              </div>
-
+              <h3 className="text-sm font-semibold text-[#1a1a18]">Upload compliance document</h3>
+              <p className="mt-1 text-xs text-[#8a877f]">Add identification, screening, and certification records</p>
               <form onSubmit={handleUpload} className="mt-5 grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Document type</label>
-                  <select
-                    value={docType}
-                    onChange={event => setDocType(event.target.value)}
-                    required
-                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
-                  >
+                  <label htmlFor="doc-type" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Document type</label>
+                  <select id="doc-type" value={docType} onChange={e => setDocType(e.target.value)} required className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
                     <option value="">Select document</option>
-                    {DOC_TYPES.map(type => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
+                    {DOC_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Expiry date</label>
-                  <input
-                    type="date"
-                    value={expiryDate}
-                    onChange={event => setExpiryDate(event.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
-                  />
+                  <label htmlFor="expiry" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Expiry date</label>
+                  <input id="expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]" />
                 </div>
-
                 <div className="md:col-span-2">
-                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">File</label>
-                  <input
-                    type="file"
-                    required
-                    onChange={event => setFile(event.target.files?.[0] ?? null)}
-                    className="mt-2 w-full rounded-2xl border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-4 py-3 text-sm text-[#66635b] outline-none"
-                  />
+                  <label htmlFor="file-upload" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">File</label>
+                  <input id="file-upload" type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="mt-2 w-full rounded-2xl border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-4 py-3 text-sm text-[#66635b] outline-none" />
                 </div>
-
                 <div className="md:col-span-2 flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={uploading}
-                    className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
-                  >
+                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2">
                     {uploading ? 'Uploading...' : 'Upload document'}
                   </button>
                 </div>
@@ -217,32 +231,10 @@ export default function StaffDetailClient({
 
             {documents.length > 0 ? (
               <div className="space-y-3">
-                {documents.map(doc => (
-                  <article key={doc.id} className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
-                    <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#6f6b63]">
-                          <span className="material-symbols-outlined text-[18px]">description</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-semibold text-[#1a1a18]">{doc.doc_type}</h4>
-                          <p className="text-[11px] text-[#8a877f]">{doc.file_name ?? 'Document file'}</p>
-                        </div>
-                      </div>
-                      <div className="md:ml-auto flex items-center gap-3">
-                        <ExpiryBadge expiryDate={doc.expiry_date} />
-                        {doc.file_url ? (
-                          <a href={doc.file_url} target="_blank" rel="noreferrer" className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45]">
-                            Open file
-                          </a>
-                        ) : null}
-                      </div>
-                    </div>
-                  </article>
-                ))}
+                {documents.map(doc => <DocumentCard key={doc.id} doc={doc} />)}
               </div>
             ) : (
-              <EmptyState icon="folder_open" title="No documents uploaded yet" copy="Upload worker screening, identification, and compliance records here." />
+              <EmptyState icon="folder_open" title="No documents uploaded yet" description="Upload worker screening, identification, and compliance records here." />
             )}
           </section>
 
@@ -253,19 +245,22 @@ export default function StaffDetailClient({
             </div>
           </RailCard>
         </div>
-      ) : null}
+      )}
 
-      {tab === 'shifts' ? (
+      {/* Roster tab */}
+      {tab === 'roster' && (
         shifts.length > 0 ? (
           <div className="space-y-3">
             {shifts.map((shift: any) => {
-              const hours =
-                shift.clock_out_time && shift.clock_in_time
-                  ? ((new Date(shift.clock_out_time).getTime() - new Date(shift.clock_in_time).getTime()) / 3600000).toFixed(1)
-                  : null
-
+              const hours = shift.clock_out_time && shift.clock_in_time
+                ? ((new Date(shift.clock_out_time).getTime() - new Date(shift.clock_in_time).getTime()) / 3600000).toFixed(1)
+                : null
               return (
-                <article key={shift.id} className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+                <Link
+                  key={shift.id}
+                  href={`/admin/shifts/${shift.id}`}
+                  className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                >
                   <div className="flex flex-col gap-3 md:flex-row md:items-center">
                     <div>
                       <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.clients?.full_name ?? 'Client record'}</h4>
@@ -278,82 +273,66 @@ export default function StaffDetailClient({
                         {hours ? ` / ${hours}h` : ''}
                       </p>
                     </div>
-                    <div className="md:ml-auto flex items-center gap-3">
+                    <div className="md:ml-auto">
                       <Badge variant={shift.status} />
                     </div>
                   </div>
-                </article>
+                </Link>
               )
             })}
           </div>
         ) : (
-          <EmptyState icon="calendar_today" title="No shifts recorded" copy="Recent client visits for this worker will appear here." />
+          <EmptyState icon="calendar_today" title="No shifts recorded" description="Recent client visits for this worker will appear here." />
         )
-      ) : null}
-    </div>
-  )
-}
+      )}
 
-function MetricCard({
-  label,
-  value,
-  sub,
-  accent,
-}: {
-  label: string
-  value: number
-  sub: string
-  accent?: boolean
-}) {
-  return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.2rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
-    </div>
-  )
-}
+      {/* Availability tab (placeholder) */}
+      {tab === 'availability' && (
+        <div className="space-y-4">
+          <EmptyState
+            icon="event_available"
+            title="Availability management"
+            description="Staff availability and unavailable dates will be configurable here once the availability table is implemented."
+          />
+          {/* TODO: Implement availability management when backend supports an availability table */}
+          <p className="rounded-[18px] bg-[#fef9c3] px-4 py-3 text-xs text-[#92400e]">
+            <span className="material-symbols-outlined mr-1 text-[14px] align-middle" aria-hidden="true">info</span>
+            Availability management requires a backend table. This feature is planned for a future release.
+          </p>
+        </div>
+      )}
 
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[18px] bg-[#faf9f6] p-4">
-      <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">{label}</p>
-      <p className="mt-2 text-sm font-medium text-[#1a1a18]">{value}</p>
-    </div>
-  )
-}
-
-function RailCard({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-      <div className="border-b border-[#f0ece5] px-4 py-3">
-        <h3 className="text-sm font-semibold text-[#1a1a18]">{title}</h3>
-      </div>
-      <div className="px-4 py-4">{children}</div>
-    </section>
-  )
-}
-
-function EmptyState({
-  icon,
-  title,
-  copy,
-}: {
-  icon: string
-  title: string
-  copy: string
-}) {
-  return (
-    <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
-      <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">{icon}</span>
-      <p className="mt-3 text-sm font-medium text-[#1a1a18]">{title}</p>
-      <p className="mt-1 text-xs text-[#8a877f]">{copy}</p>
+      {/* Activity tab */}
+      {tab === 'activity' && (
+        <div className="space-y-4">
+          {shifts.length > 0 ? (
+            <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <h3 className="text-sm font-semibold text-[#1a1a18]">Recent activity</h3>
+              <div className="mt-4 space-y-3">
+                {shifts.slice(0, 10).map((shift: any) => (
+                  <div key={shift.id} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-4 py-3">
+                    <span className={`flex h-8 w-8 items-center justify-center rounded-full ${shift.status === 'completed' ? 'bg-[#dcfce7] text-[#166534]' : shift.status === 'cancelled' ? 'bg-[#f3f4f6] text-[#6b7280]' : 'bg-[#dbeafe] text-[#1d4ed8]'}`}>
+                      <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+                        {shift.status === 'completed' ? 'check' : shift.status === 'cancelled' ? 'close' : 'schedule'}
+                      </span>
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-[#1a1a18]">
+                        {shift.status === 'completed' ? 'Completed shift' : shift.status === 'cancelled' ? 'Cancelled shift' : 'Scheduled shift'} — {shift.clients?.full_name ?? 'Client'}
+                      </p>
+                      <p className="text-[11px] text-[#8a877f]">
+                        {new Date(shift.start_time).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <EmptyState icon="history" title="No activity yet" description="Staff activity timeline will populate as shifts are completed." />
+          )}
+        </div>
+      )}
     </div>
   )
 }

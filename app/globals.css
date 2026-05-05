@@ -152,11 +152,20 @@ body {
     80%      { transform: translateX(4px); }
   }
 
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+
   .animate-fade-slide-up {
     animation: fadeSlideUp 0.4s ease both;
   }
 
   .animate-shake {
     animation: shake 0.35s ease both;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.25s ease both;
   }
 }

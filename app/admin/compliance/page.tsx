@@ -63,8 +63,8 @@ export default async function CompliancePage() {
           <p className="text-sm text-[#6c6b66]">Live document health across staff, client, and compliance records</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54]"><span className="material-symbols-outlined text-[20px]">notifications</span></Link>
-          <Link href="/admin/staff" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54]"><span className="material-symbols-outlined text-[20px]">badge</span></Link>
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span></Link>
+          <Link href="/admin/staff" aria-label="Staff directory" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">badge</span></Link>
           <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"><span className="material-symbols-outlined text-[18px]">upload_file</span>Review uploads</Link>
         </div>
       </header>

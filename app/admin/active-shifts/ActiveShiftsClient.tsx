@@ -196,7 +196,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
   const progress = shiftProgress(shift)
 
   return (
-    <article className="rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4">
+    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
           <Avatar name={shift.staffName} tone="dark" />
@@ -240,13 +240,13 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
           ) : null}
         </div>
       </div>
-    </article>
+    </Link>
   )
 }
 
 function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
   return (
-    <article className="flex flex-col gap-4 rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 md:flex-row md:items-center">
+    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
       <div className="flex items-center gap-3">
         <Avatar name={shift.staffName} tone="accent" />
         <div>
@@ -267,7 +267,7 @@ function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
           {shift.clientAddress ?? 'Address pending'}{shift.hasGeofence ? ' / geo-ready' : ' / geo-missing'}
         </p>
       </div>
-    </article>
+    </Link>
   )
 }
 

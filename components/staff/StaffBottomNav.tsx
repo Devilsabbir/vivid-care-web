@@ -17,7 +17,7 @@ export default function StaffBottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
+    <nav aria-label="Staff navigation" className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
       <div className="pointer-events-auto mx-auto mb-4 max-w-lg px-4">
         <div className="grid h-[76px] grid-cols-7 items-center rounded-[28px] border border-white/10 bg-[#171717]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl">
         {navItems.map(({ href, icon, label }) => {
@@ -26,7 +26,9 @@ export default function StaffBottomNav() {
             <Link
               key={href}
               href={href}
-              className={`flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-center transition ${
+              aria-current={active ? 'page' : undefined}
+              aria-label={label}
+              className={`flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] ${
                 active ? 'text-[#171717]' : 'text-[#989389] hover:text-white'
               }`}
             >

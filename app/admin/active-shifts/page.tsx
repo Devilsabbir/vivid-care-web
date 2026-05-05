@@ -27,8 +27,8 @@ export default async function ActiveShiftsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54]">
-            <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+          <Link href="/admin/roster" aria-label="Open roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
           </Link>
           <Link href="/admin/dashboard" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white">
             <span className="material-symbols-outlined text-[18px]">dashboard</span>

@@ -29,7 +29,7 @@ type ShiftRow = {
   clock_in_time: string | null
   clock_out_time: string | null
   status: string
-  profiles:
+  staff:
     | {
         full_name: string | null
       }
@@ -84,7 +84,7 @@ serve(async request => {
 
     let query = supabase
       .from('shifts')
-      .select('id, staff_id, start_time, end_time, clock_in_time, clock_out_time, status, profiles(full_name)')
+      .select('id, staff_id, start_time, end_time, clock_in_time, clock_out_time, status, staff:profiles!staff_id(full_name)')
       .eq('status', 'completed')
       .gte('start_time', startDate.toISOString())
       .lte('end_time', endDate.toISOString())
@@ -132,7 +132,7 @@ serve(async request => {
         overtimeHours * rates.overtimeRate
 
       const staffId = shift.staff_id ?? 'unassigned'
-      const staffName = relationRow(shift.profiles)?.full_name ?? 'Unassigned staff'
+      const staffName = relationRow(shift.staff)?.full_name ?? 'Unassigned staff'
       const currentSummary = summaries.get(staffId) ?? {
         staffId,
         staffName,

@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import DocumentsClient from './DocumentsClient'
@@ -5,6 +6,7 @@ import DocumentsClient from './DocumentsClient'
 export default async function StaffDocumentsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const { data: myDocs } = await supabase
     .from('documents')
@@ -18,6 +20,7 @@ export default async function StaffDocumentsPage() {
     .select('client_id, clients(id, full_name)')
     .eq('staff_id', user!.id)
     .not('client_id', 'is', null)
+    .gte('start_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
 
   const uniqueClients = Object.values(
     (shifts ?? []).reduce((acc: any, shift: any) => {

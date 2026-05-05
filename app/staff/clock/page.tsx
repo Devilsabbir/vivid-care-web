@@ -1,9 +1,11 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ClockClient from './ClockClient'
 
 export default async function ClockPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   // Perth is UTC+8 with no DST. Compute "today" as a Perth calendar day so
   // shifts entered by the admin in Perth time are matched correctly.

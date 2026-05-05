@@ -1,9 +1,11 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import IncidentReportClient from './IncidentReportClient'
 
 export default async function StaffIncidentsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const now = new Date()
   const startOfDay = new Date(now)

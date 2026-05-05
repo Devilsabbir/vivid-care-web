@@ -1,9 +1,11 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import StaffDocumentationClient from './StaffDocumentationClient'
 
 export default async function StaffDocumentationPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const since = new Date()
   since.setDate(since.getDate() - 30)

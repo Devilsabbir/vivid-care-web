@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import NotificationsClient from '@/components/ui/NotificationsClient'
 
@@ -16,6 +17,7 @@ export default async function AdminNotificationsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const { data } = await supabase
     .from('notifications')
@@ -64,7 +66,7 @@ export default async function AdminNotificationsPage() {
         </div>
       </header>
 
-      <NotificationsClient initialNotifications={notifications} userId={user!.id} />
+      <NotificationsClient initialNotifications={notifications ?? []} userId={user.id} />
     </div>
   )
 }

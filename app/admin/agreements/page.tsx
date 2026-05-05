@@ -1,9 +1,11 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AgreementsClient from './AgreementsClient'
 
 export default async function AgreementsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const [
     { data: templates, error: templatesError },

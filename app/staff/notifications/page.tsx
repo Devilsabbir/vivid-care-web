@@ -1,9 +1,11 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import NotificationsClient from '@/components/ui/NotificationsClient'
 
 export default async function StaffNotificationsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const { data: notifications } = await supabase
     .from('notifications')

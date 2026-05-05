@@ -51,6 +51,8 @@ export default function ClockClient({ shifts, adminIds }: {
         clock_in_lng: lng,
       }).eq('id', shift.id)
 
+      await supabase.from('clock_events').insert({ shift_id: shift.id, type: 'clock_in', lat, lng })
+
       await Promise.all(adminIds.map(adminId =>
         supabase.from('notifications').insert({
           user_id: adminId,
@@ -84,6 +86,8 @@ export default function ClockClient({ shifts, adminIds }: {
         clock_out_lat: lat,
         clock_out_lng: lng,
       }).eq('id', shift.id)
+
+      await supabase.from('clock_events').insert({ shift_id: shift.id, type: 'clock_out', lat, lng })
 
       await Promise.all(adminIds.map(adminId =>
         supabase.from('notifications').insert({

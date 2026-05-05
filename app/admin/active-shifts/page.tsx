@@ -7,7 +7,7 @@ export default async function ActiveShiftsPage() {
 
   const { data: shifts } = await supabase
     .from('shifts')
-    .select('*, profiles(full_name, phone), clients(full_name, address, lat, lng)')
+    .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
     .in('status', ['active', 'scheduled'])
     .gte('start_time', new Date(Date.now() - 86400000).toISOString())
     .order('start_time', { ascending: true })

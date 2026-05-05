@@ -8,7 +8,7 @@ type IncidentRow = {
   severity: 'low' | 'medium' | 'high' | 'emergency'
   status: 'open' | 'investigating' | 'resolved'
   reported_at: string
-  profiles: { full_name: string | null }[] | null
+  staff: { full_name: string | null }[] | null
   clients: { full_name: string | null }[] | null
 }
 
@@ -16,12 +16,12 @@ export default async function IncidentsPage() {
   const supabase = await createClient()
   const { data } = await supabase
     .from('incidents')
-    .select('id, title, description, severity, status, reported_at, profiles(full_name), clients(full_name)')
+    .select('id, title, description, severity, status, reported_at, staff:profiles!staff_id(full_name), clients(full_name)')
     .order('reported_at', { ascending: false })
 
   const incidents = ((data ?? []) as IncidentRow[]).map(item => ({
     ...item,
-    staffName: item.profiles?.[0]?.full_name ?? 'Staff member',
+    staffName: item.staff?.[0]?.full_name ?? 'Staff member',
     clientName: item.clients?.[0]?.full_name ?? 'Client record',
   }))
 

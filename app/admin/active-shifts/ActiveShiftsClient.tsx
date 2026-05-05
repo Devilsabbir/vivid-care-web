@@ -20,7 +20,7 @@ type ShiftRow = {
   end_time: string
   clock_in_time?: string | null
   status: ShiftStatus
-  profiles: Relation | Relation[] | null
+  staff: Relation | Relation[] | null
   clients: Relation | Relation[] | null
 }
 
@@ -47,7 +47,7 @@ export default function ActiveShiftsClient({ initialShifts }: { initialShifts: S
       .on('postgres_changes', { event: '*', schema: 'public', table: 'shifts' }, async () => {
         const { data } = await supabase
           .from('shifts')
-          .select('*, profiles(full_name, phone), clients(full_name, address, lat, lng)')
+          .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
           .in('status', ['active', 'scheduled'])
           .gte('start_time', new Date(Date.now() - 86400000).toISOString())
           .order('start_time', { ascending: true })
@@ -63,7 +63,7 @@ export default function ActiveShiftsClient({ initialShifts }: { initialShifts: S
 
   const normalizedShifts = useMemo<NormalizedShift[]>(() => {
     return shifts.map(shift => {
-      const staff = relationRow(shift.profiles)
+      const staff = relationRow(shift.staff)
       const client = relationRow(shift.clients)
       return {
         id: shift.id,

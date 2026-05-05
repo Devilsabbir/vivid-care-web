@@ -10,7 +10,7 @@ type IncidentDetail = {
   severity: 'low' | 'medium' | 'high' | 'emergency'
   status: 'open' | 'investigating' | 'resolved'
   reported_at: string
-  profiles: { full_name: string | null }[] | { full_name: string | null } | null
+  staff: { full_name: string | null }[] | { full_name: string | null } | null
   clients: { full_name: string | null }[] | { full_name: string | null } | null
   shifts: { start_time: string; end_time: string }[] | { start_time: string; end_time: string } | null
 }
@@ -20,14 +20,14 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
 
   const { data } = await supabase
     .from('incidents')
-    .select('id, title, description, severity, status, reported_at, profiles(full_name), clients(full_name), shifts(start_time, end_time)')
+    .select('id, title, description, severity, status, reported_at, staff:profiles!staff_id(full_name), clients(full_name), shifts(start_time, end_time)')
     .eq('id', params.id)
     .single()
 
   const incident = data as IncidentDetail | null
   if (!incident) notFound()
 
-  const reporter = relationRow(incident.profiles)?.full_name ?? 'Staff member'
+  const reporter = relationRow(incident.staff)?.full_name ?? 'Staff member'
   const client = relationRow(incident.clients)?.full_name ?? 'Client record'
   const shift = relationRow(incident.shifts)
 

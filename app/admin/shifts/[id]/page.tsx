@@ -9,7 +9,7 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
   const [{ data: shift }, { data: clockEvents }, { data: incidents }] = await Promise.all([
     supabase
       .from('shifts')
-      .select('*, profiles(id, full_name, phone, email), clients(id, full_name, address, lat, lng)')
+      .select('*, staff:profiles!staff_id(id, full_name, phone, email), clients(id, full_name, address, lat, lng)')
       .eq('id', params.id)
       .single(),
     supabase
@@ -25,7 +25,7 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
 
   if (!shift) notFound()
 
-  const staffProfile = Array.isArray(shift.profiles) ? shift.profiles[0] : shift.profiles
+  const staffProfile = Array.isArray(shift.staff) ? shift.staff[0] : shift.staff
   const clientRecord = Array.isArray(shift.clients) ? shift.clients[0] : shift.clients
 
   return (

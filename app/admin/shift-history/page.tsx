@@ -21,7 +21,7 @@ export default async function ShiftHistoryPage() {
     .order('start_time', { ascending: false })
     .limit(100)
 
-  const shifts = ((data ?? []) as ShiftRow[]).map(shift => ({
+  const shifts = ((data ?? []) as unknown as ShiftRow[]).map(shift => ({
     ...shift,
     staffName: shift.staff?.full_name ?? 'Unassigned',
     clientName: shift.clients?.full_name ?? 'Client record',

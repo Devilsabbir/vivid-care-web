@@ -4,25 +4,48 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-const navItems = [
-  { href: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
-  { href: '/admin/roster', icon: 'calendar_month', label: 'Scheduler' },
-  { href: '/admin/staff', icon: 'badge', label: 'Staff' },
-  { href: '/admin/clients', icon: 'group', label: 'Clients' },
-  { href: '/admin/compliance', icon: 'description', label: 'Documents' },
-  { href: '/admin/service-documentation', icon: 'fact_check', label: 'Service docs' },
-  { href: '/admin/agreements', icon: 'draw', label: 'Agreements' },
-  { href: '/admin/incidents', icon: 'warning', label: 'Incidents' },
-  { href: '/admin/notifications', icon: 'notifications', label: 'Notifications' },
-  { href: '/admin/active-shifts', icon: 'location_on', label: 'Live shifts' },
-  { href: '/admin/shift-history', icon: 'history', label: 'History' },
-  { href: '/admin/settings', icon: 'tune', label: 'Settings' },
+const NAV_GROUPS = [
+  {
+    label: 'Operations',
+    items: [
+      { href: '/admin/dashboard',        icon: 'dashboard',    label: 'Dashboard' },
+      { href: '/admin/roster',           icon: 'calendar_month', label: 'Roster' },
+      { href: '/admin/shifts',           icon: 'event_note',   label: 'Shifts' },
+      { href: '/admin/shift-history',    icon: 'history',      label: 'Shift history' },
+      { href: '/admin/active-shifts',    icon: 'location_on',  label: 'Live shifts' },
+    ],
+  },
+  {
+    label: 'People',
+    items: [
+      { href: '/admin/clients', icon: 'group',  label: 'Clients' },
+      { href: '/admin/staff',   icon: 'badge',  label: 'Staff' },
+    ],
+  },
+  {
+    label: 'Compliance',
+    items: [
+      { href: '/admin/compliance',            icon: 'description', label: 'Documents' },
+      { href: '/admin/agreements',            icon: 'draw',        label: 'Agreements' },
+      { href: '/admin/incidents',             icon: 'warning',     label: 'Incidents' },
+      { href: '/admin/service-documentation', icon: 'fact_check',  label: 'Service docs' },
+    ],
+  },
+  {
+    label: 'Admin',
+    items: [
+      { href: '/admin/payments',      icon: 'payments',      label: 'Payments' },
+      { href: '/admin/notifications', icon: 'notifications', label: 'Notifications' },
+      { href: '/admin/settings',      icon: 'tune',          label: 'Settings' },
+    ],
+  },
 ]
 
 export default function AdminSidebar({ adminName }: { adminName?: string }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+
   const initials = adminName
     ?.split(' ')
     .filter(Boolean)
@@ -36,61 +59,86 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
   }
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 flex w-[88px] flex-col items-center bg-[#1a1a18] px-3 py-4">
-      <Link
-        href="/admin/dashboard"
-        className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-[#cdff52] text-[#1a1a18] shadow-[0_14px_32px_rgba(26,26,24,0.2)]"
-        title="Vivid Care"
-      >
-        <span className="material-symbols-outlined material-symbols-filled text-[22px]">favorite</span>
-        <span className="sr-only">Vivid Care</span>
-      </Link>
+    <aside className="fixed inset-y-0 left-0 z-50 flex w-[220px] flex-col bg-[#1a1a18]">
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-4 py-5">
+        <Link
+          href="/admin/dashboard"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#cdff52] text-[#1a1a18] shadow-[0_8px_20px_rgba(205,255,82,0.25)]"
+          title="Vivid Care"
+        >
+          <span className="material-symbols-outlined material-symbols-filled text-[20px]">favorite</span>
+          <span className="sr-only">Vivid Care</span>
+        </Link>
+        <div>
+          <div className="text-[13px] font-semibold leading-tight tracking-[-0.01em] text-white">Vivid Care</div>
+          <div className="text-[10px] font-medium text-white/40">Clinical Atelier</div>
+        </div>
+      </div>
 
-      <nav className="flex w-full flex-1 flex-col items-center gap-2 overflow-y-auto">
-        {navItems.map(item => {
-          const active = pathname === item.href || pathname.startsWith(item.href + '/')
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={item.label}
-              aria-label={item.label}
-              className={`group relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-150 ${
-                active
-                  ? 'bg-white/10 text-[#cdff52]'
-                  : 'text-white/55 hover:bg-white/8 hover:text-white'
-              }`}
-            >
-              <span
-                className="material-symbols-outlined text-[21px]"
-                style={active ? { fontVariationSettings: "'FILL' 1" } : {}}
-              >
-                {item.icon}
-              </span>
-              <span className="sr-only">{item.label}</span>
-              <span className="pointer-events-none absolute left-[calc(100%+0.75rem)] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-[#1f1f1c] px-3 py-1 text-[11px] font-medium text-white shadow-lg group-hover:block">
-                {item.label}
-              </span>
-            </Link>
-          )
-        })}
+      {/* Nav */}
+      <nav
+        aria-label="Main navigation"
+        className="flex-1 overflow-y-auto px-3 pb-2"
+        style={{ scrollbarWidth: 'none' }}
+      >
+        {NAV_GROUPS.map(group => (
+          <div key={group.label} className="mb-4">
+            <div className="mb-1 px-2 pt-2 text-[9.5px] font-semibold uppercase tracking-[0.12em] text-white/30">
+              {group.label}
+            </div>
+            {group.items.map(item => {
+              const active = pathname === item.href || pathname.startsWith(item.href + '/')
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex h-9 w-full items-center gap-3 rounded-xl px-2.5 text-[13px] font-medium transition-all duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] ${
+                    active
+                      ? 'bg-white/10 text-[#cdff52]'
+                      : 'text-white/55 hover:bg-white/6 hover:text-white/90'
+                  }`}
+                >
+                  <span
+                    className="material-symbols-outlined shrink-0 text-[18px]"
+                    style={active ? { fontVariationSettings: "'FILL' 1" } : {}}
+                    aria-hidden="true"
+                  >
+                    {item.icon}
+                  </span>
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+        ))}
       </nav>
 
-      <div className="mt-4 flex flex-col items-center gap-2">
-        <button
-          onClick={handleSignOut}
-          type="button"
-          title="Sign out"
-          aria-label="Sign out"
-          className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-white/60 transition-colors hover:border-white/20 hover:bg-white/8 hover:text-white"
-        >
-          <span className="material-symbols-outlined text-[20px]">logout</span>
-        </button>
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#30302a] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#cdff52]"
-          title={adminName ?? 'Admin'}
-        >
-          {initials}
+      {/* Footer */}
+      <div className="border-t border-white/8 px-3 py-3">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2e2e2a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#cdff52]"
+            title={adminName ?? 'Admin'}
+          >
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[12px] font-medium leading-tight text-white/80">
+              {adminName ?? 'Admin'}
+            </div>
+            <div className="text-[10px] text-white/35">System Admin</div>
+          </div>
+          <button
+            onClick={handleSignOut}
+            type="button"
+            title="Sign out"
+            aria-label="Sign out"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/8 hover:text-white/80"
+          >
+            <span className="material-symbols-outlined text-[16px]">logout</span>
+          </button>
         </div>
       </div>
     </aside>

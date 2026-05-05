@@ -33,7 +33,7 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <header className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
           <Link
             href="/admin/incidents"
@@ -68,7 +68,7 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             <InfoTile label="Reported by" value={reporter} sub="Submitted from staff workflow" />
             <InfoTile label="Client" value={client} sub="Linked care recipient" />
             <InfoTile

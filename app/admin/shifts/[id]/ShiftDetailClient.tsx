@@ -34,7 +34,7 @@ export default function ShiftDetailClient({ shift, staff, client, clockEvents, i
   return (
     <div className="space-y-6">
       {/* Metrics */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <MetricCard label="Scheduled" value={`${hours}h ${mins}m`} sub={`${formatTime(startDate)} – ${formatTime(endDate)}`} />
         <MetricCard
           label="Actual"

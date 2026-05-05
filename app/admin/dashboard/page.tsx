@@ -114,7 +114,7 @@ export default async function AdminDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
           </Link>
@@ -209,21 +209,23 @@ export default async function AdminDashboard() {
               </span>
             </div>
 
-            <div className="grid grid-cols-7 gap-3">
-              {days.map(day => {
-                const completeHeight = day.complete > 0 ? Math.max(28, (day.complete / maxBar) * 116) : 22
-                const upcomingHeight = day.upcoming > 0 ? Math.max(18, (day.upcoming / maxBar) * 66) : 16
-                const empty = day.complete === 0 && day.upcoming === 0
-                return (
-                  <div key={day.label} className="flex flex-col items-center gap-3">
-                    <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
-                      <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#cfcac1] bg-[#efebe4]' : 'bg-[#1a1a18]'}`} style={{ height: `${completeHeight}px` }} />
-                      <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#c852ff]'}`} style={{ height: `${upcomingHeight}px` }} />
+            <div className="overflow-x-auto">
+              <div className="grid min-w-[320px] grid-cols-7 gap-3">
+                {days.map(day => {
+                  const completeHeight = day.complete > 0 ? Math.max(28, (day.complete / maxBar) * 116) : 22
+                  const upcomingHeight = day.upcoming > 0 ? Math.max(18, (day.upcoming / maxBar) * 66) : 16
+                  const empty = day.complete === 0 && day.upcoming === 0
+                  return (
+                    <div key={day.label} className="flex flex-col items-center gap-3">
+                      <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
+                        <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#cfcac1] bg-[#efebe4]' : 'bg-[#1a1a18]'}`} style={{ height: `${completeHeight}px` }} />
+                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#c852ff]'}`} style={{ height: `${upcomingHeight}px` }} />
+                      </div>
+                      <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#1a1a18]' : 'text-[#97938a]'}`}>{day.label}</span>
                     </div>
-                    <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#1a1a18]' : 'text-[#97938a]'}`}>{day.label}</span>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
           </section>
 

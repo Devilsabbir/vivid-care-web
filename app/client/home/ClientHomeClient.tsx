@@ -8,7 +8,7 @@ interface Shift {
   end_time: string
   status: string
   support_type: string | null
-  profiles: { full_name: string | null } | { full_name: string | null }[] | null
+  staff: { full_name: string | null } | { full_name: string | null }[] | null
 }
 
 export default function ClientHomeClient({
@@ -133,9 +133,9 @@ export default function ClientHomeClient({
 function VisitCard({ shift }: { shift: Shift }) {
   const start = new Date(shift.start_time)
   const end = new Date(shift.end_time)
-  const staffName = Array.isArray(shift.profiles)
-    ? shift.profiles[0]?.full_name
-    : shift.profiles?.full_name
+  const staffName = Array.isArray(shift.staff)
+    ? shift.staff[0]?.full_name
+    : shift.staff?.full_name
 
   return (
     <div className="flex items-center gap-4 rounded-[24px] border border-[#ebe5db] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">

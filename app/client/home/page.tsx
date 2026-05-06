@@ -42,7 +42,7 @@ export default async function ClientHomePage() {
       .single(),
     supabase
       .from('shifts')
-      .select('id, start_time, end_time, status, support_type, profiles:staff_id(full_name)')
+      .select('id, start_time, end_time, status, support_type, staff:profiles!staff_id(full_name)')
       .eq('client_id', clientId)
       .gte('start_time', now)
       .neq('status', 'cancelled')

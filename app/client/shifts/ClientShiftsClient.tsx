@@ -9,7 +9,7 @@ type Shift = {
   status: string
   support_type: string | null
   notes: string | null
-  profiles: { full_name: string | null } | { full_name: string | null }[] | null
+  staff: { full_name: string | null } | { full_name: string | null }[] | null
 }
 
 type Tab = 'upcoming' | 'past'
@@ -77,9 +77,9 @@ export default function ClientShiftsClient({ shifts }: { shifts: Shift[] }) {
 function ShiftCard({ shift }: { shift: Shift }) {
   const start = new Date(shift.start_time)
   const end = new Date(shift.end_time)
-  const staffName = Array.isArray(shift.profiles)
-    ? shift.profiles[0]?.full_name
-    : shift.profiles?.full_name
+  const staffName = Array.isArray(shift.staff)
+    ? shift.staff[0]?.full_name
+    : shift.staff?.full_name
 
   const statusStyles: Record<string, string> = {
     scheduled: 'bg-[#f4f1ea] text-[#5c5850]',

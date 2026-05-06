@@ -40,7 +40,7 @@ export default async function ClientLayout({ children }: { children: React.React
 
   return (
     <div className="min-h-screen bg-[#f6f2ea] text-[#171716]">
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(200,82,255,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(139,69,166,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
       <ClientHeader clientName={clientName} initialUnreadCount={unreadCount} userId={userId} />
 
       <main className="relative mx-auto max-w-lg px-4 pb-28 pt-5">

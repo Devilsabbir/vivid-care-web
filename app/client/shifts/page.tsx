@@ -30,7 +30,7 @@ export default async function ClientShiftsPage() {
 
   const { data: shifts, error: shiftsError } = await supabase
     .from('shifts')
-    .select('id, start_time, end_time, status, support_type, notes, profiles:staff_id(full_name)')
+    .select('id, start_time, end_time, status, support_type, notes, staff:profiles!staff_id(full_name)')
     .eq('client_id', clientId)
     .neq('status', 'cancelled')
     .order('start_time', { ascending: false })

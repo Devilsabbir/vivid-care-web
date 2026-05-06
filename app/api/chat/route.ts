@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rate-limit'
+import { getIP } from '@/lib/get-ip'
 
 const SYSTEM_PROMPT = `You are a helpful assistant for Vivid Care, a workforce management platform for care providers.
 Help staff with questions about using the app. Keep answers concise and practical.
@@ -14,6 +16,21 @@ Key features you can explain:
 If you cannot help, suggest they contact support via the Contact Support tab.`
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`chat:${getIP(req)}`, { limit: 20, windowMs: 60_000 })
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'You are sending messages too quickly. Please wait a moment.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Limit': String(rl.limit),
+          'X-RateLimit-Remaining': String(rl.remaining),
+        },
+      }
+    )
+  }
+
   const { messages } = await req.json()
 
   const apiKey = process.env.ANTHROPIC_API_KEY

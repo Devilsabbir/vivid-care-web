@@ -1,6 +1,8 @@
 // app/api/agreements/sign/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rate-limit'
+import { getIP } from '@/lib/get-ip'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
 import { createServiceClient } from '@/lib/supabase/service'
@@ -26,6 +28,22 @@ function formatDateTime(iso: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = getIP(request)
+  const rl = rateLimit(`sign:${ip}`, { limit: 10, windowMs: 60_000 })
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Limit': String(rl.limit),
+          'X-RateLimit-Remaining': String(rl.remaining),
+        },
+      }
+    )
+  }
+
   let body: {
     token?: string
     id?: string

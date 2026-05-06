@@ -1,8 +1,26 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rate-limit'
+import { getIP } from '@/lib/get-ip'
 
 export async function POST(req: NextRequest) {
+  const ip = getIP(req)
+  const rl = rateLimit(`create-user:${ip}`, { limit: 5, windowMs: 60_000 })
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Limit': String(rl.limit),
+          'X-RateLimit-Remaining': String(rl.remaining),
+        },
+      }
+    )
+  }
+
   // Verify caller is an admin
   const caller = await createServerClient()
   const { data: { user } } = await caller.auth.getUser()

@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { Badge } from '@/components/ui/Badge'
 
-export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; staffName: string }) {
+export default function StaffHomeClient({ initialShifts, staffName }: { initialShifts: any[]; staffName: string }) {
+  const [shifts, setShifts] = useState(initialShifts)
   const [FC, setFC] = useState<any>(null)
   const [plugins, setPlugins] = useState<any[]>([])
   const router = useRouter()
@@ -19,6 +21,32 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
       setFC(() => fc.default)
       setPlugins([dg.default, ip.default])
     })
+  }, [])
+
+  // Realtime: refetch shifts whenever any shift row changes
+  useEffect(() => {
+    const supabase = createClient()
+
+    async function refetchShifts() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('shifts')
+        .select('*, clients(full_name, address)')
+        .eq('staff_id', user.id)
+        .neq('status', 'cancelled')
+        .order('start_time', { ascending: true })
+      if (data) setShifts(data)
+    }
+
+    const channel = supabase
+      .channel('staff-home-shifts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'shifts' }, () => {
+        refetchShifts()
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
   }, [])
 
   const now = new Date()

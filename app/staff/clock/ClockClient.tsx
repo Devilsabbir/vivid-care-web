@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { isWithinGeofence, isWithinShiftWindow } from '@/lib/utils/distance'
@@ -8,15 +8,59 @@ import { Badge } from '@/components/ui/Badge'
 import ErrorToast from '@/components/ui/ErrorToast'
 import { useErrorToast } from '@/lib/hooks/useErrorToast'
 
-export default function ClockClient({ shifts, adminIds }: {
-  shifts: any[]
+export default function ClockClient({ initialShifts, adminIds }: {
+  initialShifts: any[]
   adminIds: string[]
 }) {
+  const [shifts, setShifts] = useState(initialShifts)
   const [loading, setLoading] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
   const router = useRouter()
   const { errorMessage, showError, dismiss } = useErrorToast()
+
+  // Realtime: refetch today's shifts when any shift changes
+  useEffect(() => {
+    async function refetchShifts() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Replicate Perth UTC+8 day boundary logic from page.tsx
+      const PERTH_OFFSET_MS = 8 * 60 * 60 * 1000
+      const nowUtc = new Date()
+      const perthNow = new Date(nowUtc.getTime() + PERTH_OFFSET_MS)
+      perthNow.setUTCHours(0, 0, 0, 0)
+      const startOfPerthDay = new Date(perthNow.getTime() - PERTH_OFFSET_MS)
+      const endOfPerthDay = new Date(startOfPerthDay.getTime() + 24 * 60 * 60 * 1000 - 1)
+
+      const [{ data: todayScheduled }, { data: currentlyActive }] = await Promise.all([
+        supabase.from('shifts').select('*, clients(full_name, address, lat, lng)')
+          .eq('staff_id', user.id).eq('status', 'scheduled')
+          .gte('start_time', startOfPerthDay.toISOString())
+          .lte('start_time', endOfPerthDay.toISOString())
+          .order('start_time', { ascending: true }),
+        supabase.from('shifts').select('*, clients(full_name, address, lat, lng)')
+          .eq('staff_id', user.id).eq('status', 'active')
+          .order('start_time', { ascending: true }),
+      ])
+
+      const activeList = currentlyActive ?? []
+      const activeIds = new Set(activeList.map((s: any) => s.id))
+      setShifts([
+        ...activeList,
+        ...(todayScheduled ?? []).filter((s: any) => !activeIds.has(s.id)),
+      ])
+    }
+
+    const channel = supabase
+      .channel('clock-shifts-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'shifts' }, () => {
+        refetchShifts()
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [supabase])
 
   async function getPosition(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {

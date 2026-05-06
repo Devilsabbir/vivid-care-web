@@ -162,12 +162,6 @@ function setField(
   field: keyof CreateShiftForm, value: string,
 ) { setForm(c => ({ ...c, [field]: value })) }
 
-function formatLongDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-AU', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  })
-}
-
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-AU', {
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -895,11 +889,13 @@ export default function RosterClient({
     if (createError) { setError(createError.message); setSaving(false); return }
 
     if (form.staff_id) {
+      const shiftDate = new Date(form.start_time)
       await supabase.from('notifications').insert({
         user_id: form.staff_id,
-        type: 'roster',
+        type: 'shift_assigned',
         title: 'New shift assigned',
-        message: `You have a new shift on ${formatLongDate(form.start_time)}.`,
+        message: `You've been assigned a shift on ${shiftDate.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} at ${shiftDate.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}.`,
+        related_id: createdShift?.id ?? null,
       })
     }
 

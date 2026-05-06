@@ -18,5 +18,5 @@ export default async function StaffHomePage() {
     .order('start_time', { ascending: true })
   if (shiftsError) console.error('[staff home page] shifts fetch failed:', shiftsError)
 
-  return <StaffHomeClient shifts={shifts ?? []} staffName={profile?.full_name ?? ''} />
+  return <StaffHomeClient initialShifts={shifts ?? []} staffName={profile?.full_name ?? ''} />
 }

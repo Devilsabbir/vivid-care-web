@@ -75,7 +75,7 @@ export default async function ClockPage() {
         </div>
       </section>
 
-      <ClockClient shifts={shifts ?? []} adminIds={(admins ?? []).map(admin => admin.id)} />
+      <ClockClient initialShifts={shifts ?? []} adminIds={(admins ?? []).map(admin => admin.id)} />
     </div>
   )
 }

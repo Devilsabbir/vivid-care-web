@@ -48,7 +48,10 @@ export async function middleware(request: NextRequest) {
         .select('role')
         .eq('id', user.id)
         .single()
-      const dest = profile?.role === 'admin' ? '/admin/dashboard' : '/staff/home'
+      const dest =
+        profile?.role === 'admin' ? '/admin/dashboard' :
+        profile?.role === 'client' ? '/client/home' :
+        '/staff/home'
       return NextResponse.redirect(new URL(dest, request.url))
     }
     return supabaseResponse
@@ -70,16 +73,25 @@ export async function middleware(request: NextRequest) {
 
   // Root redirect
   if (pathname === '/') {
-    const dest = role === 'admin' ? '/admin/dashboard' : '/staff/home'
+    const dest =
+      role === 'admin' ? '/admin/dashboard' :
+      role === 'client' ? '/client/home' :
+      '/staff/home'
     return NextResponse.redirect(new URL(dest, request.url))
   }
 
   // Role enforcement
   if (pathname.startsWith('/admin') && role !== 'admin') {
-    return NextResponse.redirect(new URL('/staff/home', request.url))
+    const dest = role === 'client' ? '/client/home' : '/staff/home'
+    return NextResponse.redirect(new URL(dest, request.url))
   }
   if (pathname.startsWith('/staff') && role !== 'staff') {
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    const dest = role === 'admin' ? '/admin/dashboard' : '/client/home'
+    return NextResponse.redirect(new URL(dest, request.url))
+  }
+  if (pathname.startsWith('/client') && role !== 'client') {
+    const dest = role === 'admin' ? '/admin/dashboard' : '/staff/home'
+    return NextResponse.redirect(new URL(dest, request.url))
   }
 
   return supabaseResponse

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Modal from '@/components/ui/Modal'
@@ -293,50 +293,53 @@ function WeekView({
 
   return (
     <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 260px)' }}>
-      <div style={{ minWidth: 900 }}>
-        {/* Day header */}
-        <div
-          className="sticky top-0 z-10 grid border-b border-[#e8e4dc] bg-white"
-          style={{ gridTemplateColumns: '180px repeat(7, 1fr)' }}
-        >
-          <div className="px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#9b988f]">
-            Staff
-          </div>
-          {days.map((d, i) => {
-            const isToday = i === todayIdx
-            return (
-              <div
-                key={i}
-                className="border-l border-[#e8e4dc] px-3 py-2"
-                style={{ background: isToday ? '#faf0ff' : undefined }}
-              >
-                <div
-                  className="text-[10px] font-semibold uppercase tracking-[0.08em]"
-                  style={{ color: isToday ? '#8B45A6' : '#9b988f' }}
-                >
-                  {DAY_LABELS[i]}
-                </div>
-                <div
-                  className="text-[13px] font-semibold"
-                  style={{ color: isToday ? '#8B45A6' : '#1a1a18' }}
-                >
-                  {d.getDate()}
-                  {isToday && (
-                    <span className="ml-1.5 text-[9px] font-bold tracking-[0.06em]">TODAY</span>
-                  )}
-                </div>
-              </div>
-            )
-          })}
+      {/*
+        Single CSS grid spanning all rows.
+        All cells are direct grid children so column tracks are shared —
+        this guarantees pixel-perfect alignment regardless of scroll position.
+        Header corner: sticky top-0 + left-0  (always visible)
+        Header day cells: sticky top-0         (visible when scrolling down)
+        Staff-name cells: sticky left-0        (visible when scrolling right)
+      */}
+      <div
+        className="grid"
+        style={{ minWidth: 900, gridTemplateColumns: '180px repeat(7, 1fr)' }}
+      >
+        {/* ── Header row ── */}
+        <div className="sticky top-0 left-0 z-30 border-b border-[#e8e4dc] bg-white px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#9b988f]">
+          Staff
         </div>
+        {days.map((d, i) => {
+          const isToday = i === todayIdx
+          return (
+            <div
+              key={i}
+              className="sticky top-0 z-20 border-b border-l border-[#e8e4dc] px-3 py-2"
+              style={{ background: isToday ? '#faf0ff' : 'white' }}
+            >
+              <div
+                className="text-[10px] font-semibold uppercase tracking-[0.08em]"
+                style={{ color: isToday ? '#8B45A6' : '#9b988f' }}
+              >
+                {DAY_LABELS[i]}
+              </div>
+              <div
+                className="text-[13px] font-semibold"
+                style={{ color: isToday ? '#8B45A6' : '#1a1a18' }}
+              >
+                {d.getDate()}
+                {isToday && (
+                  <span className="ml-1.5 text-[9px] font-bold tracking-[0.06em]">TODAY</span>
+                )}
+              </div>
+            </div>
+          )
+        })}
 
-        {/* Unassigned row */}
+        {/* ── Unassigned row ── */}
         {unassigned.length > 0 && (
-          <div
-            className="grid border-b border-[#e8e4dc]"
-            style={{ gridTemplateColumns: '180px repeat(7, 1fr)', background: '#fffdf5' }}
-          >
-            <div className="flex items-center gap-2.5 px-4 py-3">
+          <>
+            <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e8e4dc] bg-[#fffdf5] px-4 py-3">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#fef3c7]">
                 <span className="material-symbols-outlined text-[14px] text-[#d97706]">warning</span>
               </div>
@@ -351,8 +354,8 @@ function WeekView({
               return (
                 <div
                   key={day}
-                  className="flex min-h-[56px] flex-col gap-1 border-l border-[#e8e4dc] p-1.5"
-                  style={{ background: isToday ? 'rgba(248,216,255,0.08)' : undefined }}
+                  className="flex min-h-[56px] flex-col gap-1 border-b border-l border-[#e8e4dc] p-1.5"
+                  style={{ background: isToday ? 'rgba(248,216,255,0.08)' : '#fffdf5' }}
                 >
                   {items.map(s => (
                     <ShiftPill key={s.id} shift={s} onClick={() => onShiftClick(s.id)} compact />
@@ -360,17 +363,13 @@ function WeekView({
                 </div>
               )
             })}
-          </div>
+          </>
         )}
 
-        {/* Staff rows */}
+        {/* ── Staff rows ── */}
         {staff.map(person => (
-          <div
-            key={person.id}
-            className="grid border-b border-[#e8e4dc] bg-white"
-            style={{ gridTemplateColumns: '180px repeat(7, 1fr)' }}
-          >
-            <div className="sticky left-0 z-[1] flex items-center gap-2.5 bg-white px-4 py-2.5">
+          <Fragment key={person.id}>
+            <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e8e4dc] bg-white px-4 py-2.5">
               <div
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
                 style={{ background: '#1a1a18' }}
@@ -389,7 +388,7 @@ function WeekView({
               return (
                 <div
                   key={day}
-                  className="flex min-h-[72px] flex-col gap-1 border-l border-[#e8e4dc] p-1.5"
+                  className="flex min-h-[72px] flex-col gap-1 border-b border-l border-[#e8e4dc] p-1.5"
                   style={{ background: isToday ? 'rgba(139,69,166,0.025)' : undefined }}
                 >
                   {items.map(s => (
@@ -398,7 +397,7 @@ function WeekView({
                 </div>
               )
             })}
-          </div>
+          </Fragment>
         ))}
       </div>
     </div>

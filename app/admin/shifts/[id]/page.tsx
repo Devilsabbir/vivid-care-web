@@ -10,6 +10,9 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
     { data: shift, error: shiftError },
     { data: clockEvents, error: clockEventsError },
     { data: incidents, error: incidentsError },
+    { data: allStaff, error: staffError },
+    { data: allClients, error: clientsError },
+    { data: allShifts, error: shiftsError },
   ] = await Promise.all([
     supabase
       .from('shifts')
@@ -25,10 +28,32 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
       .from('incidents')
       .select('id, title, severity, status')
       .eq('shift_id', params.id),
+    // For edit / reassign dropdowns
+    supabase
+      .from('profiles')
+      .select('id, full_name')
+      .eq('role', 'staff')
+      .order('full_name'),
+    supabase
+      .from('clients')
+      .select('id, full_name, address, lat, lng, status')
+      .order('full_name'),
+    // For double-booking validation (exclude completed/cancelled).
+    // limit(5000) overrides Supabase's default 1000-row cap so large
+    // organisations don't silently miss conflicts.
+    supabase
+      .from('shifts')
+      .select('id, staff_id, start_time, end_time')
+      .in('status', ['scheduled', 'active'])
+      .limit(5000),
   ])
+
   if (shiftError) console.error('[shift detail page] shifts fetch failed:', shiftError)
   if (clockEventsError) console.error('[shift detail page] clock_events fetch failed:', clockEventsError)
   if (incidentsError) console.error('[shift detail page] incidents fetch failed:', incidentsError)
+  if (staffError) console.error('[shift detail page] all staff fetch failed:', staffError)
+  if (clientsError) console.error('[shift detail page] all clients fetch failed:', clientsError)
+  if (shiftsError) console.error('[shift detail page] all shifts fetch failed:', shiftsError)
 
   if (!shift) notFound()
 
@@ -63,6 +88,9 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
         client={clientRecord}
         clockEvents={clockEvents ?? []}
         incidents={incidents ?? []}
+        allStaff={allStaff ?? []}
+        allClients={allClients ?? []}
+        allShifts={allShifts ?? []}
       />
     </div>
   )

@@ -53,12 +53,13 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       return
     }
 
-    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
+    // Store the storage path (not a public URL) — signed URLs are generated
+    // on demand so the private bucket restriction is respected.
     const { error: dbErr } = await supabase.from('documents').insert({
       owner_id: staffId,
       owner_type: 'staff',
       doc_type: docType,
-      file_url: publicUrl,
+      file_url: path,
       file_name: file.name,
       expiry_date: expiryDate || null,
       uploaded_by: staffId,
@@ -89,12 +90,13 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       return
     }
 
-    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
+    // Store the storage path (not a public URL) — signed URLs are generated
+    // on demand so the private bucket restriction is respected.
     const { error: dbErr } = await supabase.from('documents').insert({
       owner_id: selectedClient,
       owner_type: 'client',
       doc_type: docType,
-      file_url: publicUrl,
+      file_url: path,
       file_name: file.name,
       expiry_date: expiryDate || null,
       uploaded_by: staffId,
@@ -265,14 +267,47 @@ function DocList({ docs, emptyText }: { docs: any[]; emptyText: string }) {
           <div className="flex items-center gap-2">
             <ExpiryBadge expiryDate={doc.expiry_date} />
             {doc.file_url ? (
-              <a href={doc.file_url} target="_blank" rel="noopener" className="rounded-xl bg-[#f4f1ea] p-2 text-[#171716] transition hover:bg-[#ece6dc]">
-                <span className="material-symbols-outlined text-[20px]">open_in_new</span>
-              </a>
+              <DocOpenButton docId={doc.id} />
             ) : null}
           </div>
         </article>
       ))}
     </div>
+  )
+}
+
+function DocOpenButton({ docId }: { docId: string }) {
+  const [opening, setOpening] = useState(false)
+
+  async function handleOpen() {
+    setOpening(true)
+    try {
+      const res = await fetch('/api/documents/sign-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId: docId }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const { signedUrl } = await res.json()
+      if (signedUrl) window.open(signedUrl, '_blank', 'noopener,noreferrer')
+    } catch (err) {
+      console.error('[DocOpenButton] failed to open document:', err)
+    } finally {
+      setOpening(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleOpen}
+      disabled={opening}
+      aria-label={opening ? 'Opening document…' : 'Open document'}
+      className="rounded-xl bg-[#f4f1ea] p-2 text-[#171716] transition hover:bg-[#ece6dc] disabled:opacity-60"
+    >
+      <span className={`material-symbols-outlined text-[20px] ${opening ? 'animate-spin' : ''}`}>
+        {opening ? 'progress_activity' : 'open_in_new'}
+      </span>
+    </button>
   )
 }
 

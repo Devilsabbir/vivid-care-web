@@ -71,13 +71,13 @@ export default function StaffDetailClient({
       return
     }
 
-    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
-
+    // Store the storage path (not a public URL) — signed URLs are generated
+    // on demand so the private bucket restriction is respected.
     await supabase.from('documents').insert({
       owner_id: member.id,
       owner_type: 'staff',
       doc_type: docType,
-      file_url: publicUrl,
+      file_url: path,
       file_name: file.name,
       expiry_date: expiryDate || null,
     })

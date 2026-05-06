@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { rateLimit } from '@/lib/rate-limit'
 import { getIP } from '@/lib/get-ip'
 
@@ -15,7 +16,29 @@ Key features you can explain:
 
 If you cannot help, suggest they contact support via the Contact Support tab.`
 
+const MAX_MESSAGES = 10
+const MAX_MESSAGE_LENGTH = 2000
+
 export async function POST(req: NextRequest) {
+  // Authentication check — only admin and staff may use the chat assistant
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !['admin', 'staff'].includes(profile.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  // Rate limiting
   const rl = rateLimit(`chat:${getIP(req)}`, { limit: 20, windowMs: 60_000 })
   if (!rl.success) {
     return NextResponse.json(
@@ -31,7 +54,21 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const { messages } = await req.json()
+  const body = await req.json()
+  const { messages } = body
+
+  // Validate input
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
+  if (messages.length > MAX_MESSAGES) {
+    return NextResponse.json({ error: 'Too many messages in context' }, { status: 400 })
+  }
+  for (const msg of messages) {
+    if (typeof msg.content !== 'string' || msg.content.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json({ error: 'Message too long' }, { status: 400 })
+    }
+  }
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
@@ -50,7 +87,7 @@ export async function POST(req: NextRequest) {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 512,
         system: SYSTEM_PROMPT,
-        messages: messages.slice(-10), // Last 10 messages for context
+        messages: messages.slice(-MAX_MESSAGES),
       }),
     })
 

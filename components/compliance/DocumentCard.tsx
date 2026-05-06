@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { ExpiryBadge } from '@/components/ui/Badge'
 
 interface DocumentCardProps {
@@ -13,6 +16,38 @@ interface DocumentCardProps {
 }
 
 export default function DocumentCard({ doc, showOwnerType, ownerType }: DocumentCardProps) {
+  const [opening, setOpening] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+  async function handleOpen() {
+    if (!doc.file_url) return
+    setOpening(true)
+    setErrorMsg(null)
+
+    try {
+      const res = await fetch('/api/documents/sign-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId: doc.id }),
+      })
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body?.error ?? `HTTP ${res.status}`)
+      }
+
+      const { signedUrl } = await res.json()
+      if (signedUrl) {
+        window.open(signedUrl, '_blank', 'noopener,noreferrer')
+      }
+    } catch (err: any) {
+      console.error('[DocumentCard] failed to open document:', err)
+      setErrorMsg('Could not open file. Please try again.')
+    } finally {
+      setOpening(false)
+    }
+  }
+
   return (
     <article className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
@@ -26,19 +61,22 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
               {doc.file_name ?? 'Document file'}
               {showOwnerType && ownerType ? ` · ${ownerType}` : ''}
             </p>
+            {errorMsg ? (
+              <p className="mt-0.5 text-[11px] text-red-600">{errorMsg}</p>
+            ) : null}
           </div>
         </div>
         <div className="flex items-center gap-3 md:ml-auto">
           <ExpiryBadge expiryDate={doc.expiry_date} />
           {doc.file_url ? (
-            <a
-              href={doc.file_url}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+            <button
+              onClick={handleOpen}
+              disabled={opening}
+              aria-label={opening ? 'Opening document…' : 'Open document file'}
+              className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45] transition hover:bg-[#ece6dc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] disabled:opacity-60"
             >
-              Open file
-            </a>
+              {opening ? 'Opening…' : 'Open file'}
+            </button>
           ) : null}
         </div>
       </div>

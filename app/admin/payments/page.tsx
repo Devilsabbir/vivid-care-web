@@ -31,7 +31,7 @@ export default async function PaymentsPage() {
             </span>
           </div>
           <p className="text-sm text-[#6c6b66]">
-            Track shift-based billing, hours worked, and payment status across the organisation.
+            Track shift hours and clock activity across the organisation.
           </p>
         </div>
       </header>

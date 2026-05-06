@@ -83,11 +83,10 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
     },
     {
       key: 'payment_status',
-      label: 'Status',
+      label: 'Completion',
       render: row => {
-        // TODO: Replace with real payment status from a payments table when available
-        if (row.clock_out_time) return <StatusBadge status="completed" label="Billable" />
-        return <StatusBadge status="pending" label="Pending" />
+        if (row.clock_out_time) return <StatusBadge status="completed" label="Clocked out" />
+        return <StatusBadge status="pending" label="In progress" />
       },
     },
   ]
@@ -123,14 +122,24 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
         onRowClick={row => router.push(`/admin/shifts/${row.id}`)}
         emptyIcon="payments"
         emptyTitle="No payment records"
-        emptyDescription="Completed shifts will appear here for billing."
+        emptyDescription="Completed and in-progress shifts will appear here."
       />
 
-      {/* TODO notice */}
-      <p className="rounded-[18px] bg-[#fef9c3] px-4 py-3 text-xs text-[#92400e]">
-        <span className="material-symbols-outlined mr-1 text-[14px] align-middle" aria-hidden="true">info</span>
-        Payment processing integration is pending. This view currently shows shift-based billing data only.
-      </p>
+      {/* Payroll not enabled notice */}
+      <div className="rounded-[22px] border border-[#e8e4dc] bg-white p-6 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+        <div className="flex items-start gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#f4f2ed]">
+            <span className="material-symbols-outlined text-[20px] text-[#6f6b63]" aria-hidden="true">account_balance_wallet</span>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-[#1a1a18]">Payroll processing is not enabled</h3>
+            <p className="mt-1 text-sm text-[#6c6b66]">
+              This page shows a read-only summary of shift hours and clock activity. Invoice generation, NDIS claiming, and payment processing require a payroll integration that has not been configured for this organisation.
+            </p>
+            <p className="mt-2 text-xs text-[#9b988f]">Contact your system administrator to enable payroll features.</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

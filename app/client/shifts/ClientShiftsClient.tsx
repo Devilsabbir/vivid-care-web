@@ -40,7 +40,7 @@ export default function ClientShiftsClient({ shifts }: { shifts: Shift[] }) {
             key={value}
             type="button"
             onClick={() => setTab(value)}
-            className={`flex-1 rounded-[18px] py-3 text-sm font-semibold capitalize transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] ${
+            className={`flex-1 rounded-[18px] py-3 text-sm font-semibold capitalize transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] ${
               tab === value ? 'bg-[#171717] text-white' : 'text-[#676359] hover:text-[#171716]'
             }`}
           >
@@ -83,7 +83,7 @@ function ShiftCard({ shift }: { shift: Shift }) {
 
   const statusStyles: Record<string, string> = {
     scheduled: 'bg-[#f4f1ea] text-[#5c5850]',
-    active: 'bg-[#c852ff] text-[#171717]',
+    active: 'bg-[#8B45A6] text-[#171717]',
     completed: 'bg-[#f3e8ff] text-[#6b21a8]',
   }
   const statusLabels: Record<string, string> = {

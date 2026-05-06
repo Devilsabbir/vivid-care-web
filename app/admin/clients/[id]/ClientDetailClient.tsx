@@ -151,7 +151,7 @@ export default function ClientDetailClient({
                 <h3 className="text-sm font-semibold text-[#1a1a18]">Upcoming shifts</h3>
                 <div className="space-y-2">
                   {shifts.filter((s: any) => s.status === 'scheduled').slice(0, 3).map((shift: any) => (
-                    <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex items-center justify-between rounded-[18px] border border-[#e8e4dc] bg-white px-4 py-3 hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+                    <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex items-center justify-between rounded-[18px] border border-[#e8e4dc] bg-white px-4 py-3 hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                       <div>
                         <p className="text-sm font-medium text-[#1a1a18]">{shift.profiles?.full_name ?? 'Staff'}</p>
                         <p className="text-[11px] text-[#8a877f]">{new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}</p>
@@ -169,7 +169,7 @@ export default function ClientDetailClient({
                 <h3 className="text-sm font-semibold text-[#1a1a18]">Recent incidents</h3>
                 <div className="space-y-2">
                   {incidents.slice(0, 3).map((inc: any) => (
-                    <Link key={inc.id} href={`/admin/incidents/${inc.id}`} className="flex items-center justify-between rounded-[18px] border border-[#e8e4dc] bg-white px-4 py-3 hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+                    <Link key={inc.id} href={`/admin/incidents/${inc.id}`} className="flex items-center justify-between rounded-[18px] border border-[#e8e4dc] bg-white px-4 py-3 hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                       <span className="text-sm font-medium text-[#1a1a18]">{inc.title}</span>
                       <StatusBadge status={inc.severity} />
                     </Link>
@@ -193,7 +193,7 @@ export default function ClientDetailClient({
                 <h3 className="text-sm font-semibold text-[#1a1a18]">Danger zone</h3>
               </div>
               <div className="px-4 py-4">
-                <button type="button" onClick={handleDelete} disabled={deleting} className="w-full rounded-2xl bg-[#fee2e2] px-4 py-3 text-sm font-semibold text-[#991b1b] disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+                <button type="button" onClick={handleDelete} disabled={deleting} className="w-full rounded-2xl bg-[#fee2e2] px-4 py-3 text-sm font-semibold text-[#991b1b] disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                   {deleting ? 'Deleting...' : 'Delete client record'}
                 </button>
               </div>
@@ -207,7 +207,7 @@ export default function ClientDetailClient({
         shifts.length > 0 ? (
           <div className="space-y-3">
             {shifts.map((shift: any) => (
-              <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+              <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center">
                   <div>
                     <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.profiles?.full_name ?? 'Staff record'}</h4>
@@ -239,18 +239,18 @@ export default function ClientDetailClient({
               <form onSubmit={handleUpload} className="mt-5 grid gap-4">
                 <div>
                   <label htmlFor="client-doc-type" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Document type</label>
-                  <input id="client-doc-type" value={docType} onChange={e => setDocType(e.target.value)} required placeholder="Client agreement, care plan..." className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]" />
+                  <input id="client-doc-type" value={docType} onChange={e => setDocType(e.target.value)} required placeholder="Client agreement, care plan..." className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]" />
                 </div>
                 <div>
                   <label htmlFor="client-expiry" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Expiry date</label>
-                  <input id="client-expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]" />
+                  <input id="client-expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]" />
                 </div>
                 <div>
                   <label htmlFor="client-file" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">File</label>
                   <input id="client-file" type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="mt-2 w-full rounded-2xl border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-4 py-3 text-sm text-[#66635b] outline-none" />
                 </div>
                 <div className="flex justify-end">
-                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2">
+                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2">
                     {uploading ? 'Uploading...' : 'Upload document'}
                   </button>
                 </div>
@@ -276,7 +276,7 @@ export default function ClientDetailClient({
         incidents.length > 0 ? (
           <div className="space-y-3">
             {incidents.map((inc: any) => (
-              <Link key={inc.id} href={`/admin/incidents/${inc.id}`} className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+              <Link key={inc.id} href={`/admin/incidents/${inc.id}`} className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center">
                   <div>
                     <h4 className="text-sm font-semibold text-[#1a1a18]">{inc.title}</h4>

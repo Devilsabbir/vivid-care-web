@@ -35,7 +35,7 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
               href={doc.file_url}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+              className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
             >
               Open file
             </a>

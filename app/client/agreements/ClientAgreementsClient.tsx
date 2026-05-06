@@ -70,12 +70,12 @@ export default function ClientAgreementsClient({
               <button
                 type="button"
                 onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
-                className="flex w-full items-start gap-4 p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#c852ff]"
+                className="flex w-full items-start gap-4 p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#8B45A6]"
                 aria-expanded={isExpanded}
               >
                 <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
                   agreement.status === 'signed' ? 'bg-[#f3e8ff] text-[#6b21a8]' :
-                  agreement.status === 'pending_signature' ? 'bg-[#c852ff] text-[#171717]' :
+                  agreement.status === 'pending_signature' ? 'bg-[#8B45A6] text-[#171717]' :
                   'bg-[#f4f1ea] text-[#5c5850]'
                 }`}>
                   <span className="material-symbols-outlined text-[20px]">
@@ -111,7 +111,7 @@ export default function ClientAgreementsClient({
                 <div className="border-t border-[#f0ece5] px-4 pb-4 pt-3">
                   <Link
                     href={`/sign/${agreement.signing_token}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#c852ff] px-4 py-3 text-sm font-semibold text-[#171717] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717]"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#8B45A6] px-4 py-3 text-sm font-semibold text-[#171717] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717]"
                   >
                     <span className="material-symbols-outlined text-[18px]">draw</span>
                     Sign this agreement
@@ -127,7 +127,7 @@ export default function ClientAgreementsClient({
                     {agreement.status === 'pending_signature' && agreement.signing_token && (
                       <Link
                         href={`/sign/${agreement.signing_token}`}
-                        className="inline-flex items-center gap-2 rounded-2xl bg-[#c852ff] px-4 py-2.5 text-sm font-semibold text-[#171717] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717]"
+                        className="inline-flex items-center gap-2 rounded-2xl bg-[#8B45A6] px-4 py-2.5 text-sm font-semibold text-[#171717] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717]"
                       >
                         <span className="material-symbols-outlined text-[16px]">draw</span>
                         Sign this agreement
@@ -138,7 +138,7 @@ export default function ClientAgreementsClient({
                         href={agreement.pdf_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm font-semibold text-[#1a1a18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm font-semibold text-[#1a1a18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
                       >
                         <span className="material-symbols-outlined text-[16px]">download</span>
                         Download PDF

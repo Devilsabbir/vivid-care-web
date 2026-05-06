@@ -38,7 +38,7 @@ export default async function StaffPaymentsPage() {
 
       <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#c852ff] text-[#171716]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#8B45A6] text-[#171716]">
             <span className="material-symbols-outlined text-[20px]">info</span>
           </div>
           <p className="text-sm leading-6 text-[#666258]">
@@ -96,7 +96,7 @@ export default async function StaffPaymentsPage() {
 
 function MiniStat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#c852ff] text-[#171716]' : 'bg-white/8 text-white'}`}>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#8B45A6] text-[#171716]' : 'bg-white/8 text-white'}`}>
       <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>
     </div>

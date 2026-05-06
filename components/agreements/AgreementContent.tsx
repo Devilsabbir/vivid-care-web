@@ -90,12 +90,12 @@ export default function AgreementContent({
     <div className="space-y-1 text-[#1a1a18]">
       {/* Document header */}
       <div className="rounded-2xl bg-[#1a1a18] px-5 py-4 text-center">
-        <p className="font-headline text-lg font-bold uppercase tracking-[0.2em] text-[#cdff52]">Service Agreement</p>
+        <p className="font-headline text-lg font-bold uppercase tracking-[0.2em] text-[#7BC143]">Service Agreement</p>
         <p className="mt-1 text-[11px] text-[#8f8a80]">Vivid Care · NDIS Registered Service Provider</p>
       </div>
 
       {/* Provider block */}
-      <div className="mt-4 border-l-4 border-[#cdff52] pl-4">
+      <div className="mt-4 border-l-4 border-[#7BC143] pl-4">
         <div className="space-y-1 text-xs">
           <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Company Name:</span><span>{p.name}</span></div>
           <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Address:</span><span>{p.address}</span></div>

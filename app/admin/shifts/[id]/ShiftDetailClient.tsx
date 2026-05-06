@@ -111,7 +111,7 @@ export default function ShiftDetailClient({ shift, staff, client, clockEvents, i
                     <Link
                       key={incident.id}
                       href={`/admin/incidents/${incident.id}`}
-                      className="flex items-center justify-between rounded-[18px] bg-[#faf9f6] px-4 py-3 hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                      className="flex items-center justify-between rounded-[18px] bg-[#faf9f6] px-4 py-3 hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
                     >
                       <span className="text-sm font-medium text-[#1a1a18]">{incident.title}</span>
                       <div className="flex gap-2">
@@ -137,7 +137,7 @@ export default function ShiftDetailClient({ shift, staff, client, clockEvents, i
                 {staff.email && <p className="text-xs text-[#66635b]">{staff.email}</p>}
                 <Link
                   href={`/admin/staff/${staff.id}`}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#c852ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#8B45A6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
                 >
                   View profile
                   <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>
@@ -156,7 +156,7 @@ export default function ShiftDetailClient({ shift, staff, client, clockEvents, i
                 {client.address && <p className="text-xs text-[#66635b]">{client.address}</p>}
                 <Link
                   href={`/admin/clients/${client.id}`}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#c852ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#8B45A6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
                 >
                   View profile
                   <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>

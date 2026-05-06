@@ -60,14 +60,14 @@ export default async function CompliancePage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
             <span className="font-headline">Document</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]"><span className="material-symbols-outlined text-[18px]">description</span>hub</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]"><span className="material-symbols-outlined text-[18px]">description</span>hub</span>
           </div>
           <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]"><span className="font-headline">and compliance</span></div>
           <p className="text-sm text-[#6c6b66]">Live document health across staff, client, and compliance records</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span></Link>
-          <Link href="/admin/staff" aria-label="Staff directory" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">badge</span></Link>
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span></Link>
+          <Link href="/admin/staff" aria-label="Staff directory" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">badge</span></Link>
           <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"><span className="material-symbols-outlined text-[18px]">upload_file</span>Review uploads</Link>
         </div>
       </header>
@@ -100,7 +100,7 @@ export default async function CompliancePage() {
           <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
             <div className="flex items-center justify-between gap-3 border-b border-[#f0ece5] px-5 py-4 md:px-6"><div><h3 className="text-sm font-semibold text-[#1a1a18]">Policy and handbook hub</h3><p className="text-xs text-[#8a877f]">Starter structure for the policy-library module in the next implementation slice</p></div><span className="rounded-xl bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white">Phase 2 ready</span></div>
             <div className="grid gap-3 p-5 md:grid-cols-3 md:p-6">
-              {policyCards.map(([title, meta, tone]) => <div key={title} className={`rounded-[18px] p-4 ${tone === 'dashed' ? 'border border-dashed border-[#dad5cb] bg-[#faf9f6] text-center' : 'border border-[#ece8e1] bg-white'}`}><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'indigo' ? 'bg-[#eef2ff] text-[#3b5bdb]' : tone === 'accent' ? 'bg-[#c852ff] text-[#1a1a18]' : 'bg-[#f0ede7] text-[#88847d]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><p className="mt-4 text-sm font-medium text-[#1a1a18]">{title}</p><p className="mt-1 text-[11px] text-[#9c998f]">{meta}</p></div>)}
+              {policyCards.map(([title, meta, tone]) => <div key={title} className={`rounded-[18px] p-4 ${tone === 'dashed' ? 'border border-dashed border-[#dad5cb] bg-[#faf9f6] text-center' : 'border border-[#ece8e1] bg-white'}`}><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'indigo' ? 'bg-[#eef2ff] text-[#3b5bdb]' : tone === 'accent' ? 'bg-[#8B45A6] text-[#1a1a18]' : 'bg-[#f0ede7] text-[#88847d]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><p className="mt-4 text-sm font-medium text-[#1a1a18]">{title}</p><p className="mt-1 text-[11px] text-[#9c998f]">{meta}</p></div>)}
             </div>
           </section>
         </div>
@@ -141,7 +141,7 @@ function Tile({
   danger?: 'amber' | 'red'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
       <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'accent' ? 'bg-black/10 text-[#1a1a18]' : 'bg-[#f3f1eb] text-[#6c6962]'}`}><span className="material-symbols-outlined text-[18px]">{icon}</span></div>
       <p className={`mt-4 text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>

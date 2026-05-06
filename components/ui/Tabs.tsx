@@ -32,8 +32,8 @@ export default function Tabs({
           onClick={() => onChange(item.key)}
           className={
             active === item.key
-              ? 'rounded-full bg-[#1a1a18] px-4 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2'
-              : 'rounded-full px-4 py-2 text-[#6d6b64] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2'
+              ? 'rounded-full bg-[#1a1a18] px-4 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2'
+              : 'rounded-full px-4 py-2 text-[#6d6b64] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2'
           }
         >
           {item.label}

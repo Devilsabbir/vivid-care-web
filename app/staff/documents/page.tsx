@@ -47,7 +47,7 @@ export default async function StaffDocumentsPage() {
         </p>
         <Link
           href="/staff/documentation"
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-2 text-sm font-semibold text-[#171716]"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-2 text-sm font-semibold text-[#171716]"
         >
           Open service documentation
           <span className="material-symbols-outlined text-[18px]">arrow_forward</span>

@@ -118,7 +118,7 @@ export default function ShiftsListClient({
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search shifts..."
-            className="w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] py-2.5 pl-10 pr-4 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+            className="w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] py-2.5 pl-10 pr-4 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
             aria-label="Search shifts"
           />
         </div>
@@ -126,7 +126,7 @@ export default function ShiftsListClient({
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#4f4c45] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+          className="rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#4f4c45] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
           aria-label="Filter by status"
         >
           <option value="all">All statuses</option>
@@ -139,7 +139,7 @@ export default function ShiftsListClient({
         <select
           value={staffFilter}
           onChange={e => setStaffFilter(e.target.value)}
-          className="rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#4f4c45] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+          className="rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#4f4c45] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
           aria-label="Filter by staff"
         >
           <option value="all">All staff</option>
@@ -151,7 +151,7 @@ export default function ShiftsListClient({
         <select
           value={clientFilter}
           onChange={e => setClientFilter(e.target.value)}
-          className="rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#4f4c45] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+          className="rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#4f4c45] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
           aria-label="Filter by client"
         >
           <option value="all">All clients</option>

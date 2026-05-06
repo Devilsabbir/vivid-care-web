@@ -196,7 +196,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
   const progress = shiftProgress(shift)
 
   return (
-    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
           <Avatar name={shift.staffName} tone="dark" />
@@ -246,7 +246,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
 
 function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
   return (
-    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
       <div className="flex items-center gap-3">
         <Avatar name={shift.staffName} tone="accent" />
         <div>
@@ -283,7 +283,7 @@ function StatCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
       <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
       <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
@@ -348,7 +348,7 @@ function formatDate(value: string) {
 
 function Avatar({ name, tone }: { name: string; tone: 'dark' | 'accent' }) {
   return (
-    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#1a1a18] text-[#c852ff]' : 'bg-[#c852ff] text-[#1a1a18]'}`}>
+    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#1a1a18] text-[#8B45A6]' : 'bg-[#8B45A6] text-[#1a1a18]'}`}>
       {name
         .split(' ')
         .filter(Boolean)

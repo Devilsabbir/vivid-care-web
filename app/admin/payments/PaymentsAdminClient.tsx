@@ -110,7 +110,7 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search by client, staff, or service..."
-          className="w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] py-2.5 pl-10 pr-4 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+          className="w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] py-2.5 pl-10 pr-4 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
           aria-label="Search payments"
         />
       </div>

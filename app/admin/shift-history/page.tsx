@@ -41,7 +41,7 @@ export default async function ShiftHistoryPage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
             <span className="font-headline">Shift history</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">history</span>
               payroll view
             </span>
@@ -83,7 +83,7 @@ export default async function ShiftHistoryPage() {
                   <tr key={shift.id} className="border-t border-[#f5f1ea] text-sm text-[#1a1a18] transition-colors hover:bg-[#faf9f6]">
                     <td className="px-6 py-4">
                       <Link href={`/admin/shifts/${shift.id}`} className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a18] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a18] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
                           {initials(shift.staffName)}
                         </div>
                         <span className="font-medium">{shift.staffName}</span>
@@ -133,7 +133,7 @@ function SummaryCard({
   danger?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#c852ff]' : 'border border-[#e8e4dc] bg-white'}`}>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
       <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : danger ? 'text-[#dc2626]' : 'text-[#8a877f]'}`}>{label}</p>
       <div className="mt-2 flex items-end gap-1">
         <p className={`font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#dc2626]' : 'text-[#1a1a18]'}`}>{value}</p>

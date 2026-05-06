@@ -104,14 +104,14 @@ export default async function AdminDashboard() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
             <span className="font-headline">Managing</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">group</span>
               your team
             </span>
             <span className="font-headline">and</span>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#c852ff] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
               <span className="material-symbols-outlined text-[18px]">neurology</span>
               workflows
             </span>
@@ -123,13 +123,13 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
           </Link>
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span>
           </Link>
-          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] focus-visible:ring-offset-2">
+          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2">
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
             New shift
           </Link>
@@ -162,7 +162,7 @@ export default async function AdminDashboard() {
           <p className="mt-3 text-xs text-[#9a978f]">Across {clientCount ?? 0} active clients</p>
         </div>
 
-        <div className="rounded-[24px] bg-[#c852ff] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[24px] bg-[#8B45A6] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
           <div className="flex items-start justify-between">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10">
               <span className="material-symbols-outlined text-[20px]">badge</span>
@@ -208,7 +208,7 @@ export default async function AdminDashboard() {
                   Completed
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#c852ff]" />
+                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#8B45A6]" />
                   Upcoming
                 </span>
               </div>
@@ -227,7 +227,7 @@ export default async function AdminDashboard() {
                     <div key={day.label} className="flex flex-col items-center gap-3">
                       <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
                         <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#cfcac1] bg-[#efebe4]' : 'bg-[#1a1a18]'}`} style={{ height: `${completeHeight}px` }} />
-                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#c852ff]'}`} style={{ height: `${upcomingHeight}px` }} />
+                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#8B45A6]'}`} style={{ height: `${upcomingHeight}px` }} />
                       </div>
                       <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#1a1a18]' : 'text-[#97938a]'}`}>{day.label}</span>
                     </div>
@@ -251,9 +251,9 @@ export default async function AdminDashboard() {
             {liveBoard.length > 0 ? (
               <div className="space-y-3">
                 {liveBoard.map(shift => (
-                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
                         {initials(shift.staff?.full_name)}
                       </div>
                       <div>
@@ -321,7 +321,7 @@ export default async function AdminDashboard() {
                   ? `/admin/staff/${doc.owner_id}?tab=documents`
                   : `/admin/clients/${doc.owner_id}?tab=documents`
                 return (
-                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3 hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3 hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
                     <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>
                       {doc.owner_type === 'staff' ? 'ST' : 'CL'}
                     </div>

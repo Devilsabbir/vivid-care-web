@@ -87,7 +87,7 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
       </section>
 
       {activeShift ? (
-        <section className="rounded-[28px] bg-[#c852ff] p-5 shadow-[0_18px_36px_rgba(200,82,255,0.2)]">
+        <section className="rounded-[28px] bg-[#8B45A6] p-5 shadow-[0_18px_36px_rgba(139,69,166,0.2)]">
           <Link href={`/staff/shifts/${activeShift.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717] rounded-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -110,14 +110,14 @@ export default function StaffHomeClient({ shifts, staffName }: { shifts: any[]; 
 
           <Link
             href="/staff/clock"
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#171717] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#cdff52]"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#171717] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7BC143]"
           >
             Open clock screen
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
           </Link>
         </section>
       ) : nextShift ? (
-        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Next up</p>
@@ -215,7 +215,7 @@ function ShiftCard({ shift }: { shift: any }) {
   return (
     <Link
       href={`/staff/shifts/${shift.id}`}
-      className="flex items-center gap-4 rounded-[24px] border border-[#ebe5db] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+      className="flex items-center gap-4 rounded-[24px] border border-[#ebe5db] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
     >
       <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-2xl bg-[#f4f1ea] py-3">
         <p className="font-headline text-xl font-semibold leading-none text-[#171716]">{start.getDate()}</p>
@@ -250,7 +250,7 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
       href={href}
       className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e0d7] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#8B45A6]">
         <span className="material-symbols-outlined text-[20px]">{icon}</span>
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#171716]">{label}</span>
@@ -260,7 +260,7 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
 
 function MetricCard({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#c852ff] text-[#171717]' : 'bg-white/8 text-white'}`}>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#8B45A6] text-[#171717]' : 'bg-white/8 text-white'}`}>
       <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>
         {label}
       </p>

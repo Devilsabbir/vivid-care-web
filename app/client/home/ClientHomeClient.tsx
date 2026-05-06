@@ -52,7 +52,7 @@ export default function ClientHomeClient({
               {upcomingShifts.length}
             </p>
           </div>
-          <div className="rounded-[22px] bg-[#c852ff] px-4 py-4">
+          <div className="rounded-[22px] bg-[#8B45A6] px-4 py-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5e0087]">To sign</p>
             <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em] text-[#171717]">
               {pendingAgreements}
@@ -65,9 +65,9 @@ export default function ClientHomeClient({
       {pendingAgreements > 0 ? (
         <Link
           href="/client/agreements"
-          className="flex items-center gap-4 rounded-[28px] bg-[#c852ff] px-5 py-4 shadow-[0_18px_36px_rgba(200,82,255,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717]"
+          className="flex items-center gap-4 rounded-[28px] bg-[#8B45A6] px-5 py-4 shadow-[0_18px_36px_rgba(139,69,166,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717]"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-[#8B45A6]">
             <span className="material-symbols-outlined text-[20px]">description</span>
           </div>
           <div className="flex-1">
@@ -81,9 +81,9 @@ export default function ClientHomeClient({
       ) : (
         <Link
           href="/client/agreements"
-          className="flex items-center gap-4 rounded-[28px] border border-[#e6e0d7] bg-white px-5 py-4 shadow-[0_14px_28px_rgba(23,23,22,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+          className="flex items-center gap-4 rounded-[28px] border border-[#e6e0d7] bg-white px-5 py-4 shadow-[0_14px_28px_rgba(23,23,22,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#171717] text-[#8B45A6]">
             <span className="material-symbols-outlined text-[20px]">description</span>
           </div>
           <div className="flex-1">
@@ -102,7 +102,7 @@ export default function ClientHomeClient({
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Upcoming visits</p>
               <h2 className="mt-1 text-lg font-semibold text-[#171716]">Your scheduled care</h2>
             </div>
-            <Link href="/client/shifts" className="text-sm font-semibold text-[#c852ff]">
+            <Link href="/client/shifts" className="text-sm font-semibold text-[#8B45A6]">
               See all
             </Link>
           </div>
@@ -168,7 +168,7 @@ function VisitCard({ shift }: { shift: Shift }) {
 function StatusPill({ status }: { status: string }) {
   const styles: Record<string, string> = {
     scheduled: 'bg-[#f4f1ea] text-[#5c5850]',
-    active: 'bg-[#c852ff] text-[#1a1a18]',
+    active: 'bg-[#8B45A6] text-[#1a1a18]',
     completed: 'bg-[#f3e8ff] text-[#6b21a8]',
   }
   const labels: Record<string, string> = {
@@ -187,9 +187,9 @@ function QuickLink({ href, icon, label }: { href: string; icon: string; label: s
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e0d7] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+      className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e0d7] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#8B45A6]">
         <span className="material-symbols-outlined text-[20px]">{icon}</span>
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#171716]">{label}</span>

@@ -68,9 +68,9 @@ function NavItems({
                 href={item.href}
                 onClick={onLinkClick}
                 aria-current={active ? 'page' : undefined}
-                className={`flex h-9 w-full items-center gap-3 rounded-xl px-2.5 text-[13px] font-medium transition-all duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff] ${
+                className={`flex h-9 w-full items-center gap-3 rounded-xl px-2.5 text-[13px] font-medium transition-all duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] ${
                   active
-                    ? 'bg-white/10 text-[#cdff52]'
+                    ? 'bg-white/10 text-[#7BC143]'
                     : 'text-white/55 hover:bg-white/6 hover:text-white/90'
                 }`}
               >
@@ -113,7 +113,7 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
     <div className="border-t border-white/8 px-3 py-3">
       <div className="flex items-center gap-2.5">
         <div
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2e2e2a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#cdff52]"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2e2e2a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7BC143]"
           title={adminName ?? 'Admin'}
         >
           {initials}
@@ -142,17 +142,15 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
       {/* ── Desktop sidebar (lg+) ── */}
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-[220px] flex-col bg-[#1a1a18] lg:flex">
         <div className="flex items-center gap-3 px-4 py-5">
-          <Link
-            href="/admin/dashboard"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#cdff52] text-[#1a1a18] shadow-[0_8px_20px_rgba(205,255,82,0.25)]"
-            title="Vivid Care"
-          >
-            <span className="material-symbols-outlined material-symbols-filled text-[20px]">favorite</span>
-            <span className="sr-only">Vivid Care</span>
+          <Link href="/admin/dashboard" title="Vivid Care">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Vivid Care" className="h-7 w-7 object-contain" />
+            </div>
           </Link>
           <div>
             <div className="text-[13px] font-semibold leading-tight tracking-[-0.01em] text-white">Vivid Care</div>
-            <div className="text-[10px] font-medium text-white/40">Clinical Atelier</div>
+            <div className="text-[10px] font-medium text-[#7BC143]">Empowering People</div>
           </div>
         </div>
         <NavItems pathname={pathname} />
@@ -165,20 +163,21 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Open navigation menu"
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-white/70 hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-white/70 hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
         >
           <span className="material-symbols-outlined text-[22px]">menu</span>
         </button>
 
         <Link href="/admin/dashboard" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#cdff52] text-[#1a1a18] shadow-[0_4px_12px_rgba(205,255,82,0.25)]">
-            <span className="material-symbols-outlined material-symbols-filled text-[17px]">favorite</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Vivid Care" className="h-6 w-6 object-contain" />
           </div>
           <div className="text-[13px] font-semibold text-white">Vivid Care</div>
         </Link>
 
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2e2e2a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#cdff52]"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2e2e2a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7BC143]"
           title={adminName ?? 'Admin'}
         >
           {initials}
@@ -204,20 +203,20 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#cdff52] text-[#1a1a18] shadow-[0_8px_20px_rgba(205,255,82,0.25)]">
-                  <span className="material-symbols-outlined material-symbols-filled text-[20px]">favorite</span>
-                  <span className="sr-only">Vivid Care</span>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo.png" alt="Vivid Care" className="h-7 w-7 object-contain" />
                 </div>
                 <div>
                   <div className="text-[13px] font-semibold leading-tight text-white">Vivid Care</div>
-                  <div className="text-[10px] font-medium text-white/40">Clinical Atelier</div>
+                  <div className="text-[10px] font-medium text-[#7BC143]">Empowering People</div>
                 </div>
               </Link>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
                 aria-label="Close navigation menu"
-                className="flex h-8 w-8 items-center justify-center rounded-xl text-white/50 hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+                className="flex h-8 w-8 items-center justify-center rounded-xl text-white/50 hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>

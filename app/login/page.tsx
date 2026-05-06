@@ -34,7 +34,9 @@ export default function LoginPage() {
         .eq('id', data.user.id)
         .single()
 
-      router.push(profile?.role === 'admin' ? '/admin/dashboard' : '/staff/home')
+      const role = profile?.role
+      const dest = role === 'admin' ? '/admin/dashboard' : role === 'client' ? '/client/home' : '/staff/home'
+      router.push(dest)
       router.refresh()
     }
   }
@@ -43,13 +45,14 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#edecea]">
       <div className="grid min-h-screen lg:grid-cols-[1.1fr_0.9fr]">
         <section className="relative overflow-hidden bg-[#1a1a18] px-6 py-10 text-white md:px-10 lg:px-14">
-          <div className="absolute left-[-4rem] top-[-3rem] h-40 w-40 rounded-full bg-[#c852ff]/16 blur-3xl" />
+          <div className="absolute left-[-4rem] top-[-3rem] h-40 w-40 rounded-full bg-[#8B45A6]/16 blur-3xl" />
           <div className="absolute bottom-[-5rem] right-[-3rem] h-56 w-56 rounded-full bg-white/6 blur-3xl" />
 
           <div className="relative flex h-full flex-col justify-between gap-10">
             <div className="space-y-6">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#c852ff] text-[#1a1a18] shadow-[0_16px_40px_rgba(0,0,0,0.2)]">
-                <span className="material-symbols-outlined material-symbols-filled text-[28px]">favorite</span>
+              <div className="inline-block rounded-2xl bg-white p-3 shadow-[0_16px_40px_rgba(0,0,0,0.25)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.png" alt="Vivid Care" className="h-14 w-auto" />
               </div>
 
               <div className="space-y-4">
@@ -73,6 +76,10 @@ export default function LoginPage() {
               <FeatureCard
                 title="Mobile staff flow"
                 copy="Clock in with geofence checks, finish required documentation, and stay on top of today’s support work."
+              />
+              <FeatureCard
+                title="Client portal"
+                copy="NDIS participants can view their service agreements, upcoming visits, and sign documents securely online."
               />
             </div>
           </div>

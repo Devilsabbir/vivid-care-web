@@ -198,7 +198,7 @@ export default function ClockClient({ shifts, adminIds }: {
               <button
                 onClick={() => handleClockIn(shift)}
                 disabled={!!loading}
-                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#c852ff] px-4 py-4 font-headline text-base font-semibold text-[#171716] transition hover:brightness-95 disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#8B45A6] px-4 py-4 font-headline text-base font-semibold text-[#171716] transition hover:brightness-95 disabled:opacity-60"
               >
                 {isThisLoading ? (
                   <span className="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>

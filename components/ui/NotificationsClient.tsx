@@ -147,7 +147,7 @@ export default function NotificationsClient({
             type="button"
             onClick={markAllRead}
             disabled={!unreadCount}
-            className="ml-auto rounded-full bg-[#cdff52] px-4 py-2 text-xs font-semibold text-[#171716] disabled:opacity-50"
+            className="ml-auto rounded-full bg-[#7BC143] px-4 py-2 text-xs font-semibold text-[#171716] disabled:opacity-50"
           >
             Mark all read
           </button>
@@ -166,7 +166,7 @@ export default function NotificationsClient({
               >
                 <div className="flex gap-3">
                   <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${
-                    notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#171717] text-[#cdff52]'
+                    notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#171717] text-[#7BC143]'
                   }`}>
                     <span className="material-symbols-outlined text-[20px]">
                       {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
@@ -182,7 +182,7 @@ export default function NotificationsClient({
                             {TYPE_LABELS[notification.type] ?? 'General'}
                           </span>
                           {!notification.read ? (
-                            <span className="rounded-full bg-[#cdff52] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#171716]">
+                            <span className="rounded-full bg-[#7BC143] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#171716]">
                               New
                             </span>
                           ) : null}
@@ -243,7 +243,7 @@ export default function NotificationsClient({
                   type="button"
                   onClick={markAllRead}
                   disabled={!unreadCount}
-                  className="rounded-full bg-[#cdff52] px-4 py-2 text-xs font-semibold text-[#1a1a18] disabled:opacity-50"
+                  className="rounded-full bg-[#7BC143] px-4 py-2 text-xs font-semibold text-[#1a1a18] disabled:opacity-50"
                 >
                   Mark all read
                 </button>
@@ -262,7 +262,7 @@ export default function NotificationsClient({
                     }`}
                   >
                     <div className="flex gap-4">
-                      <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#1a1a18] text-[#cdff52]'}`}>
+                      <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#1a1a18] text-[#7BC143]'}`}>
                         <span className="material-symbols-outlined text-[20px]">
                           {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
                         </span>
@@ -277,7 +277,7 @@ export default function NotificationsClient({
                                 {TYPE_LABELS[notification.type] ?? 'General'}
                               </span>
                               {!notification.read ? (
-                                <span className="rounded-full bg-[#cdff52] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
+                                <span className="rounded-full bg-[#7BC143] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
                                   New
                                 </span>
                               ) : null}
@@ -405,7 +405,7 @@ export default function NotificationsClient({
                 <div className="rounded-[20px] border border-[#efebe4] bg-[#faf9f6] p-4">
                   <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Preview</p>
                   <div className="mt-3 flex gap-3">
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-[#1a1a18] text-[#cdff52]">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-[#1a1a18] text-[#7BC143]">
                       <span className="material-symbols-outlined text-[20px]">
                         {TYPE_ICONS[composeForm.type] ?? TYPE_ICONS.default}
                       </span>
@@ -474,7 +474,7 @@ function SummaryPanel({
   return (
     <section
       className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${
-        accent ? 'bg-[#cdff52]' : 'border border-[#e8e4dc] bg-white'
+        accent ? 'bg-[#7BC143]' : 'border border-[#e8e4dc] bg-white'
       }`}
     >
       <p className={`text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>

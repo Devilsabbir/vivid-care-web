@@ -57,7 +57,7 @@ export default function DataTable<T>({
                 <tr
                   key={key}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={`${isClickable ? 'cursor-pointer hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#c852ff]' : ''}`}
+                  className={`${isClickable ? 'cursor-pointer hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#8B45A6]' : ''}`}
                   tabIndex={isClickable ? 0 : undefined}
                   onKeyDown={
                     isClickable

@@ -90,7 +90,7 @@ export default function Modal({ open, onClose, title, children, wide }: ModalPro
           <h2 id="modal-title" className="text-lg font-bold font-headline text-on-surface">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]"
+            className="p-1.5 rounded-lg hover:bg-surface-container transition-colors text-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
             aria-label="Close dialog"
           >
             <span className="material-symbols-outlined text-xl" aria-hidden="true">close</span>

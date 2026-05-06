@@ -48,8 +48,9 @@ export default function ClientHeader({
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#171717]/95 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-lg items-center justify-between px-4">
         <Link href="/client/home" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c852ff] text-[#171717] shadow-[0_8px_24px_rgba(200,82,255,0.28)]">
-            <span className="material-symbols-outlined material-symbols-filled text-[20px]">favorite</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Vivid Care" className="h-8 w-8 object-contain" />
           </div>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8f8a80]">Client portal</p>
@@ -65,7 +66,7 @@ export default function ClientHeader({
           >
             <span className="material-symbols-outlined text-[20px]">notifications</span>
             {unreadCount > 0 ? (
-              <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#c852ff] px-1 text-[10px] font-bold text-[#171717]">
+              <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#8B45A6] px-1 text-[10px] font-bold text-[#171717]">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             ) : null}

@@ -68,7 +68,7 @@ export default async function ClockPage() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8f8a80]">Today</p>
             <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{(shifts ?? []).length}</p>
           </div>
-          <div className="rounded-[22px] bg-[#c852ff] px-4 py-4 text-[#171717]">
+          <div className="rounded-[22px] bg-[#8B45A6] px-4 py-4 text-[#171717]">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5e0087]">Active now</p>
             <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{activeCount}</p>
           </div>

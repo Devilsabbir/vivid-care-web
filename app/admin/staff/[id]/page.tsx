@@ -30,7 +30,7 @@ export default async function StaffDetailPage({ params }: { params: { id: string
             Back to staff
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1a1a18] text-xl font-semibold uppercase tracking-[0.14em] text-[#c852ff]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1a1a18] text-xl font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
               {(member.full_name ?? 'S')
                 .split(' ')
                 .filter(Boolean)
@@ -48,7 +48,7 @@ export default async function StaffDetailPage({ params }: { params: { id: string
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" aria-label="Go to scheduler" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c852ff]">
+          <Link href="/admin/roster" aria-label="Go to scheduler" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
           </Link>
           <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white">

@@ -4,7 +4,7 @@ type CardVariant = 'default' | 'accent' | 'dark' | 'rail'
 
 const variantStyles: Record<CardVariant, string> = {
   default: 'border border-[#e8e4dc] bg-white shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
-  accent: 'bg-[#c852ff] shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
+  accent: 'bg-[#8B45A6] shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
   dark: 'bg-[#1a1a18] text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]',
   rail: 'border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)] overflow-hidden',
 }

@@ -35,7 +35,11 @@ export default async function StaffPage() {
   const weekStart = startOfWeek(new Date())
   const weekEnd = endOfDay(addDays(weekStart, 6))
 
-  const [{ data: staff }, { data: shifts }, { data: docs }] = await Promise.all([
+  const [
+    { data: staff, error: staffError },
+    { data: shifts, error: shiftsError },
+    { data: docs, error: docsError },
+  ] = await Promise.all([
     supabase.from('profiles').select('id, full_name, phone').eq('role', 'staff').order('full_name', { ascending: true }),
     supabase
       .from('shifts')
@@ -48,6 +52,9 @@ export default async function StaffPage() {
       .eq('owner_type', 'staff')
       .not('expiry_date', 'is', null),
   ])
+  if (staffError) console.error('[staff page] profiles fetch failed:', staffError)
+  if (shiftsError) console.error('[staff page] shifts fetch failed:', shiftsError)
+  if (docsError) console.error('[staff page] documents fetch failed:', docsError)
 
   const shiftRows = (shifts ?? []) as StaffShift[]
   const docRows = (docs ?? []) as StaffDocument[]

@@ -19,6 +19,11 @@ export default async function AgreementsPage() {
     supabase.from('clients').select('id, full_name').order('full_name', { ascending: true }),
   ])
 
+  if (templatesError) console.error('[agreements page] agreement_templates fetch failed:', templatesError)
+  if (agreementsError) console.error('[agreements page] agreements fetch failed:', agreementsError)
+  if (staffError) console.error('[agreements page] profiles fetch failed:', staffError)
+  if (clientsError) console.error('[agreements page] clients fetch failed:', clientsError)
+
   const schemaReady = !templatesError && !agreementsError && !staffError && !clientsError
 
   return (

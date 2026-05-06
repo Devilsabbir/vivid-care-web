@@ -7,12 +7,13 @@ export default async function StaffNotificationsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: notifications } = await supabase
+  const { data: notifications, error: notificationsError } = await supabase
     .from('notifications')
     .select('*')
     .eq('user_id', user!.id)
     .order('created_at', { ascending: false })
     .limit(50)
+  if (notificationsError) console.error('[staff notifications page] notifications fetch failed:', notificationsError)
 
   const unreadCount = notifications?.filter(notification => !notification.read).length ?? 0
   const incidentCount = notifications?.filter(notification => notification.type === 'incident').length ?? 0

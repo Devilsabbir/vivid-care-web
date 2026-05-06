@@ -11,21 +11,24 @@ export default async function StaffIncidentsPage() {
   const startOfDay = new Date(now)
   startOfDay.setHours(0, 0, 0, 0)
 
-  const { data: shifts } = await supabase
+  const { data: shifts, error: shiftsError } = await supabase
     .from('shifts')
     .select('id, clients(id, full_name)')
     .eq('staff_id', user!.id)
     .in('status', ['active', 'scheduled'])
     .gte('start_time', startOfDay.toISOString())
+  if (shiftsError) console.error('[staff incidents page] shifts fetch failed:', shiftsError)
 
-  const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin')
+  const { data: admins, error: adminsError } = await supabase.from('profiles').select('id').eq('role', 'admin')
+  if (adminsError) console.error('[staff incidents page] profiles (admins) fetch failed:', adminsError)
 
-  const { data: myIncidents } = await supabase
+  const { data: myIncidents, error: myIncidentsError } = await supabase
     .from('incidents')
     .select('*, clients(full_name)')
     .eq('staff_id', user!.id)
     .order('reported_at', { ascending: false })
     .limit(20)
+  if (myIncidentsError) console.error('[staff incidents page] incidents fetch failed:', myIncidentsError)
 
   const openCount = (myIncidents ?? []).filter(incident => incident.status === 'open' || incident.status === 'investigating').length
   const urgentCount = (myIncidents ?? []).filter(incident => incident.severity === 'high' || incident.severity === 'emergency').length

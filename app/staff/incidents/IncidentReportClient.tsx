@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Badge } from '@/components/ui/Badge'
+import ErrorToast from '@/components/ui/ErrorToast'
+import { useErrorToast } from '@/lib/hooks/useErrorToast'
 
 export default function IncidentReportClient({ shifts, staffId, adminIds, myIncidents }: {
   shifts: any[]
@@ -22,6 +24,7 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
     client_id: '',
   })
   const router = useRouter()
+  const { errorMessage, showError, dismiss } = useErrorToast()
 
   function set(field: string, value: string) {
     setForm(current => ({ ...current, [field]: value }))
@@ -41,7 +44,8 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
     })
 
     if (error) {
-      alert(error.message)
+      console.error('[IncidentReportClient] incident insert failed:', error)
+      showError('Failed to submit incident report. Please try again.')
       setSaving(false)
       return
     }
@@ -64,6 +68,7 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
 
   return (
     <div className="space-y-4">
+      {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
       <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#c852ff]">

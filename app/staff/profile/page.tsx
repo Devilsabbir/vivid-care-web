@@ -7,11 +7,12 @@ export default async function StaffProfilePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('full_name, role')
     .eq('id', user.id)
     .single()
+  if (profileError) console.error('[staff profile page] profiles fetch failed:', profileError)
 
   return (
     <StaffProfileClient

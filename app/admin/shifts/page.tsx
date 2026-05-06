@@ -4,7 +4,11 @@ import ShiftsListClient from './ShiftsListClient'
 export default async function ShiftsPage() {
   const supabase = await createClient()
 
-  const [{ data: shifts }, { data: staff }, { data: clients }] = await Promise.all([
+  const [
+    { data: shifts, error: shiftsError },
+    { data: staff, error: staffError },
+    { data: clients, error: clientsError },
+  ] = await Promise.all([
     supabase
       .from('shifts')
       .select('id, start_time, end_time, status, support_type, clock_in_time, clock_out_time, notes, staff_id, client_id, staff:profiles!staff_id(full_name), clients(full_name, address)')
@@ -13,6 +17,9 @@ export default async function ShiftsPage() {
     supabase.from('profiles').select('id, full_name').eq('role', 'staff').order('full_name'),
     supabase.from('clients').select('id, full_name').order('full_name'),
   ])
+  if (shiftsError) console.error('[shifts page] shifts fetch failed:', shiftsError)
+  if (staffError) console.error('[shifts page] profiles fetch failed:', staffError)
+  if (clientsError) console.error('[shifts page] clients fetch failed:', clientsError)
 
   const normalizedShifts = (shifts ?? []).map((shift: any) => ({
     ...shift,

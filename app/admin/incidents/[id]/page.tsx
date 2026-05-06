@@ -18,11 +18,12 @@ type IncidentDetail = {
 export default async function IncidentDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
 
-  const { data } = await supabase
+  const { data, error: incidentError } = await supabase
     .from('incidents')
     .select('id, title, description, severity, status, reported_at, staff:profiles!staff_id(full_name), clients(full_name), shifts(start_time, end_time)')
     .eq('id', params.id)
     .single()
+  if (incidentError) console.error('[incident detail page] incidents fetch failed:', incidentError)
 
   const incident = data as IncidentDetail | null
   if (!incident) notFound()

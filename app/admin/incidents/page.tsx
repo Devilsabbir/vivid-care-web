@@ -14,10 +14,11 @@ type IncidentRow = {
 
 export default async function IncidentsPage() {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { data, error: incidentsError } = await supabase
     .from('incidents')
     .select('id, title, description, severity, status, reported_at, staff:profiles!staff_id(full_name), clients(full_name)')
     .order('reported_at', { ascending: false })
+  if (incidentsError) console.error('[incidents page] incidents fetch failed:', incidentsError)
 
   const incidents = ((data ?? []) as IncidentRow[]).map(item => ({
     ...item,

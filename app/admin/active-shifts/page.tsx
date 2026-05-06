@@ -5,12 +5,13 @@ import ActiveShiftsClient from './ActiveShiftsClient'
 export default async function ActiveShiftsPage() {
   const supabase = await createClient()
 
-  const { data: shifts } = await supabase
+  const { data: shifts, error: shiftsError } = await supabase
     .from('shifts')
     .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
     .in('status', ['active', 'scheduled'])
     .gte('start_time', new Date(Date.now() - 86400000).toISOString())
     .order('start_time', { ascending: true })
+  if (shiftsError) console.error('[active-shifts page] shifts fetch failed:', shiftsError)
 
   return (
     <div className="flex flex-col gap-6">

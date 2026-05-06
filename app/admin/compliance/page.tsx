@@ -25,15 +25,18 @@ const policyCards = [
 
 export default async function CompliancePage() {
   const supabase = await createClient()
-  const { data } = await supabase.from('documents').select('id, owner_id, owner_type, doc_type, file_url, file_name, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true })
+  const { data, error: documentsError } = await supabase.from('documents').select('id, owner_id, owner_type, doc_type, file_url, file_name, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true })
+  if (documentsError) console.error('[compliance page] documents fetch failed:', documentsError)
   const docs = (data ?? []) as Doc[]
 
   const staffIds = Array.from(new Set(docs.filter(doc => doc.owner_type === 'staff').map(doc => doc.owner_id)))
   const clientIds = Array.from(new Set(docs.filter(doc => doc.owner_type === 'client').map(doc => doc.owner_id)))
-  const [{ data: staffOwners }, { data: clientOwners }] = await Promise.all([
+  const [{ data: staffOwners, error: staffOwnersError }, { data: clientOwners, error: clientOwnersError }] = await Promise.all([
     staffIds.length ? supabase.from('profiles').select('id, full_name').in('id', staffIds) : Promise.resolve({ data: [] as Owner[], error: null }),
     clientIds.length ? supabase.from('clients').select('id, full_name').in('id', clientIds) : Promise.resolve({ data: [] as Owner[], error: null }),
   ])
+  if (staffOwnersError) console.error('[compliance page] profiles (staff owners) fetch failed:', staffOwnersError)
+  if (clientOwnersError) console.error('[compliance page] clients (client owners) fetch failed:', clientOwnersError)
 
   const names = new Map<string, string>()
   ;(staffOwners ?? []).forEach(owner => names.set(owner.id, owner.full_name ?? 'Staff member'))

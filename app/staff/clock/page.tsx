@@ -19,7 +19,11 @@ export default async function ClockPage() {
   // Fetch today's scheduled shifts (Perth day) and all active shifts separately.
   // Active shifts are fetched without a date filter so staff can always clock out,
   // even if the shift started before today's Perth midnight (e.g. overnight shifts).
-  const [{ data: todayScheduled }, { data: currentlyActive }, { data: admins }] = await Promise.all([
+  const [
+    { data: todayScheduled, error: todayScheduledError },
+    { data: currentlyActive, error: currentlyActiveError },
+    { data: admins, error: adminsError },
+  ] = await Promise.all([
     supabase
       .from('shifts')
       .select('*, clients(full_name, address, lat, lng)')
@@ -36,6 +40,9 @@ export default async function ClockPage() {
       .order('start_time', { ascending: true }),
     supabase.from('profiles').select('id').eq('role', 'admin'),
   ])
+  if (todayScheduledError) console.error('[clock page] shifts (today scheduled) fetch failed:', todayScheduledError)
+  if (currentlyActiveError) console.error('[clock page] shifts (currently active) fetch failed:', currentlyActiveError)
+  if (adminsError) console.error('[clock page] profiles (admins) fetch failed:', adminsError)
 
   // Active shifts bubble to the top; deduplicate in case a shift appears in both lists.
   const activeList = currentlyActive ?? []

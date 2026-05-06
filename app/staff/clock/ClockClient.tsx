@@ -5,15 +5,18 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { isWithinGeofence, isWithinShiftWindow } from '@/lib/utils/distance'
 import { Badge } from '@/components/ui/Badge'
+import ErrorToast from '@/components/ui/ErrorToast'
+import { useErrorToast } from '@/lib/hooks/useErrorToast'
 
 export default function ClockClient({ shifts, adminIds }: {
   shifts: any[]
   adminIds: string[]
 }) {
   const [loading, setLoading] = useState<string | null>(null)
-  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
   const router = useRouter()
+  const { errorMessage, showError, dismiss } = useErrorToast()
 
   async function getPosition(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
@@ -24,32 +27,39 @@ export default function ClockClient({ shifts, adminIds }: {
 
   async function handleClockIn(shift: any) {
     setLoading(shift.id)
-    setMessage(null)
+    setSuccessMessage(null)
 
     try {
       const pos = await getPosition()
       const { latitude: lat, longitude: lng } = pos.coords
 
       if (!isWithinShiftWindow(shift.start_time)) {
-        setMessage({ text: 'You can only clock in within 15 minutes of your shift start time.', type: 'error' })
+        showError('You can only clock in within 15 minutes of your shift start time.')
         setLoading(null)
         return
       }
 
       if (shift.clients?.lat && shift.clients?.lng) {
         if (!isWithinGeofence(lat, lng, shift.clients.lat, shift.clients.lng)) {
-          setMessage({ text: 'You must be within 300m of the client location to clock in.', type: 'error' })
+          showError('You must be within 300m of the client location to clock in.')
           setLoading(null)
           return
         }
       }
 
-      await supabase.from('shifts').update({
+      const { error: shiftError } = await supabase.from('shifts').update({
         status: 'active',
         clock_in_time: new Date().toISOString(),
         clock_in_lat: lat,
         clock_in_lng: lng,
       }).eq('id', shift.id)
+
+      if (shiftError) {
+        console.error('[ClockClient] clock_in shift update failed:', shiftError)
+        showError('Failed to record clock-in. Please try again.')
+        setLoading(null)
+        return
+      }
 
       await Promise.all(adminIds.map(adminId =>
         supabase.from('notifications').insert({
@@ -61,10 +71,16 @@ export default function ClockClient({ shifts, adminIds }: {
         }),
       ))
 
-      setMessage({ text: 'Clocked in successfully.', type: 'success' })
+      setSuccessMessage('Clocked in successfully.')
       router.refresh()
     } catch (err: any) {
-      setMessage({ text: err.message ?? 'Location access denied. Please enable GPS.', type: 'error' })
+      const msg = err?.code === 1
+        ? 'Location permission denied. Please enable GPS in your browser settings.'
+        : err?.code === 3
+          ? 'Location request timed out. Please try again.'
+          : (err?.message ?? 'Unable to get your location. Please enable GPS.')
+      console.error('[ClockClient] clock_in error:', err)
+      showError(msg)
     }
 
     setLoading(null)
@@ -72,18 +88,25 @@ export default function ClockClient({ shifts, adminIds }: {
 
   async function handleClockOut(shift: any) {
     setLoading(shift.id)
-    setMessage(null)
+    setSuccessMessage(null)
 
     try {
       const pos = await getPosition()
       const { latitude: lat, longitude: lng } = pos.coords
 
-      await supabase.from('shifts').update({
+      const { error: shiftError } = await supabase.from('shifts').update({
         status: 'completed',
         clock_out_time: new Date().toISOString(),
         clock_out_lat: lat,
         clock_out_lng: lng,
       }).eq('id', shift.id)
+
+      if (shiftError) {
+        console.error('[ClockClient] clock_out shift update failed:', shiftError)
+        showError('Failed to record clock-out. Please try again.')
+        setLoading(null)
+        return
+      }
 
       await Promise.all(adminIds.map(adminId =>
         supabase.from('notifications').insert({
@@ -95,10 +118,16 @@ export default function ClockClient({ shifts, adminIds }: {
         }),
       ))
 
-      setMessage({ text: 'Clocked out successfully.', type: 'success' })
+      setSuccessMessage('Clocked out successfully.')
       router.refresh()
     } catch (err: any) {
-      setMessage({ text: err.message ?? 'Location access denied.', type: 'error' })
+      const msg = err?.code === 1
+        ? 'Location permission denied. Please enable GPS in your browser settings.'
+        : err?.code === 3
+          ? 'Location request timed out. Please try again.'
+          : (err?.message ?? 'Unable to get your location. Please enable GPS.')
+      console.error('[ClockClient] clock_out error:', err)
+      showError(msg)
     }
 
     setLoading(null)
@@ -106,16 +135,11 @@ export default function ClockClient({ shifts, adminIds }: {
 
   return (
     <div className="space-y-4">
-      {message ? (
-        <div className={`flex items-start gap-3 rounded-[22px] px-4 py-4 text-sm shadow-[0_10px_24px_rgba(23,23,22,0.05)] ${
-          message.type === 'success'
-            ? 'border border-[#e4c1f5] bg-[#f9f0ff] text-[#4a006f]'
-            : 'border border-[#f3d7d7] bg-[#fff1f1] text-[#9b3434]'
-        }`}>
-          <span className="material-symbols-outlined mt-0.5 text-[18px]">
-            {message.type === 'success' ? 'check_circle' : 'error'}
-          </span>
-          <p>{message.text}</p>
+      {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
+      {successMessage ? (
+        <div className="flex items-start gap-3 rounded-[22px] border border-[#e4c1f5] bg-[#f9f0ff] px-4 py-4 text-sm text-[#4a006f] shadow-[0_10px_24px_rgba(23,23,22,0.05)]">
+          <span className="material-symbols-outlined mt-0.5 text-[18px]">check_circle</span>
+          <p>{successMessage}</p>
         </div>
       ) : null}
 

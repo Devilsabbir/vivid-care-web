@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ExpiryBadge } from '@/components/ui/Badge'
 import Modal from '@/components/ui/Modal'
+import ErrorToast from '@/components/ui/ErrorToast'
+import { useErrorToast } from '@/lib/hooks/useErrorToast'
 
 const MY_DOC_TYPES = [
   'Passport',
@@ -35,6 +37,7 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
   const [selectedClient, setSelectedClient] = useState('')
   const router = useRouter()
   const [supabase] = useState(() => createClient())
+  const { errorMessage, showError, dismiss } = useErrorToast()
 
   async function uploadPersonal(e: React.FormEvent) {
     e.preventDefault()
@@ -44,13 +47,14 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
     const path = `staff/${staffId}/${docType}/${Date.now()}_${file.name}`
     const { error: upErr } = await supabase.storage.from('documents').upload(path, file)
     if (upErr) {
+      console.error('[DocumentsClient] personal storage upload failed:', upErr)
       setUploading(false)
-      alert(upErr.message)
+      showError('File upload failed. Please try again.')
       return
     }
 
     const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
-    await supabase.from('documents').insert({
+    const { error: dbErr } = await supabase.from('documents').insert({
       owner_id: staffId,
       owner_type: 'staff',
       doc_type: docType,
@@ -59,6 +63,13 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       expiry_date: expiryDate || null,
       uploaded_by: staffId,
     })
+
+    if (dbErr) {
+      console.error('[DocumentsClient] personal document record insert failed:', dbErr)
+      setUploading(false)
+      showError('Document saved to storage but record creation failed. Contact support.')
+      return
+    }
 
     resetForm()
     router.refresh()
@@ -72,13 +83,14 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
     const path = `client/${selectedClient}/${docType}/${Date.now()}_${file.name}`
     const { error: upErr } = await supabase.storage.from('documents').upload(path, file)
     if (upErr) {
+      console.error('[DocumentsClient] client storage upload failed:', upErr)
       setUploading(false)
-      alert(upErr.message)
+      showError('File upload failed. Please try again.')
       return
     }
 
     const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
-    await supabase.from('documents').insert({
+    const { error: dbErr } = await supabase.from('documents').insert({
       owner_id: selectedClient,
       owner_type: 'client',
       doc_type: docType,
@@ -87,6 +99,13 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       expiry_date: expiryDate || null,
       uploaded_by: staffId,
     })
+
+    if (dbErr) {
+      console.error('[DocumentsClient] client document record insert failed:', dbErr)
+      setUploading(false)
+      showError('Document saved to storage but record creation failed. Contact support.')
+      return
+    }
 
     resetForm()
     router.refresh()
@@ -103,6 +122,7 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
 
   return (
     <>
+      {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
       <div className="grid grid-cols-3 gap-3">
         <SummaryCard label="My docs" value={myDocs.length} sub="Personal compliance" />
         <SummaryCard label="Client docs" value={clientDocs.length} sub="Shared records" />

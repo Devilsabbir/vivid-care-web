@@ -6,11 +6,18 @@ import StaffDetailClient from './StaffDetailClient'
 export default async function StaffDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
 
-  const [{ data: member }, { data: docs }, { data: shifts }] = await Promise.all([
+  const [
+    { data: member, error: memberError },
+    { data: docs, error: docsError },
+    { data: shifts, error: shiftsError },
+  ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', params.id).single(),
     supabase.from('documents').select('*').eq('owner_id', params.id).eq('owner_type', 'staff').order('created_at', { ascending: false }),
     supabase.from('shifts').select('*, clients(full_name)').eq('staff_id', params.id).order('start_time', { ascending: false }).limit(10),
   ])
+  if (memberError) console.error('[staff detail page] profiles fetch failed:', memberError)
+  if (docsError) console.error('[staff detail page] documents fetch failed:', docsError)
+  if (shiftsError) console.error('[staff detail page] shifts fetch failed:', shiftsError)
 
   if (!member) notFound()
 

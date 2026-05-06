@@ -78,19 +78,37 @@ export default function NotificationsClient({
   }, [filter, notifications])
 
   async function markRead(id: string) {
-    await supabase.from('notifications').update({ read: true }).eq('id', id)
+    // Optimistic update
     setNotifications(current => current.map(notification => {
       if (notification.id === id) return { ...notification, read: true }
       return notification
     }))
+    const { error } = await supabase.from('notifications').update({ read: true }).eq('id', id)
+    if (error) {
+      console.error('[NotificationsClient] markRead failed:', error)
+      // Revert optimistic update
+      setNotifications(current => current.map(notification => {
+        if (notification.id === id) return { ...notification, read: false }
+        return notification
+      }))
+    }
   }
 
   async function markAllRead() {
     const unreadIds = notifications.filter(notification => !notification.read).map(notification => notification.id)
     if (!unreadIds.length) return
 
-    await supabase.from('notifications').update({ read: true }).in('id', unreadIds)
+    // Optimistic update
     setNotifications(current => current.map(notification => ({ ...notification, read: true })))
+    const { error } = await supabase.from('notifications').update({ read: true }).in('id', unreadIds)
+    if (error) {
+      console.error('[NotificationsClient] markAllRead failed:', error)
+      // Revert optimistic update
+      setNotifications(current => current.map(notification => ({
+        ...notification,
+        read: unreadIds.includes(notification.id) ? false : notification.read,
+      })))
+    }
   }
 
   async function handleComposeSend() {

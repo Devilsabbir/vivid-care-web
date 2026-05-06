@@ -38,14 +38,14 @@ export default async function AdminDashboard() {
   const weekEnd = dayEnd(addDays(weekStart, 6))
 
   const [
-    { count: staffCount },
-    { count: clientCount },
-    { data: weekShifts },
-    { data: chartShifts },
-    { data: boardShifts },
-    { data: docs },
-    { data: incidents },
-    { data: unreadNotifications },
+    { count: staffCount, error: staffCountError },
+    { count: clientCount, error: clientCountError },
+    { data: weekShifts, error: weekShiftsError },
+    { data: chartShifts, error: chartShiftsError },
+    { data: boardShifts, error: boardShiftsError },
+    { data: docs, error: docsError },
+    { data: incidents, error: incidentsError },
+    { data: unreadNotifications, error: notificationsError },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'staff'),
     supabase.from('clients').select('*', { count: 'exact', head: true }),
@@ -56,6 +56,14 @@ export default async function AdminDashboard() {
     supabase.from('incidents').select('id').neq('status', 'resolved'),
     supabase.from('notifications').select('id').eq('read', false),
   ])
+  if (staffCountError) console.error('[dashboard page] profiles count fetch failed:', staffCountError)
+  if (clientCountError) console.error('[dashboard page] clients count fetch failed:', clientCountError)
+  if (weekShiftsError) console.error('[dashboard page] week shifts fetch failed:', weekShiftsError)
+  if (chartShiftsError) console.error('[dashboard page] chart shifts fetch failed:', chartShiftsError)
+  if (boardShiftsError) console.error('[dashboard page] board shifts fetch failed:', boardShiftsError)
+  if (docsError) console.error('[dashboard page] documents fetch failed:', docsError)
+  if (incidentsError) console.error('[dashboard page] incidents fetch failed:', incidentsError)
+  if (notificationsError) console.error('[dashboard page] notifications fetch failed:', notificationsError)
 
   const shifts = (weekShifts ?? []) as Shift[]
   const chart = (chartShifts ?? []) as Shift[]

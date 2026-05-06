@@ -19,12 +19,13 @@ export default async function AdminNotificationsPage() {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data } = await supabase
+  const { data, error: notificationsError } = await supabase
     .from('notifications')
     .select('id, type, title, message, created_at, read')
     .eq('user_id', user!.id)
     .order('created_at', { ascending: false })
     .limit(50)
+  if (notificationsError) console.error('[admin notifications page] notifications fetch failed:', notificationsError)
 
   const notifications = (data ?? []) as NotificationRow[]
   const unreadCount = notifications.filter(notification => !notification.read).length

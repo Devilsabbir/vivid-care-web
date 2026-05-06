@@ -24,7 +24,7 @@ export default async function ClientsPage() {
   const weekStart = startOfWeek(new Date())
   const weekEnd = endOfDay(addDays(weekStart, 6))
 
-  const [{ data: clients }, { data: shifts }] = await Promise.all([
+  const [{ data: clients, error: clientsError }, { data: shifts, error: shiftsError }] = await Promise.all([
     supabase
       .from('clients')
       .select('id, full_name, ndis_number, address, phone, lat, lng')
@@ -35,6 +35,8 @@ export default async function ClientsPage() {
       .gte('start_time', weekStart.toISOString())
       .lte('start_time', weekEnd.toISOString()),
   ])
+  if (clientsError) console.error('[clients page] clients fetch failed:', clientsError)
+  if (shiftsError) console.error('[clients page] shifts fetch failed:', shiftsError)
 
   const shiftRows = (shifts ?? []) as ClientShift[]
   const cards = ((clients ?? []) as Client[]).map(client => {

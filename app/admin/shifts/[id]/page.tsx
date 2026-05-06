@@ -6,7 +6,11 @@ import ShiftDetailClient from './ShiftDetailClient'
 export default async function ShiftDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
 
-  const [{ data: shift }, { data: clockEvents }, { data: incidents }] = await Promise.all([
+  const [
+    { data: shift, error: shiftError },
+    { data: clockEvents, error: clockEventsError },
+    { data: incidents, error: incidentsError },
+  ] = await Promise.all([
     supabase
       .from('shifts')
       .select('*, staff:profiles!staff_id(id, full_name, phone, email), clients(id, full_name, address, lat, lng)')
@@ -22,6 +26,9 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
       .select('id, title, severity, status')
       .eq('shift_id', params.id),
   ])
+  if (shiftError) console.error('[shift detail page] shifts fetch failed:', shiftError)
+  if (clockEventsError) console.error('[shift detail page] clock_events fetch failed:', clockEventsError)
+  if (incidentsError) console.error('[shift detail page] incidents fetch failed:', incidentsError)
 
   if (!shift) notFound()
 

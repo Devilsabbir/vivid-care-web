@@ -8,19 +8,21 @@ export default async function StaffDocumentsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: myDocs } = await supabase
+  const { data: myDocs, error: myDocsError } = await supabase
     .from('documents')
     .select('*')
     .eq('owner_id', user!.id)
     .eq('owner_type', 'staff')
     .order('created_at', { ascending: false })
+  if (myDocsError) console.error('[staff documents page] documents fetch failed:', myDocsError)
 
-  const { data: shifts } = await supabase
+  const { data: shifts, error: shiftsError } = await supabase
     .from('shifts')
     .select('client_id, clients(id, full_name)')
     .eq('staff_id', user!.id)
     .not('client_id', 'is', null)
     .gte('start_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+  if (shiftsError) console.error('[staff documents page] shifts fetch failed:', shiftsError)
 
   const uniqueClients = Object.values(
     (shifts ?? []).reduce((acc: any, shift: any) => {
@@ -30,9 +32,10 @@ export default async function StaffDocumentsPage() {
   )
 
   const clientIds = uniqueClients.map((client: any) => client.id)
-  const { data: clientDocs } = clientIds.length > 0
+  const { data: clientDocs, error: clientDocsError } = clientIds.length > 0
     ? await supabase.from('documents').select('*').in('owner_id', clientIds).eq('owner_type', 'client').order('created_at', { ascending: false })
-    : { data: [] }
+    : { data: [], error: null }
+  if (clientDocsError) console.error('[staff documents page] client documents fetch failed:', clientDocsError)
 
   return (
     <div className="space-y-5">

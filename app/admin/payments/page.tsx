@@ -5,12 +5,13 @@ export default async function PaymentsPage() {
   const supabase = await createClient()
 
   // Fetch completed shifts as the basis for payments
-  const { data: shifts } = await supabase
+  const { data: shifts, error: shiftsError } = await supabase
     .from('shifts')
     .select('id, start_time, end_time, status, support_type, clock_in_time, clock_out_time, staff_id, client_id, staff:profiles!staff_id(full_name), clients(full_name)')
     .in('status', ['completed', 'active'])
     .order('start_time', { ascending: false })
     .limit(100)
+  if (shiftsError) console.error('[payments page] shifts fetch failed:', shiftsError)
 
   const normalizedShifts = (shifts ?? []).map((shift: any) => ({
     ...shift,

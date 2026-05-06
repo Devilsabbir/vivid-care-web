@@ -6,13 +6,24 @@ import ClientDetailClient from './ClientDetailClient'
 export default async function ClientDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
 
-  const [{ data: client }, { data: docs }, { data: shifts }, { data: incidents }, { data: agreements }] = await Promise.all([
+  const [
+    { data: client, error: clientError },
+    { data: docs, error: docsError },
+    { data: shifts, error: shiftsError },
+    { data: incidents, error: incidentsError },
+    { data: agreements, error: agreementsError },
+  ] = await Promise.all([
     supabase.from('clients').select('*').eq('id', params.id).single(),
     supabase.from('documents').select('*').eq('owner_id', params.id).eq('owner_type', 'client').order('created_at', { ascending: false }),
     supabase.from('shifts').select('*, staff:profiles!staff_id(full_name)').eq('client_id', params.id).order('start_time', { ascending: false }).limit(10),
     supabase.from('incidents').select('id, title, severity, status, reported_at').eq('client_id', params.id).order('reported_at', { ascending: false }).limit(10),
     supabase.from('agreements').select('id, title, status, created_at').eq('client_id', params.id).order('created_at', { ascending: false }).limit(10),
   ])
+  if (clientError) console.error('[client detail page] clients fetch failed:', clientError)
+  if (docsError) console.error('[client detail page] documents fetch failed:', docsError)
+  if (shiftsError) console.error('[client detail page] shifts fetch failed:', shiftsError)
+  if (incidentsError) console.error('[client detail page] incidents fetch failed:', incidentsError)
+  if (agreementsError) console.error('[client detail page] agreements fetch failed:', agreementsError)
 
   if (!client) notFound()
 

@@ -6,12 +6,13 @@ export default async function StaffPaymentsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: shifts } = await supabase
+  const { data: shifts, error: shiftsError } = await supabase
     .from('shifts')
     .select('*, clients(full_name)')
     .eq('staff_id', user!.id)
     .eq('status', 'completed')
     .order('start_time', { ascending: false })
+  if (shiftsError) console.error('[staff payments] shifts fetch failed:', shiftsError)
 
   const totalHours = (shifts ?? []).reduce((sum, shift) => {
     if (!shift.clock_in_time || !shift.clock_out_time) return sum

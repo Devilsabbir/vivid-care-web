@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public routes
-  if (pathname.startsWith('/login') || pathname.startsWith('/api')) {
+  if (pathname.startsWith('/login') || pathname.startsWith('/api') || pathname.startsWith('/sign')) {
     if (user && pathname === '/login') {
       // Redirect logged-in users away from login
       const { data: profile } = await supabase

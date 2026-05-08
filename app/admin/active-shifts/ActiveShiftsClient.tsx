@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import LiveMap from '@/components/maps/LiveMap'
+import type { MapMarker } from '@/components/maps/LiveMap'
 
 type ShiftStatus = 'scheduled' | 'active' | 'completed' | 'cancelled'
 
@@ -32,15 +34,35 @@ type NormalizedShift = {
   status: ShiftStatus
   staffName: string
   staffPhone: string | null
+  staffId: string | null
   clientName: string
   clientAddress: string | null
+  clientLat: number | null
+  clientLng: number | null
   hasGeofence: boolean
 }
 
-export default function ActiveShiftsClient({ initialShifts }: { initialShifts: ShiftRow[] }) {
+type StaffLocation = {
+  staff_id: string
+  lat: number
+  lng: number
+  accuracy: number | null
+  updated_at: string
+  shift_id: string | null
+}
+
+export default function ActiveShiftsClient({
+  initialShifts,
+  initialStaffLocations,
+}: {
+  initialShifts: ShiftRow[]
+  initialStaffLocations: StaffLocation[]
+}) {
   const [shifts, setShifts] = useState(initialShifts)
+  const [staffLocations, setStaffLocations] = useState(initialStaffLocations)
   const [supabase] = useState(() => createClient())
 
+  // Realtime: refetch shifts when any shift changes
   useEffect(() => {
     const channel = supabase
       .channel('active_shifts')
@@ -56,9 +78,22 @@ export default function ActiveShiftsClient({ initialShifts }: { initialShifts: S
       })
       .subscribe()
 
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    return () => { supabase.removeChannel(channel) }
+  }, [supabase])
+
+  // Realtime: refetch staff locations when any position updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('staff_locations_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'staff_locations' }, async () => {
+        const { data } = await supabase
+          .from('staff_locations')
+          .select('staff_id, lat, lng, accuracy, updated_at, shift_id')
+        if (data) setStaffLocations(data as StaffLocation[])
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
   }, [supabase])
 
   const normalizedShifts = useMemo<NormalizedShift[]>(() => {
@@ -73,12 +108,53 @@ export default function ActiveShiftsClient({ initialShifts }: { initialShifts: S
         status: shift.status,
         staffName: staff?.full_name ?? 'Unassigned staff',
         staffPhone: staff?.phone ?? null,
+        staffId: (shift as any).staff_id ?? null,
         clientName: client?.full_name ?? 'Client record',
         clientAddress: client?.address ?? null,
+        clientLat: client?.lat ?? null,
+        clientLng: client?.lng ?? null,
         hasGeofence: Boolean(client?.lat && client?.lng),
       }
     })
   }, [shifts])
+
+  // Build map markers: live staff positions + client pins
+  const mapMarkers = useMemo<MapMarker[]>(() => {
+    const markers: MapMarker[] = []
+    const seenClients = new Set<string>()
+
+    normalizedShifts.forEach(shift => {
+      const clientKey = `${shift.clientLat}:${shift.clientLng}`
+      if (shift.clientLat && shift.clientLng && !seenClients.has(clientKey)) {
+        seenClients.add(clientKey)
+        markers.push({
+          id: `client-${shift.id}`,
+          lat: shift.clientLat,
+          lng: shift.clientLng,
+          type: 'client',
+          label: shift.clientName,
+          sublabel: shift.clientAddress ?? undefined,
+          geofenceRadius: 300,
+        })
+      }
+    })
+
+    staffLocations.forEach(loc => {
+      const shift = normalizedShifts.find(s => s.id === loc.shift_id)
+      markers.push({
+        id: `staff-${loc.staff_id}`,
+        lat: loc.lat,
+        lng: loc.lng,
+        type: 'staff',
+        label: shift?.staffName ?? 'Staff',
+        sublabel: shift?.clientName ? `Supporting ${shift.clientName}` : undefined,
+        status: 'active',
+        updatedAt: loc.updated_at,
+      })
+    })
+
+    return markers
+  }, [normalizedShifts, staffLocations])
 
   const active = normalizedShifts.filter(shift => shift.status === 'active')
   const scheduled = normalizedShifts.filter(shift => shift.status === 'scheduled')
@@ -112,6 +188,30 @@ export default function ActiveShiftsClient({ initialShifts }: { initialShifts: S
           </div>
         </aside>
       </section>
+
+      {/* Live location map — visible when any staff have a GPS position */}
+      {mapMarkers.length > 0 && (
+        <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold text-[#1a1a18]">Live location map</h3>
+              <p className="text-xs text-[#8a877f]">Staff positions update every 30 seconds</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#8a877f]">
+              <span className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded-full bg-[#8B45A6]" /> Staff
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded-full bg-[#00AAEF]" /> Client
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded-full border-2 border-[#8B45A6]/30 bg-transparent" /> Geofence
+              </span>
+            </div>
+          </div>
+          <LiveMap markers={mapMarkers} height="400px" className="overflow-hidden rounded-[20px]" />
+        </section>
+      )}
 
       {active.length > 0 ? (
         <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">

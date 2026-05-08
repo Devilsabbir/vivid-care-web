@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -10,6 +10,8 @@ import MetricCard from '@/components/ui/MetricCard'
 import { Card, RailCard } from '@/components/ui/Card'
 import Modal from '@/components/ui/Modal'
 import { checkDoubleBooking, checkTimeRange } from '@/lib/utils/roster-validation'
+import LiveMap from '@/components/maps/LiveMap'
+import type { MapMarker } from '@/components/maps/LiveMap'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,6 +73,25 @@ export default function ShiftDetailClient({
 }: ShiftDetailClientProps) {
   const router = useRouter()
   const [supabase] = useState(() => createClient())
+
+  // ── Live staff location for this shift ────────────────────────────────
+  const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number; updated_at: string } | null>(null)
+
+  useEffect(() => {
+    if (!shift.staff_id) return
+    let cancelled = false
+
+    supabase
+      .from('staff_locations')
+      .select('lat, lng, updated_at')
+      .eq('staff_id', shift.staff_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data) setLiveLocation(data)
+      })
+
+    return () => { cancelled = true }
+  }, [supabase, shift.staff_id])
 
   // ── Modal visibility ──────────────────────────────────────────────────────
   const [editOpen, setEditOpen] = useState(false)
@@ -336,6 +357,76 @@ export default function ShiftDetailClient({
                 )}
               </div>
             </Card>
+
+            {/* Location map — shown when at least one coordinate is available */}
+            {(() => {
+              const locationMarkers: MapMarker[] = []
+
+              if (client?.lat && client?.lng) {
+                locationMarkers.push({
+                  id: 'client-location',
+                  lat: client.lat,
+                  lng: client.lng,
+                  type: 'client',
+                  label: client.full_name ?? 'Client',
+                  sublabel: client.address ?? undefined,
+                  geofenceRadius: 300,
+                })
+              }
+
+              if (shift.clock_in_lat && shift.clock_in_lng) {
+                locationMarkers.push({
+                  id: 'clock-in',
+                  lat: shift.clock_in_lat,
+                  lng: shift.clock_in_lng,
+                  type: 'clock',
+                  label: staff?.full_name ?? 'Staff',
+                  sublabel: 'Clock in',
+                })
+              }
+
+              if (shift.clock_out_lat && shift.clock_out_lng) {
+                locationMarkers.push({
+                  id: 'clock-out',
+                  lat: shift.clock_out_lat,
+                  lng: shift.clock_out_lng,
+                  type: 'clock',
+                  label: staff?.full_name ?? 'Staff',
+                  sublabel: 'Clock out',
+                })
+              }
+
+              if (liveLocation) {
+                locationMarkers.push({
+                  id: 'staff-live',
+                  lat: liveLocation.lat,
+                  lng: liveLocation.lng,
+                  type: 'staff',
+                  label: staff?.full_name ?? 'Staff',
+                  sublabel: 'Live position',
+                  status: 'active',
+                  updatedAt: liveLocation.updated_at,
+                })
+              }
+
+              if (locationMarkers.length === 0) return null
+
+              return (
+                <Card>
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-[#1a1a18]">Location</h3>
+                    <div className="mt-4 flex flex-wrap gap-3 text-[11px] text-[#8a877f]">
+                      {client?.lat && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#00AAEF]" />Client</span>}
+                      {(shift.clock_in_lat || shift.clock_out_lat) && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#22c55e]" />Clock in / out</span>}
+                      {liveLocation && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#8B45A6]" />Live</span>}
+                    </div>
+                    <div className="mt-3 overflow-hidden rounded-[16px]">
+                      <LiveMap markers={locationMarkers} height="220px" showGeofences />
+                    </div>
+                  </div>
+                </Card>
+              )
+            })()}
 
             {/* Clock events timeline */}
             <Card>

@@ -7,10 +7,14 @@ import { isWithinGeofence, isWithinShiftWindow } from '@/lib/utils/distance'
 import { Badge } from '@/components/ui/Badge'
 import ErrorToast from '@/components/ui/ErrorToast'
 import { useErrorToast } from '@/lib/hooks/useErrorToast'
+import { useLocationTracker } from '@/lib/hooks/useLocationTracker'
+import LiveMap from '@/components/maps/LiveMap'
+import type { MapMarker } from '@/components/maps/LiveMap'
 
-export default function ClockClient({ initialShifts, adminIds }: {
+export default function ClockClient({ initialShifts, adminIds, staffId }: {
   initialShifts: any[]
   adminIds: string[]
+  staffId: string
 }) {
   const [shifts, setShifts] = useState(initialShifts)
   const [loading, setLoading] = useState<string | null>(null)
@@ -18,6 +22,17 @@ export default function ClockClient({ initialShifts, adminIds }: {
   const [supabase] = useState(() => createClient())
   const router = useRouter()
   const { errorMessage, showError, dismiss } = useErrorToast()
+
+  // The shift currently clocked in (not yet clocked out)
+  const activeShift = shifts.find((s: any) => s.clock_in_time && !s.clock_out_time)
+
+  // Live location tracking — runs only while a shift is active
+  const { stopTracking } = useLocationTracker({
+    staffId,
+    shiftId: activeShift?.id ?? null,
+    enabled: Boolean(activeShift),
+    intervalMs: 30000,
+  })
 
   // Realtime: refetch today's shifts when any shift changes
   useEffect(() => {
@@ -162,6 +177,9 @@ export default function ClockClient({ initialShifts, adminIds }: {
         }),
       ))
 
+      // Immediately clear live location and stop GPS polling
+      await stopTracking()
+
       setSuccessMessage('Clocked out successfully.')
       router.refresh()
     } catch (err: any) {
@@ -186,6 +204,14 @@ export default function ClockClient({ initialShifts, adminIds }: {
           <p>{successMessage}</p>
         </div>
       ) : null}
+
+      {/* Location sharing disclosure — shown while a shift is active */}
+      {activeShift && (
+        <div className="flex items-center gap-2 rounded-2xl bg-[#f3e8ff] px-4 py-3 text-xs text-[#6b21a8]">
+          <span className="material-symbols-outlined text-[16px]">location_on</span>
+          <span>Your location is being shared with your coordinator while on shift.</span>
+        </div>
+      )}
 
       {shifts.length > 0 ? shifts.map(shift => {
         const isActive = shift.status === 'active'
@@ -220,6 +246,24 @@ export default function ClockClient({ initialShifts, adminIds }: {
                 </div>
               </div>
             ) : null}
+
+            {/* Mini geofence map — shows client pin + 300m zone */}
+            {shift.clients?.lat && shift.clients?.lng ? (() => {
+              const clientMarkers: MapMarker[] = [{
+                id: `client-${shift.id}`,
+                lat: shift.clients.lat,
+                lng: shift.clients.lng,
+                type: 'client',
+                label: shift.clients.full_name ?? 'Client',
+                sublabel: shift.clients.address ?? undefined,
+                geofenceRadius: 300,
+              }]
+              return (
+                <div className="mt-3 overflow-hidden rounded-[22px]">
+                  <LiveMap markers={clientMarkers} height="180px" showGeofences zoom={15} />
+                </div>
+              )
+            })() : null}
 
             <div className="mt-4 rounded-[22px] border border-[#ece6dc] bg-[#fbfaf7] px-4 py-3 text-xs text-[#8b867b]">
               Clock in opens 15 minutes before shift start. Clock out captures your GPS position for attendance history.

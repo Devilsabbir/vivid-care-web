@@ -5,13 +5,22 @@ import ActiveShiftsClient from './ActiveShiftsClient'
 export default async function ActiveShiftsPage() {
   const supabase = await createClient()
 
-  const { data: shifts, error: shiftsError } = await supabase
-    .from('shifts')
-    .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
-    .in('status', ['active', 'scheduled'])
-    .gte('start_time', new Date(Date.now() - 86400000).toISOString())
-    .order('start_time', { ascending: true })
+  const [
+    { data: shifts, error: shiftsError },
+    { data: staffLocations, error: locError },
+  ] = await Promise.all([
+    supabase
+      .from('shifts')
+      .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
+      .in('status', ['active', 'scheduled'])
+      .gte('start_time', new Date(Date.now() - 86400000).toISOString())
+      .order('start_time', { ascending: true }),
+    supabase
+      .from('staff_locations')
+      .select('staff_id, lat, lng, accuracy, updated_at, shift_id'),
+  ])
   if (shiftsError) console.error('[active-shifts page] shifts fetch failed:', shiftsError)
+  if (locError) console.error('[active-shifts page] staff_locations fetch failed:', locError)
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,7 +47,7 @@ export default async function ActiveShiftsPage() {
         </div>
       </header>
 
-      <ActiveShiftsClient initialShifts={shifts ?? []} />
+      <ActiveShiftsClient initialShifts={shifts ?? []} initialStaffLocations={staffLocations ?? []} />
     </div>
   )
 }

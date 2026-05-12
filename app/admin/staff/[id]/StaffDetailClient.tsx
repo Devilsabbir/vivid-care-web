@@ -73,7 +73,7 @@ export default function StaffDetailClient({
 
     // Store the storage path (not a public URL) — signed URLs are generated
     // on demand so the private bucket restriction is respected.
-    await supabase.from('documents').insert({
+    const { error: insertError } = await supabase.from('documents').insert({
       owner_id: member.id,
       owner_type: 'staff',
       doc_type: docType,
@@ -81,6 +81,12 @@ export default function StaffDetailClient({
       file_name: file.name,
       expiry_date: expiryDate || null,
     })
+    if (insertError) {
+      console.error('[StaffDetailClient] document insert failed:', insertError)
+      setUploading(false)
+      alert('Document record failed: ' + insertError.message)
+      return
+    }
 
     setUploading(false)
     setDocType('')

@@ -26,8 +26,8 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  // Public routes
-  if (pathname.startsWith('/login') || pathname.startsWith('/api') || pathname.startsWith('/sign')) {
+  // Public routes — /sign/ covers /sign/[token] (public agreement links) but NOT /sign-inperson (admin-only)
+  if (pathname.startsWith('/login') || pathname.startsWith('/api') || pathname.startsWith('/sign/')) {
     if (user && pathname === '/login') {
       // Redirect logged-in users away from login
       const { data: profile } = await supabase

@@ -15,12 +15,20 @@ export default function IncidentStatusUpdate({
 }) {
   const [status, setStatus] = useState(currentStatus)
   const [saving, setSaving] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
   const router = useRouter()
 
   async function update(nextStatus: string) {
     setSaving(true)
-    await supabase.from('incidents').update({ status: nextStatus }).eq('id', incidentId)
+    setErrorMsg(null)
+    const { error } = await supabase.from('incidents').update({ status: nextStatus }).eq('id', incidentId)
+    if (error) {
+      console.error('[IncidentStatusUpdate] status update failed:', error)
+      setErrorMsg('Failed to update status. Please try again.')
+      setSaving(false)
+      return
+    }
     setStatus(nextStatus)
     setSaving(false)
     router.refresh()
@@ -50,6 +58,9 @@ export default function IncidentStatusUpdate({
           )
         })}
       </div>
+      {errorMsg && (
+        <p className="text-xs font-medium text-red-600">{errorMsg}</p>
+      )}
     </div>
   )
 }

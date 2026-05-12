@@ -67,13 +67,13 @@ export default function ActiveShiftsClient({
     const channel = supabase
       .channel('active_shifts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'shifts' }, async () => {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('shifts')
           .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
           .in('status', ['active', 'scheduled'])
           .gte('start_time', new Date(Date.now() - 86400000).toISOString())
           .order('start_time', { ascending: true })
-
+        if (error) console.error('[ActiveShiftsClient] shifts refetch failed:', error)
         if (data) setShifts(data as ShiftRow[])
       })
       .subscribe()
@@ -86,9 +86,10 @@ export default function ActiveShiftsClient({
     const channel = supabase
       .channel('staff_locations_realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'staff_locations' }, async () => {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('staff_locations')
           .select('staff_id, lat, lng, accuracy, updated_at, shift_id')
+        if (error) console.error('[ActiveShiftsClient] staff_locations refetch failed:', error)
         if (data) setStaffLocations(data as StaffLocation[])
       })
       .subscribe()

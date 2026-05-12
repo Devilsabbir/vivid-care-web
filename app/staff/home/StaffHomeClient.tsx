@@ -30,12 +30,13 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
     async function refetchShifts() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('shifts')
         .select('*, clients(full_name, address)')
         .eq('staff_id', user.id)
         .neq('status', 'cancelled')
         .order('start_time', { ascending: true })
+      if (error) console.error('[StaffHomeClient] shifts refetch failed:', error)
       if (data) setShifts(data)
     }
 

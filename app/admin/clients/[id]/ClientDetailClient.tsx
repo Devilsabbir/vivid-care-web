@@ -58,7 +58,13 @@ export default function ClientDetailClient({
   async function handleDelete() {
     if (!confirm(`Delete ${client.full_name}? This cannot be undone.`)) return
     setDeleting(true)
-    await supabase.from('clients').delete().eq('id', client.id)
+    const { error: deleteError } = await supabase.from('clients').delete().eq('id', client.id)
+    if (deleteError) {
+      console.error('[ClientDetailClient] client delete failed:', deleteError)
+      setDeleting(false)
+      alert('Delete failed: ' + deleteError.message)
+      return
+    }
     router.push('/admin/clients')
   }
 
@@ -77,7 +83,7 @@ export default function ClientDetailClient({
 
     // Store the storage path (not a public URL) — signed URLs are generated
     // on demand so the private bucket restriction is respected.
-    await supabase.from('documents').insert({
+    const { error: insertError } = await supabase.from('documents').insert({
       owner_id: client.id,
       owner_type: 'client',
       doc_type: docType,
@@ -85,6 +91,12 @@ export default function ClientDetailClient({
       file_name: file.name,
       expiry_date: expiryDate || null,
     })
+    if (insertError) {
+      console.error('[ClientDetailClient] document insert failed:', insertError)
+      setUploading(false)
+      alert('Document record failed: ' + insertError.message)
+      return
+    }
 
     setUploading(false)
     setDocType('')

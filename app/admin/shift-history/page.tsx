@@ -14,12 +14,13 @@ type ShiftRow = {
 
 export default async function ShiftHistoryPage() {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { data, error: historyError } = await supabase
     .from('shifts')
     .select('id, status, start_time, end_time, clock_in_time, clock_out_time, staff:profiles!staff_id(full_name), clients(full_name)')
     .in('status', ['completed', 'cancelled'])
     .order('start_time', { ascending: false })
     .limit(100)
+  if (historyError) console.error('[shift-history] shifts fetch failed:', historyError)
 
   const shifts = ((data ?? []) as unknown as ShiftRow[]).map(shift => ({
     ...shift,

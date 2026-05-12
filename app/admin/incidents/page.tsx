@@ -47,13 +47,6 @@ export default async function IncidentsPage() {
           <p className="text-sm text-[#6c6b66]">Track open issues, review escalations, and keep incident handling visible for the whole operations team</p>
         </div>
 
-        <Link
-          href="/staff/incidents"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"
-        >
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          New report
-        </Link>
       </header>
 
       <nav className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">

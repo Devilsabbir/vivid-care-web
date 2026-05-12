@@ -72,13 +72,6 @@ export default async function CompliancePage() {
         </div>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
-        <span className="rounded-full bg-[#1a1a18] px-4 py-2 text-white">All documents</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">My documents</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Compliance</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Agreements</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Policy hub</span>
-      </nav>
 
       <section className="grid gap-4 xl:grid-cols-4">
         <Tile tone="white" icon="folder" label="Total documents" value={rows.length} sub={`Across staff and client records`} />

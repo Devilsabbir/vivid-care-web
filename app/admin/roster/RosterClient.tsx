@@ -889,13 +889,14 @@ export default function RosterClient({
 
     if (form.staff_id) {
       const shiftDate = new Date(form.start_time)
-      await supabase.from('notifications').insert({
+      const { error: notifError } = await supabase.from('notifications').insert({
         user_id: form.staff_id,
         type: 'shift_assigned',
         title: 'New shift assigned',
         message: `You've been assigned a shift on ${shiftDate.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} at ${shiftDate.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}.`,
         related_id: createdShift?.id ?? null,
       })
+      if (notifError) console.error('[RosterClient] notification insert failed:', notifError)
     }
 
     setSaving(false); setOpen(false); setForm(EMPTY_FORM)

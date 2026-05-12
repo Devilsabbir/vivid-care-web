@@ -5,6 +5,7 @@ import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefres
 import AlertBanner from '@/components/admin/dashboard/AlertBanner'
 import KpiCard from '@/components/admin/dashboard/KpiCard'
 import DashboardLiveMap from '@/components/admin/dashboard/DashboardLiveMap'
+import RosterTimeline, { type ShiftBlock, type StaffRow } from '@/components/admin/dashboard/RosterTimeline'
 
 type Shift = {
   id: string
@@ -96,10 +97,6 @@ export default async function AdminDashboard() {
 
   const completed = shifts.filter(shift => shift.status === 'completed' || shift.status === 'active').length
   const planned = shifts.filter(shift => shift.status !== 'cancelled').length
-  const activeBoard = board.filter(shift => shift.status === 'active')
-  const scheduledBoard = board.filter(shift => shift.status === 'scheduled')
-  const liveStaff = new Set(activeBoard.map(shift => shift.staff_id)).size
-  const liveBoard = activeBoard.length > 0 ? [...activeBoard, ...scheduledBoard].slice(0, 6) : scheduledBoard.slice(0, 6)
 
   // Header & alert banner data
   const firstName = (adminProfile?.full_name ?? '').split(' ')[0] || 'there'
@@ -194,18 +191,64 @@ export default async function AdminDashboard() {
   const openIncidentsCount = ((sparkIncidents ?? []) as any[]).filter(i => i.status === 'open').length
   const shiftsScheduledToday = (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).length
 
-  const days = Array.from({ length: 7 }, (_, i) => addDays(today, i - 3)).map(date => {
-    const key = stamp(date)
-    const dayShifts = chart.filter(shift => stamp(new Date(shift.start_time)) === key)
-    return {
-      label: date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
-      isToday: stamp(today) === key,
-      complete: dayShifts.filter(shift => shift.status === 'completed' || shift.status === 'active').length,
-      upcoming: dayShifts.filter(shift => shift.status === 'scheduled').length,
-      future: date > today,
+  // Live roster timeline data — today's shifts grouped by staff
+  const todayStartMs = dayStart(today).getTime()
+  const todayEndMs = dayEnd(today).getTime()
+  const { data: timelineRows } = await supabase
+    .from('shifts')
+    .select('id, staff_id, start_time, end_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(full_name), clients(full_name, client_type)')
+    .gte('start_time', new Date(todayStartMs).toISOString())
+    .lte('start_time', new Date(todayEndMs).toISOString())
+    .order('start_time', { ascending: true })
+
+  const staffToneOptions: StaffRow['tone'][] = ['warm', 'blue', 'peach', 'green', 'amber', 'purple']
+  const staffMap = new Map<string, StaffRow>()
+  const timelineBlocks: ShiftBlock[] = []
+
+  ;(timelineRows ?? []).forEach((s: any) => {
+    if (!s.staff_id) return
+    const staffRel = Array.isArray(s.staff) ? s.staff[0] : s.staff
+    if (!staffMap.has(s.staff_id)) {
+      staffMap.set(s.staff_id, {
+        id: s.staff_id,
+        name: staffRel?.full_name ?? 'Staff',
+        role: 'Support worker',
+        tone: staffToneOptions[staffMap.size % staffToneOptions.length],
+      })
     }
+
+    const start = new Date(s.start_time)
+    const end = new Date(s.end_time)
+    const startHour = start.getHours() + start.getMinutes() / 60
+    const endHour = end.getHours() + end.getMinutes() / 60
+    const clientRel = Array.isArray(s.clients) ? s.clients[0] : s.clients
+    const clientName = clientRel?.full_name ?? 'Client'
+    const isLive = s.status === 'active' || (s.clock_in_time && !s.clock_out_time)
+    const isMissed = s.status === 'missed' || (s.status === 'scheduled' && end.getTime() < Date.now())
+    const isNdis = clientRel?.client_type === 'ndis'
+    const color: ShiftBlock['color'] = isMissed
+      ? 'red'
+      : isLive
+        ? 'green'
+        : isNdis
+          ? 'blue'
+          : 'purple'
+
+    const fmt = (d: Date) => `${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, '0')}${d.getHours() < 12 ? 'a' : 'p'}`
+
+    timelineBlocks.push({
+      id: s.id,
+      staffId: s.staff_id,
+      clientName,
+      startHour,
+      endHour,
+      color,
+      sub: `${fmt(start)}–${fmt(end)}${isMissed ? ' · missed' : ''}`,
+      live: isLive,
+    })
   })
-  const maxBar = Math.max(...days.map(day => Math.max(day.complete, day.upcoming)), 1)
+
+  const timelineStaff = Array.from(staffMap.values()).slice(0, 8)
 
   return (
     <div className="flex flex-col gap-6">
@@ -314,94 +357,10 @@ export default async function AdminDashboard() {
         initialStaffLocations={(initialStaffLocations ?? []) as any}
       />
 
+      <RosterTimeline staff={timelineStaff} blocks={timelineBlocks} />
+
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
-        <div className="space-y-6">
-          <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
-            <div className="mb-5 flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px]">bar_chart</span>
-                <h3 className="text-sm font-semibold">Shift statistics</h3>
-              </div>
-              <div className="flex items-center gap-3 text-[11px] text-[#87847d]">
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#0f172a]" />
-                  Completed
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#6B2C91]" />
-                  Upcoming
-                </span>
-              </div>
-              <span className="ml-auto rounded-xl bg-[#f7f8f9] px-3 py-1.5 text-[11px] text-[#64748b]">
-                {today.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
-              </span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <div className="grid min-w-[320px] grid-cols-7 gap-3">
-                {days.map(day => {
-                  const completeHeight = day.complete > 0 ? Math.max(28, (day.complete / maxBar) * 116) : 22
-                  const upcomingHeight = day.upcoming > 0 ? Math.max(18, (day.upcoming / maxBar) * 66) : 16
-                  const empty = day.complete === 0 && day.upcoming === 0
-                  return (
-                    <div key={day.label} className="flex flex-col items-center gap-3">
-                      <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
-                        <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#d1d5db] bg-[#f0f1f3]' : 'bg-[#0f172a]'}`} style={{ height: `${completeHeight}px` }} />
-                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#e6e8ec] bg-[#f7f8f9]' : 'border border-[#94a3b8] bg-[#6B2C91]'}`} style={{ height: `${upcomingHeight}px` }} />
-                      </div>
-                      <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#0f172a]' : 'text-[#97938a]'}`}>{day.label}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
-
-          <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-semibold text-[#0f172a]">Live roster board</h3>
-                <p className="text-xs text-[#64748b]">
-                  {activeBoard.length > 0 ? `${activeBoard.length} active shifts right now` : 'Next scheduled shifts ready to review'}
-                </p>
-              </div>
-              <Link href="/admin/active-shifts" className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b]">View live board</Link>
-            </div>
-
-            {liveBoard.length > 0 ? (
-              <div className="space-y-3">
-                {liveBoard.map(shift => (
-                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#f0f1f3] bg-[#fafbfc] p-4 md:flex-row md:items-center hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#6B2C91]">
-                        {initials(shift.staff?.full_name)}
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-[#0f172a]">{shift.staff?.full_name ?? 'Unassigned staff'}</h4>
-                        <p className="text-xs text-[#64748b]">
-                          {shift.clients?.full_name ?? 'Client pending'}
-                          {shift.clients?.address ? ` Â· ${shift.clients.address}` : ''}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="md:ml-auto md:text-right">
-                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
-                        {shift.status === 'active' ? 'Active now' : 'Scheduled'}
-                      </span>
-                      <p className="mt-2 text-xs text-[#68655e]">{clock(shift.start_time)} - {clock(shift.end_time)}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-[22px] border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-6 py-12 text-center">
-                <span className="material-symbols-outlined text-[36px] text-[#94a3b8]">calendar_month</span>
-                <p className="mt-3 text-sm font-medium text-[#0f172a]">No active or scheduled shifts in this window</p>
-                <p className="mt-1 text-xs text-[#64748b]">Use the scheduler to publish the next wave of care visits.</p>
-              </div>
-            )}
-          </section>
-        </div>
+        <div className="space-y-6" />
 
         <aside className="space-y-4">
           <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
@@ -483,14 +442,6 @@ export default async function AdminDashboard() {
 
 function percent(value: number, total: number) {
   return total ? Math.round((value / total) * 100) : 0
-}
-
-function initials(name?: string | null) {
-  return name ? name.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]?.toUpperCase()).join('') : 'VC'
-}
-
-function clock(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function dayStart(date: Date) {

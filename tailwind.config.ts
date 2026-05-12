@@ -11,12 +11,19 @@ const config: Config = {
     extend: {
       colors: {
         // ── VividCare Design System ───────────────────────────────────
-        // Primary — teal
-        "vc-primary":     "#0d9488",
-        "vc-primary-700": "#0f766e",
-        "vc-primary-800": "#115e59",
-        "vc-primary-50":  "#f0fdfa",
-        "vc-primary-100": "#ccfbf1",
+        // Primary — purple (from VividCare logo)
+        "vc-primary":     "#6B2C91",
+        "vc-primary-700": "#54206F",
+        "vc-primary-800": "#2E1240",
+        "vc-primary-50":  "#F4ECF8",
+        "vc-primary-100": "#E6D4F0",
+        // Brand accents (from logo)
+        "vc-blue":        "#2BAEE0",
+        "vc-blue-50":     "#E6F5FC",
+        "vc-blue-700":    "#1380AB",
+        "vc-green-brand": "#8DC63F",
+        "vc-green-50b":   "#F1F9E1",
+        "vc-green-700b":  "#5E8D1F",
 
         // Surface
         "vc-bg":           "#f7f8f9",
@@ -38,8 +45,6 @@ const config: Config = {
         "vc-amber-50":   "#fffbeb",
         "vc-red":        "#dc2626",
         "vc-red-50":     "#fef2f2",
-        "vc-blue":       "#2563eb",
-        "vc-blue-50":    "#eff6ff",
 
         // Legacy neutral tokens (kept for existing pages)
         "surface-container-low":      "#f2f4f6",
@@ -54,10 +59,10 @@ const config: Config = {
         "surface-container-highest":  "#e0e3e5",
         "on-error":                   "#ffffff",
         "outline-variant":            "#c1c7d1",
-        "primary":                    "#0d9488",
-        "primary-container":          "#0f766e",
+        "primary":                    "#6B2C91",
+        "primary-container":          "#54206F",
         "surface-bright":             "#ffffff",
-        "inverse-primary":            "#ccfbf1",
+        "inverse-primary":            "#E6D4F0",
         "outline":                    "#64748b",
         "error-container":            "#fef2f2",
         "on-primary":                 "#ffffff",

@@ -5,6 +5,7 @@ import ClientsTable from './ClientsTable'
 type Client = {
   id: string
   full_name: string | null
+  client_type: 'ndis' | 'standard' | null
   ndis_number: string | null
   address: string | null
   phone: string | null
@@ -27,7 +28,7 @@ export default async function ClientsPage() {
   const [{ data: clients, error: clientsError }, { data: shifts, error: shiftsError }] = await Promise.all([
     supabase
       .from('clients')
-      .select('id, full_name, ndis_number, address, phone, lat, lng')
+      .select('id, full_name, client_type, ndis_number, address, phone, lat, lng')
       .order('full_name', { ascending: true }),
     supabase
       .from('shifts')
@@ -44,6 +45,7 @@ export default async function ClientsPage() {
     return {
       id: client.id,
       full_name: client.full_name ?? 'Unnamed client',
+      client_type: (client.client_type ?? 'ndis') as 'ndis' | 'standard',
       ndis_number: client.ndis_number,
       address: client.address,
       phone: client.phone,
@@ -55,7 +57,7 @@ export default async function ClientsPage() {
 
   const summary = {
     total: cards.length,
-    ndis: cards.filter(card => card.ndis_number).length,
+    ndis: cards.filter(card => card.client_type === 'ndis').length,
     activeThisWeek: cards.filter(card => card.shiftsThisWeek > 0).length,
   }
 
@@ -89,7 +91,7 @@ export default async function ClientsPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <SummaryCard label="Client records" value={summary.total} sub="Active profiles in the system" tone="white" />
-        <SummaryCard label="NDIS-linked" value={summary.ndis} sub="Profiles with NDIS numbers" tone="accent" />
+        <SummaryCard label="NDIS clients" value={summary.ndis} sub="NDIS participants — require service agreements" tone="accent" />
         <SummaryCard label="Scheduled care" value={summary.activeThisWeek} sub="Clients with shifts this week" tone="white" />
       </section>
 

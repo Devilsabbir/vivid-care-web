@@ -16,7 +16,7 @@ export default async function AgreementsPage() {
     supabase.from('agreement_templates').select('*').order('created_at', { ascending: false }),
     supabase.from('agreements').select('*').order('created_at', { ascending: false }),
     supabase.from('profiles').select('id, full_name, role').in('role', ['admin', 'staff']).order('full_name', { ascending: true }),
-    supabase.from('clients').select('id, full_name').order('full_name', { ascending: true }),
+    supabase.from('clients').select('id, full_name').eq('client_type', 'ndis').order('full_name', { ascending: true }),
   ])
 
   if (templatesError) console.error('[agreements page] agreement_templates fetch failed:', templatesError)

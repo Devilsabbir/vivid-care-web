@@ -45,9 +45,18 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
                 .join('')}
             </div>
             <div>
-              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-                <span className="font-headline">{client.full_name ?? 'Client profile'}</span>
-              </h1>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
+                  <span className="font-headline">{client.full_name ?? 'Client profile'}</span>
+                </h1>
+                <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold ${
+                  client.client_type !== 'standard'
+                    ? 'bg-[#eef2ff] text-[#3b5bdb]'
+                    : 'bg-[#f7f8f9] text-[#64748b]'
+                }`}>
+                  {client.client_type !== 'standard' ? 'NDIS Client' : 'Client'}
+                </span>
+              </div>
               <p className="text-sm text-[#64748b]">Support plan detail, linked documents, and recent care activity for this client record</p>
             </div>
           </div>

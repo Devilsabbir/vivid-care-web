@@ -15,7 +15,15 @@ import StatusBadge from '@/components/ui/StatusBadge'
 
 type Tab = 'overview' | 'shifts' | 'documents' | 'incidents' | 'agreements' | 'notes'
 
-const TAB_ITEMS = [
+const BASE_TAB_ITEMS = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'shifts', label: 'Shifts' },
+  { key: 'documents', label: 'Documents' },
+  { key: 'incidents', label: 'Incidents' },
+  { key: 'notes', label: 'Notes' },
+]
+
+const NDIS_TAB_ITEMS = [
   { key: 'overview', label: 'Overview' },
   { key: 'shifts', label: 'Shifts' },
   { key: 'documents', label: 'Documents' },
@@ -38,6 +46,8 @@ export default function ClientDetailClient({
   agreements?: any[]
 }) {
   const searchParams = useSearchParams()
+  const isNdis = client.client_type !== 'standard'
+  const TAB_ITEMS = isNdis ? NDIS_TAB_ITEMS : BASE_TAB_ITEMS
   const initialTab = (searchParams.get('tab') as Tab) || 'overview'
   const [tab, setTab] = useState<Tab>(initialTab)
   const [deleting, setDeleting] = useState(false)
@@ -133,9 +143,21 @@ export default function ClientDetailClient({
           <div className="space-y-6">
             <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
               <h3 className="text-sm font-semibold text-[#0f172a]">Client profile</h3>
+              <div className="mt-4 flex items-center gap-2">
+                <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold ${
+                  isNdis
+                    ? 'bg-[#eef2ff] text-[#3b5bdb]'
+                    : 'bg-[#f7f8f9] text-[#64748b]'
+                }`}>
+                  {isNdis ? 'NDIS Client' : 'Client'}
+                </span>
+                {isNdis && (
+                  <span className="text-[11px] text-[#64748b]">Service agreements and signatures required</span>
+                )}
+              </div>
               <div className="mt-5 grid gap-4 md:grid-cols-2">
                 <Field label="Full name" value={client.full_name ?? 'Unnamed client'} />
-                <Field label="NDIS number" value={client.ndis_number ?? 'Not recorded'} />
+                {isNdis && <Field label="NDIS number" value={client.ndis_number ?? 'Not recorded'} />}
                 <Field label="Date of birth" value={client.date_of_birth ? new Date(client.date_of_birth).toLocaleDateString('en-AU') : 'Not recorded'} />
                 <Field label="Age" value={client.age ? String(client.age) : 'Not recorded'} />
                 <Field label="Phone" value={client.phone ?? 'Not recorded'} />
@@ -309,28 +331,36 @@ export default function ClientDetailClient({
         )
       )}
 
-      {/* Agreements tab */}
+      {/* Agreements tab — NDIS clients only */}
       {tab === 'agreements' && (
-        agreements.length > 0 ? (
-          <div className="space-y-3">
-            {agreements.map((agr: any) => (
-              <article key={agr.id} className="rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                  <div>
-                    <h4 className="text-sm font-semibold text-[#0f172a]">{agr.title ?? 'Agreement'}</h4>
-                    <p className="text-[11px] text-[#94a3b8]">
-                      {agr.created_at ? new Date(agr.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
-                    </p>
+        isNdis ? (
+          agreements.length > 0 ? (
+            <div className="space-y-3">
+              {agreements.map((agr: any) => (
+                <article key={agr.id} className="rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                    <div>
+                      <h4 className="text-sm font-semibold text-[#0f172a]">{agr.title ?? 'Agreement'}</h4>
+                      <p className="text-[11px] text-[#94a3b8]">
+                        {agr.created_at ? new Date(agr.created_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
+                      </p>
+                    </div>
+                    <div className="md:ml-auto">
+                      <StatusBadge status={agr.status ?? 'draft'} />
+                    </div>
                   </div>
-                  <div className="md:ml-auto">
-                    <StatusBadge status={agr.status ?? 'draft'} />
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon="draw" title="No agreements" description="Service agreements for this NDIS client will appear here. Generate one from the Agreements hub." />
+          )
         ) : (
-          <EmptyState icon="draw" title="No agreements" description="Service agreements for this client will appear here." />
+          <div className="rounded-[24px] border border-[#e6e8ec] bg-white px-6 py-14 text-center">
+            <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">draw</span>
+            <p className="mt-3 text-sm font-semibold text-[#0f172a]">Not applicable</p>
+            <p className="mt-1 text-xs text-[#64748b]">This is a standard (non-NDIS) client. Service agreements and signature collection are only required for NDIS participants.</p>
+          </div>
         )
       )}
 

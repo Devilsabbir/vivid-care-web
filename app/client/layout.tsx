@@ -25,13 +25,15 @@ export default async function ClientLayout({ children }: { children: React.React
       .eq('read', false),
   ])
 
+  let isNdisClient = true // default to NDIS for safe rendering
   if (profile?.client_id) {
     const { data: clientRecord } = await supabase
       .from('clients')
-      .select('full_name')
+      .select('full_name, client_type')
       .eq('id', profile.client_id)
       .single()
     clientName = clientRecord?.full_name ?? profile?.full_name ?? ''
+    isNdisClient = clientRecord?.client_type !== 'standard'
   } else {
     clientName = profile?.full_name ?? ''
   }
@@ -47,7 +49,7 @@ export default async function ClientLayout({ children }: { children: React.React
         {children}
       </main>
 
-      <ClientBottomNav />
+      <ClientBottomNav isNdis={isNdisClient} />
     </div>
   )
 }

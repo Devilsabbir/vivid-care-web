@@ -6,6 +6,7 @@ import Link from 'next/link'
 type ClientCard = {
   id: string
   full_name: string
+  client_type: 'ndis' | 'standard'
   ndis_number: string | null
   address: string | null
   phone: string | null
@@ -22,7 +23,8 @@ export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
     return clients.filter(client =>
       client.full_name.toLowerCase().includes(query) ||
       client.ndis_number?.toLowerCase().includes(query) ||
-      client.address?.toLowerCase().includes(query)
+      client.address?.toLowerCase().includes(query) ||
+      (client.client_type === 'ndis' ? 'ndis client' : 'client').includes(query)
     )
   }, [search, clients])
 
@@ -70,10 +72,10 @@ export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                {client.ndis_number ? (
-                  <span className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-semibold text-[#3b5bdb]">NDIS</span>
+                {client.client_type === 'ndis' ? (
+                  <span className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-semibold text-[#3b5bdb]">NDIS Client</span>
                 ) : (
-                  <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">Private</span>
+                  <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">Client</span>
                 )}
                 <span className={client.hasGeofence ? 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
                   {client.hasGeofence ? 'Geofence ready' : 'Address review'}

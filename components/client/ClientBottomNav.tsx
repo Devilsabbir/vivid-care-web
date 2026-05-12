@@ -3,20 +3,21 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const navItems = [
-  { href: '/client/home', icon: 'home', label: 'Home' },
-  { href: '/client/agreements', icon: 'description', label: 'Agreements' },
-  { href: '/client/shifts', icon: 'calendar_month', label: 'Visits' },
-  { href: '/client/profile', icon: 'person', label: 'Profile' },
+const ALL_NAV_ITEMS = [
+  { href: '/client/home', icon: 'home', label: 'Home', ndisOnly: false },
+  { href: '/client/agreements', icon: 'description', label: 'Agreements', ndisOnly: true },
+  { href: '/client/shifts', icon: 'calendar_month', label: 'Visits', ndisOnly: false },
+  { href: '/client/profile', icon: 'person', label: 'Profile', ndisOnly: false },
 ]
 
-export default function ClientBottomNav() {
+export default function ClientBottomNav({ isNdis = true }: { isNdis?: boolean }) {
   const pathname = usePathname()
+  const navItems = ALL_NAV_ITEMS.filter(item => !item.ndisOnly || isNdis)
 
   return (
     <nav aria-label="Client navigation" className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
       <div className="pointer-events-auto mx-auto mb-4 max-w-lg px-4">
-        <div className="grid h-[76px] grid-cols-4 items-center rounded-[28px] border border-white/10 bg-[#0f172a]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl">
+        <div className={`grid h-[76px] items-center rounded-[28px] border border-white/10 bg-[#0f172a]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl ${navItems.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
           {navItems.map(({ href, icon, label }) => {
             const active = pathname === href || pathname.startsWith(href + '/')
             return (

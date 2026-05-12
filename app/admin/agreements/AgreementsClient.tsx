@@ -300,7 +300,15 @@ export default function AgreementsClient({
               ['staff', 'Staff'],
             ]}
           />
-          <SelectField label="Target" value={createForm.target_id} onChange={value => setCreateForm(current => ({ ...current, target_id: value }))} options={targetOptions.map(option => [option.id, option.full_name ?? 'Unnamed record'])} />
+          <div>
+            <SelectField label="Target" value={createForm.target_id} onChange={value => setCreateForm(current => ({ ...current, target_id: value }))} options={targetOptions.map(option => [option.id, option.full_name ?? 'Unnamed record'])} />
+            {createForm.target_type === 'client' && (
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#64748b]">
+                <span className="material-symbols-outlined text-[14px] text-[#0d9488]">info</span>
+                Only NDIS clients are shown. Standard clients do not require service agreements.
+              </p>
+            )}
+          </div>
           <TextField label="Expires on" type="date" value={createForm.expires_on} onChange={value => setCreateForm(current => ({ ...current, expires_on: value }))} />
           <div className="md:col-span-2">
             <TextField label="Agreement title" value={createForm.title} onChange={value => setCreateForm(current => ({ ...current, title: value }))} />

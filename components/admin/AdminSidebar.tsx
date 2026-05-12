@@ -37,7 +37,6 @@ const NAV_GROUPS = [
     items: [
       { href: '/admin/payments',      icon: 'payments',       label: 'Payments' },
       { href: '/admin/notifications', icon: 'notifications',  label: 'Notifications' },
-      { href: '/admin/assistant',     icon: 'auto_awesome',   label: 'Assistant' },
       { href: '/admin/settings',      icon: 'tune',           label: 'Settings' },
     ],
   },
@@ -115,25 +114,48 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
   const sidebarContent = (onClose?: () => void) => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-2.5 border-b border-[#e6e8ec] px-4 py-[18px]">
-        <Link href="/admin/dashboard" title="Vivid Care" onClick={onClose} className="flex items-center gap-2.5">
-          <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#6B2C91]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="h-4 w-4 object-contain brightness-0 invert" />
-          </div>
-          <div className="text-[14px] font-semibold tracking-[-0.01em] text-[#0f172a]">VividCare</div>
-          <span className="ml-auto text-[10.5px] font-medium text-[#94a3b8]">Admin</span>
+      <div className="relative flex items-center border-b border-[#e6e8ec] px-4 py-4">
+        <Link
+          href="/admin/dashboard"
+          title="Vivid Care"
+          onClick={onClose}
+          className="flex flex-1 items-center justify-center"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="VividCare" className="h-12 w-auto object-contain" />
         </Link>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
             aria-label="Close navigation menu"
-            className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f7f8f9] hover:text-[#0f172a]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f7f8f9] hover:text-[#0f172a]"
           >
             <span className="material-symbols-outlined text-[18px]">close</span>
           </button>
         )}
+      </div>
+
+      {/* Org switcher */}
+      <div className="border-b border-[#e6e8ec] px-3 py-3">
+        <button
+          type="button"
+          className="flex w-full items-center gap-2.5 rounded-[10px] border border-[#e6e8ec] bg-white px-2.5 py-2 hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+          aria-label="Switch organisation region"
+        >
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] bg-gradient-to-br from-[#6B2C91] to-[#2BAEE0] text-[10px] font-semibold uppercase tracking-[0.06em] text-white">
+            WA
+          </div>
+          <div className="min-w-0 flex-1 text-left">
+            <div className="truncate text-[12px] font-semibold leading-tight text-[#0f172a]">
+              Western Australia · Perth
+            </div>
+            <div className="text-[10.5px] text-[#94a3b8]">Region · 42 clients</div>
+          </div>
+          <span className="material-symbols-outlined text-[14px] text-[#94a3b8]" aria-hidden="true">
+            expand_more
+          </span>
+        </button>
       </div>
 
       {/* Search bar */}

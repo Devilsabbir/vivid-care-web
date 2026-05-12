@@ -1,11 +1,14 @@
 ﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
 import AlertBanner from '@/components/admin/dashboard/AlertBanner'
 import KpiCard from '@/components/admin/dashboard/KpiCard'
 import DashboardLiveMap from '@/components/admin/dashboard/DashboardLiveMap'
 import RosterTimeline, { type ShiftBlock, type StaffRow } from '@/components/admin/dashboard/RosterTimeline'
+import ClientMixDonut from '@/components/admin/dashboard/ClientMixDonut'
+import ComplianceWidget, { type ExpiringDoc } from '@/components/admin/dashboard/ComplianceWidget'
+import ActivityFeed, { type ActivityRow } from '@/components/admin/dashboard/ActivityFeed'
+import TeamStatusPanel, { type TeamMember } from '@/components/admin/dashboard/TeamStatusPanel'
 
 type Shift = {
   id: string
@@ -25,14 +28,6 @@ type BoardShiftRow = Shift & {
   clients: { full_name: string | null; address: string | null } | { full_name: string | null; address: string | null }[] | null
 }
 
-type Doc = {
-  id: string
-  owner_id: string
-  owner_type: 'staff' | 'client'
-  doc_type: string
-  expiry_date: string | null
-}
-
 export default async function AdminDashboard() {
   const supabase = await createClient()
   const today = dayStart(new Date())
@@ -42,25 +37,15 @@ export default async function AdminDashboard() {
   const weekEnd = dayEnd(addDays(weekStart, 6))
 
   const [
-    { count: staffCount, error: staffCountError },
-    { count: clientCount, error: clientCountError },
     { data: weekShifts, error: weekShiftsError },
     { data: chartShifts, error: chartShiftsError },
     { data: boardShifts, error: boardShiftsError },
-    { data: docs, error: docsError },
-    { data: incidents, error: incidentsError },
-    { data: unreadNotifications, error: notificationsError },
     { data: criticalIncidents, error: criticalIncidentsError },
     { data: adminProfile },
   ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'staff'),
-    supabase.from('clients').select('*', { count: 'exact', head: true }),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', weekStart.toISOString()).lte('start_time', weekEnd.toISOString()),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', chartStart.toISOString()).lte('start_time', chartEnd.toISOString()),
-    supabase.from('shifts').select('id, staff_id, status, start_time, end_time, staff:profiles!staff_id(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(6),
-    supabase.from('documents').select('id, owner_id, owner_type, doc_type, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true }).limit(8),
-    supabase.from('incidents').select('id').neq('status', 'resolved'),
-    supabase.from('notifications').select('id').eq('read', false),
+    supabase.from('shifts').select('id, staff_id, status, start_time, end_time, staff:profiles!staff_id(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(40),
     supabase.from('incidents')
       .select('id, severity, reported_at, clients(full_name)')
       .eq('status', 'open')
@@ -74,14 +59,9 @@ export default async function AdminDashboard() {
     })(),
   ])
   if (criticalIncidentsError) console.error('[dashboard page] critical incidents fetch failed:', criticalIncidentsError)
-  if (staffCountError) console.error('[dashboard page] profiles count fetch failed:', staffCountError)
-  if (clientCountError) console.error('[dashboard page] clients count fetch failed:', clientCountError)
   if (weekShiftsError) console.error('[dashboard page] week shifts fetch failed:', weekShiftsError)
   if (chartShiftsError) console.error('[dashboard page] chart shifts fetch failed:', chartShiftsError)
   if (boardShiftsError) console.error('[dashboard page] board shifts fetch failed:', boardShiftsError)
-  if (docsError) console.error('[dashboard page] documents fetch failed:', docsError)
-  if (incidentsError) console.error('[dashboard page] incidents fetch failed:', incidentsError)
-  if (notificationsError) console.error('[dashboard page] notifications fetch failed:', notificationsError)
 
   const shifts = (weekShifts ?? []) as Shift[]
   const chart = (chartShifts ?? []) as Shift[]
@@ -90,10 +70,6 @@ export default async function AdminDashboard() {
     staff: Array.isArray(shift.staff) ? (shift.staff[0] ?? null) : (shift.staff ?? null),
     clients: Array.isArray(shift.clients) ? (shift.clients[0] ?? null) : (shift.clients ?? null),
   })) as BoardShift[]
-  const urgentDocs = ((docs ?? []) as Doc[]).filter(doc => {
-    const status = getExpiryStatus(doc.expiry_date)
-    return status === 'near_expiry' || status === 'expired'
-  })
 
   const completed = shifts.filter(shift => shift.status === 'completed' || shift.status === 'active').length
   const planned = shifts.filter(shift => shift.status !== 'cancelled').length
@@ -250,6 +226,104 @@ export default async function AdminDashboard() {
 
   const timelineStaff = Array.from(staffMap.values()).slice(0, 8)
 
+  // Side widgets data
+  const [
+    { data: allClients },
+    { data: expiringDocs },
+    { data: recentNotifs },
+    { data: allStaff },
+  ] = await Promise.all([
+    supabase.from('clients').select('client_type'),
+    (async () => {
+      const thirtyDaysOut = addDays(today, 30)
+      return supabase
+        .from('documents')
+        .select('id, doc_type, expiry_date, owner_id, owner_type')
+        .not('expiry_date', 'is', null)
+        .lte('expiry_date', thirtyDaysOut.toISOString().split('T')[0])
+        .gte('expiry_date', today.toISOString().split('T')[0])
+        .order('expiry_date', { ascending: true })
+        .limit(20)
+    })(),
+    supabase
+      .from('notifications')
+      .select('id, type, title, created_at')
+      .order('created_at', { ascending: false })
+      .limit(8),
+    supabase.from('profiles').select('id, full_name').eq('role', 'staff').order('full_name'),
+  ])
+
+  // Client mix
+  const ndisClientCount = ((allClients ?? []) as { client_type: string }[]).filter(c => c.client_type === 'ndis').length
+  const standardClientCount = ((allClients ?? []) as { client_type: string }[]).filter(c => c.client_type === 'standard').length
+
+  // Resolve owner names for the compliance widget
+  const expiringStaffIds = ((expiringDocs ?? []) as any[]).filter(d => d.owner_type === 'staff').map(d => d.owner_id)
+  const expiringClientIds = ((expiringDocs ?? []) as any[]).filter(d => d.owner_type === 'client').map(d => d.owner_id)
+  const [{ data: staffNamesRes }, { data: clientNamesRes }] = await Promise.all([
+    expiringStaffIds.length
+      ? supabase.from('profiles').select('id, full_name').in('id', expiringStaffIds)
+      : Promise.resolve({ data: [] as { id: string; full_name: string | null }[] }),
+    expiringClientIds.length
+      ? supabase.from('clients').select('id, full_name').in('id', expiringClientIds)
+      : Promise.resolve({ data: [] as { id: string; full_name: string | null }[] }),
+  ])
+  const nameMap = new Map<string, string>()
+  ;((staffNamesRes ?? []) as { id: string; full_name: string | null }[]).forEach(r => nameMap.set(r.id, r.full_name ?? 'Staff'))
+  ;((clientNamesRes ?? []) as { id: string; full_name: string | null }[]).forEach(r => nameMap.set(r.id, r.full_name ?? 'Client'))
+
+  const expiringDocsList: ExpiringDoc[] = ((expiringDocs ?? []) as any[])
+    .map(d => {
+      const daysLeft = Math.round((new Date(d.expiry_date).getTime() - Date.now()) / 86_400_000)
+      return {
+        id: d.id,
+        docType: d.doc_type,
+        ownerName: nameMap.get(d.owner_id) ?? 'Unknown',
+        ownerType: d.owner_type as 'staff' | 'client',
+        ownerId: d.owner_id,
+        daysLeft,
+      }
+    })
+    .slice(0, 5)
+
+  // Activity feed icons
+  const ICON_MAP: Record<string, { icon: string; bg: string; color: string }> = {
+    clock_in:    { icon: 'login',          bg: '#F1F9E1', color: '#5E8D1F' },
+    clock_out:   { icon: 'logout',         bg: '#F0F1F3', color: '#475569' },
+    incident:    { icon: 'warning',        bg: '#FEF3D6', color: '#78350F' },
+    doc_expiry:  { icon: 'description',    bg: '#FEE2E2', color: '#991B1B' },
+    roster:      { icon: 'calendar_month', bg: '#F4ECF8', color: '#54206F' },
+    default:     { icon: 'notifications',  bg: '#F0F1F3', color: '#475569' },
+  }
+  const activityItems: ActivityRow[] = ((recentNotifs ?? []) as any[]).map(n => {
+    const meta = ICON_MAP[n.type as string] ?? ICON_MAP.default
+    const date = new Date(n.created_at)
+    const diff = Date.now() - date.getTime()
+    const mins = Math.floor(diff / 60_000)
+    const hrs = Math.floor(mins / 60)
+    const ds = Math.floor(hrs / 24)
+    const time = ds > 0 ? `${ds}d ago` : hrs > 0 ? `${hrs}h ago` : mins > 0 ? `${mins}m ago` : 'just now'
+    return { id: n.id, icon: meta.icon, iconBg: meta.bg, iconColor: meta.color, title: n.title, time }
+  })
+
+  // Team status — derive each staff member's current state from active/scheduled shifts
+  const teamMembers: TeamMember[] = ((allStaff ?? []) as { id: string; full_name: string | null }[]).map(p => {
+    const current = (board ?? []).find(s => s.staff_id === p.id && s.status === 'active')
+    const next = (board ?? []).find(s => s.staff_id === p.id && s.status === 'scheduled' && new Date(s.start_time).getTime() > Date.now())
+    let status: TeamMember['status'] = 'off'
+    let detail = 'Off today'
+    if (current) {
+      status = 'on_shift'
+      const c = current.clients
+      detail = `Support · ${c?.full_name ?? 'client'}`
+    } else if (next) {
+      status = 'available'
+      const t = new Date(next.start_time)
+      detail = `Available · next ${t.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: false })}`
+    }
+    return { id: p.id, name: p.full_name ?? 'Staff', detail, status }
+  }).slice(0, 8)
+
   return (
     <div className="flex flex-col gap-6">
       <DashboardRealtimeRefresh />
@@ -359,82 +433,11 @@ export default async function AdminDashboard() {
 
       <RosterTimeline staff={timelineStaff} blocks={timelineBlocks} />
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
-        <div className="space-y-6" />
-
-        <aside className="space-y-4">
-          <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#0f172a]">Quick links</h3>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[
-                ['Roster', '/admin/roster', 'calendar_month'],
-                ['Doc hub', '/admin/compliance', 'description'],
-                ['Staff', '/admin/staff', 'badge'],
-                ['Clients', '/admin/clients', 'group'],
-              ].map(([label, href, icon]) => (
-                <Link key={href} href={href} className="flex flex-col gap-3 rounded-[18px] border border-[#ece8e1] bg-[#fafbfc] p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f0ede7] text-[#69665e]">
-                      <span className="material-symbols-outlined text-[18px]">{icon}</span>
-                    </div>
-                    <span className="material-symbols-outlined text-[16px] text-[#64748b]">north_east</span>
-                  </div>
-                  <span className="text-[12px] font-medium text-[#0f172a]">{label}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-semibold text-[#0f172a]">Compliance watch</h3>
-                <p className="text-xs text-[#64748b]">Expiring within 45 days</p>
-              </div>
-              <Link href="/admin/compliance" className="text-[11px] font-medium text-[#64748b]">Open</Link>
-            </div>
-            <div className="mt-4 space-y-3">
-              {urgentDocs.length > 0 ? urgentDocs.map(doc => {
-                const left = daysUntilExpiry(doc.expiry_date)
-                const docHref = doc.owner_type === 'staff'
-                  ? `/admin/staff/${doc.owner_id}?tab=documents`
-                  : `/admin/clients/${doc.owner_id}?tab=documents`
-                return (
-                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-3 py-3 hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#54206F]'}`}>
-                      {doc.owner_type === 'staff' ? 'ST' : 'CL'}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[12px] font-medium text-[#0f172a]">{doc.doc_type}</p>
-                      <p className="text-[10px] text-[#98958c]">{doc.owner_type === 'staff' ? 'Staff document' : 'Client document'}</p>
-                    </div>
-                    <span className={getExpiryStatus(doc.expiry_date) === 'expired' ? 'inline-flex rounded-full bg-[#fee2e2] px-2 py-1 text-[10px] font-semibold text-[#991b1b]' : 'inline-flex rounded-full bg-[#fef9c3] px-2 py-1 text-[10px] font-semibold text-[#92400e]'}>
-                      {left !== null && left < 0 ? `${Math.abs(left)}d overdue` : `${left ?? 0}d left`}
-                    </span>
-                  </Link>
-                )
-              }) : (
-                <div className="rounded-[18px] bg-[#fafbfc] px-4 py-6 text-center text-xs text-[#7c7a72]">No urgent document renewals in the current queue.</div>
-              )}
-            </div>
-          </section>
-
-          <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#0f172a]">Operational pulse</h3>
-            <div className="mt-4 space-y-3">
-              {[
-                { label: 'Open incidents', href: '/admin/incidents', value: incidents?.length ?? 0 },
-                { label: 'Unread notifications', href: '/admin/notifications', value: unreadNotifications?.length ?? 0 },
-                { label: 'Active clients', href: '/admin/clients', value: clientCount ?? 0 },
-              ].map(item => (
-                <Link key={item.href} href={item.href} className="flex items-center justify-between rounded-[18px] bg-[#fafbfc] px-3 py-3">
-                  <span className="text-[12px] text-[#58554f]">{item.label}</span>
-                  <span className="font-headline text-xl tracking-[-0.05em] text-[#0f172a]">{item.value}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        </aside>
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+        <ClientMixDonut ndis={ndisClientCount} standard={standardClientCount} />
+        <ComplianceWidget docs={expiringDocsList} totalCount={(expiringDocs ?? []).length} />
+        <ActivityFeed items={activityItems} />
+        <TeamStatusPanel members={teamMembers} />
       </div>
     </div>
   )

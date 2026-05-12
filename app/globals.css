@@ -4,12 +4,20 @@
 
 /* ── VividCare Design System ───────────────────────────────────────── */
 :root {
-  /* Primary — teal */
-  --vc-primary:     #0d9488;
-  --vc-primary-700: #0f766e;
-  --vc-primary-800: #115e59;
-  --vc-primary-50:  #f0fdfa;
-  --vc-primary-100: #ccfbf1;
+  /* Primary — purple (VividCare logo) */
+  --vc-primary:     #6B2C91;
+  --vc-primary-700: #54206F;
+  --vc-primary-800: #2E1240;
+  --vc-primary-50:  #F4ECF8;
+  --vc-primary-100: #E6D4F0;
+
+  /* Brand accents (from logo) */
+  --vc-blue:        #2BAEE0;
+  --vc-blue-50:     #E6F5FC;
+  --vc-blue-700:    #1380AB;
+  --vc-green-brand: #8DC63F;
+  --vc-green-50b:   #F1F9E1;
+  --vc-green-700b:  #5E8D1F;
 
   /* Surface */
   --vc-bg:           #f7f8f9;
@@ -31,8 +39,6 @@
   --vc-amber-50:   #fffbeb;
   --vc-red:        #dc2626;
   --vc-red-50:     #fef2f2;
-  --vc-blue:       #2563eb;
-  --vc-blue-50:    #eff6ff;
 
   /* Radius */
   --vc-radius:    12px;
@@ -55,7 +61,7 @@
 * { box-sizing: border-box; }
 
 ::selection {
-  background: rgba(13, 148, 136, 0.18);
+  background: rgba(107, 44, 145, 0.18);
   color: var(--vc-text);
 }
 
@@ -157,7 +163,7 @@ body {
 
 .vivid-roster-calendar .fc .fc-daygrid-day.fc-day-today,
 .vivid-roster-calendar .fc .fc-timegrid-col.fc-day-today {
-  background-color: rgba(13, 148, 136, 0.06) !important;
+  background-color: rgba(107, 44, 145, 0.06) !important;
 }
 
 .vivid-roster-calendar .fc .fc-timegrid-slot-label-cushion,

@@ -82,14 +82,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Get role + linked client_id (used for NDIS gate on the client portal)
-  const { data: profile } = await supabase
+  // Get role + linked client_id (used for NDIS gate on the client portal).
+  // If the query fails OR the profile row is missing OR role is anything other
+  // than the three known values, treat the user as having no valid role and
+  // bounce them to /login. This prevents the redirect-ping-pong loop that
+  // happens when role is undefined and falls through every role check.
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, client_id')
     .eq('id', user.id)
     .single()
 
+  if (profileError) {
+    console.error('[middleware] profile fetch failed:', profileError)
+  }
+
   const role = profile?.role
+  if (role !== 'admin' && role !== 'staff' && role !== 'client') {
+    // Broken / incomplete session — sign out and send to login.
+    await supabase.auth.signOut()
+    const redirectResponse = NextResponse.redirect(new URL('/login', request.url))
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return redirectResponse
+  }
 
   // For client-role users, look up client_type to enforce the NDIS-only portal rule.
   // Use whitelist semantics: only client_type === 'ndis' is allowed in.

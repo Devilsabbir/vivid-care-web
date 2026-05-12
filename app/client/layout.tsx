@@ -25,18 +25,26 @@ export default async function ClientLayout({ children }: { children: React.React
       .eq('read', false),
   ])
 
-  let isNdisClient = true // default to NDIS for safe rendering
-  if (profile?.client_id) {
-    const { data: clientRecord } = await supabase
-      .from('clients')
-      .select('full_name, client_type')
-      .eq('id', profile.client_id)
-      .single()
-    clientName = clientRecord?.full_name ?? profile?.full_name ?? ''
-    isNdisClient = clientRecord?.client_type !== 'standard'
-  } else {
-    clientName = profile?.full_name ?? ''
+  // Whitelist gate: only client_type === 'ndis' may access the client portal.
+  // Unlinked accounts and 'standard' clients are signed out and sent to login.
+  if (!profile?.client_id) {
+    await supabase.auth.signOut()
+    redirect('/login?error=client_not_linked')
   }
+
+  const { data: clientRecord } = await supabase
+    .from('clients')
+    .select('full_name, client_type')
+    .eq('id', profile.client_id)
+    .single()
+
+  if (clientRecord?.client_type !== 'ndis') {
+    await supabase.auth.signOut()
+    redirect('/login?error=standard_client_no_access')
+  }
+
+  clientName = clientRecord?.full_name ?? profile?.full_name ?? ''
+  const isNdisClient = true
 
   unreadCount = count ?? 0
 

@@ -29,12 +29,24 @@ export async function middleware(request: NextRequest) {
   // Public routes — /sign/ covers /sign/[token] (public agreement links) but NOT /sign-inperson (admin-only)
   if (pathname.startsWith('/login') || pathname.startsWith('/api') || pathname.startsWith('/sign/')) {
     if (user && pathname === '/login') {
-      // Redirect logged-in users away from login
+      // Redirect logged-in users away from login — but only if they have valid access.
+      // Standard (non-NDIS) clients should stay on /login since they cannot access the portal.
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, client_id')
         .eq('id', user.id)
         .single()
+
+      if (profile?.role === 'client') {
+        if (!profile.client_id) return supabaseResponse
+        const { data: clientRecord } = await supabase
+          .from('clients')
+          .select('client_type')
+          .eq('id', profile.client_id)
+          .single()
+        if (clientRecord?.client_type !== 'ndis') return supabaseResponse
+      }
+
       const dest =
         profile?.role === 'admin' ? '/admin/dashboard' :
         profile?.role === 'client' ? '/client/home' :
@@ -49,14 +61,35 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Get role
+  // Get role + linked client_id (used for NDIS gate on the client portal)
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, client_id')
     .eq('id', user.id)
     .single()
 
   const role = profile?.role
+
+  // For client-role users, look up client_type to enforce the NDIS-only portal rule.
+  // Use whitelist semantics: only client_type === 'ndis' is allowed in.
+  let clientIsNdis = false
+  if (role === 'client') {
+    if (profile?.client_id) {
+      const { data: clientRecord } = await supabase
+        .from('clients')
+        .select('client_type')
+        .eq('id', profile.client_id)
+        .single()
+      clientIsNdis = clientRecord?.client_type === 'ndis'
+    }
+
+    if (!clientIsNdis) {
+      // Standard client (or unlinked) — sign out and bounce to login with explanation.
+      await supabase.auth.signOut()
+      const errorCode = profile?.client_id ? 'standard_client_no_access' : 'client_not_linked'
+      return NextResponse.redirect(new URL(`/login?error=${errorCode}`, request.url))
+    }
+  }
 
   // Root redirect
   if (pathname === '/') {

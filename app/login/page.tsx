@@ -2,17 +2,40 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+const ERROR_MESSAGES: Record<string, string> = {
+  standard_client_no_access:
+    'The client portal is only available to NDIS participants. Please contact Vivid Care if you believe this is an error.',
+  client_not_linked:
+    'Your account is not linked to a client record. Please contact Vivid Care.',
+}
+
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageInner />
+    </Suspense>
+  )
+}
+
+function LoginPageInner() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const errorCode = searchParams.get('error')
+    if (errorCode && ERROR_MESSAGES[errorCode]) {
+      setError(ERROR_MESSAGES[errorCode])
+    }
+  }, [searchParams])
 
   async function handleLogin(event: React.FormEvent) {
     event.preventDefault()
@@ -30,11 +53,35 @@ export default function LoginPage() {
     if (data.user) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, client_id')
         .eq('id', data.user.id)
         .single()
 
       const role = profile?.role
+
+      // Client portal access is restricted to NDIS clients only.
+      if (role === 'client') {
+        if (!profile?.client_id) {
+          await supabase.auth.signOut()
+          setError(ERROR_MESSAGES.client_not_linked)
+          setLoading(false)
+          return
+        }
+
+        const { data: clientRecord } = await supabase
+          .from('clients')
+          .select('client_type')
+          .eq('id', profile.client_id)
+          .single()
+
+        if (clientRecord?.client_type !== 'ndis') {
+          await supabase.auth.signOut()
+          setError(ERROR_MESSAGES.standard_client_no_access)
+          setLoading(false)
+          return
+        }
+      }
+
       const dest = role === 'admin' ? '/admin/dashboard' : role === 'client' ? '/client/home' : '/staff/home'
       router.push(dest)
       router.refresh()

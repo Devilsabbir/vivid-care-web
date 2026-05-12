@@ -3,10 +3,23 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
+  const { pathname } = request.nextUrl
+
+  // ── Defensive: if Supabase env vars are missing, fail OPEN.
+  // Without these, every server-side query throws and the auth gates can't run.
+  // Letting traffic through is safer than redirect-looping users into /login.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseKey) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[middleware] Supabase env vars missing — auth gates skipped')
+    }
+    return supabaseResponse
+  }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -23,8 +36,16 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
-  const { pathname } = request.nextUrl
+  // Defensive: any Supabase error during the auth check should NOT redirect.
+  // Better to fall through to the public routing rules than to loop.
+  let user: { id: string } | null = null
+  try {
+    const result = await supabase.auth.getUser()
+    user = result.data.user
+  } catch (err) {
+    console.error('[middleware] supabase.auth.getUser() threw:', err)
+    return supabaseResponse
+  }
 
   // Public routes — /sign/ covers /sign/[token] (public agreement links) but NOT /sign-inperson (admin-only)
   if (pathname.startsWith('/login') || pathname.startsWith('/api') || pathname.startsWith('/sign/')) {
@@ -85,9 +106,16 @@ export async function middleware(request: NextRequest) {
 
     if (!clientIsNdis) {
       // Standard client (or unlinked) — sign out and bounce to login with explanation.
+      // signOut() clears cookies on supabaseResponse via the setAll callback. We
+      // must copy those Set-Cookie headers onto the redirect, otherwise the next
+      // request still carries the stale session and the user loops.
       await supabase.auth.signOut()
       const errorCode = profile?.client_id ? 'standard_client_no_access' : 'client_not_linked'
-      return NextResponse.redirect(new URL(`/login?error=${errorCode}`, request.url))
+      const redirectResponse = NextResponse.redirect(new URL(`/login?error=${errorCode}`, request.url))
+      supabaseResponse.cookies.getAll().forEach(cookie => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+      })
+      return redirectResponse
     }
   }
 

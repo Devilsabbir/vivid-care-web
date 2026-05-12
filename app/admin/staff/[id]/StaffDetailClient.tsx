@@ -48,8 +48,33 @@ export default function StaffDetailClient({
   const [docType, setDocType] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [hourlyRate, setHourlyRate] = useState<string>(String(member.hourly_rate ?? 0))
+  const [savingRate, setSavingRate] = useState(false)
+  const [rateMessage, setRateMessage] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  async function handleSaveRate() {
+    const parsed = parseFloat(hourlyRate)
+    if (Number.isNaN(parsed) || parsed < 0) {
+      setRateMessage('Enter a non-negative hourly rate.')
+      return
+    }
+    setSavingRate(true)
+    setRateMessage(null)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ hourly_rate: parsed })
+      .eq('id', member.id)
+    setSavingRate(false)
+    if (error) {
+      console.error('[StaffDetailClient] hourly_rate update failed:', error)
+      setRateMessage('Save failed: ' + error.message)
+      return
+    }
+    setRateMessage('Hourly rate updated.')
+    router.refresh()
+  }
 
   useEffect(() => {
     const urlTab = searchParams.get('tab') as Tab | null
@@ -141,6 +166,44 @@ export default function StaffDetailClient({
                 <Field label="Phone" value={member.phone ?? 'No phone recorded'} />
                 <Field label="Email" value={member.email ?? 'Email not stored in profile'} />
                 <Field label="Role" value="Support worker" />
+              </div>
+
+              {/* Hourly rate editor */}
+              <div className="mt-6 rounded-[18px] bg-[#fafbfc] p-4">
+                <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                  <div className="flex-1">
+                    <label htmlFor="hourly-rate" className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+                      Hourly rate (AUD)
+                    </label>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-sm font-medium text-[#64748b]">$</span>
+                      <input
+                        id="hourly-rate"
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={hourlyRate}
+                        onChange={e => setHourlyRate(e.target.value)}
+                        className="w-32 rounded-xl border border-[#e6e8ec] bg-white px-3 py-2 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                      />
+                      <span className="text-sm text-[#94a3b8]">/ hr</span>
+                    </div>
+                    <p className="mt-1 text-[11px] text-[#94a3b8]">Used by the payments page to calculate amounts owed from clocked hours.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSaveRate}
+                    disabled={savingRate}
+                    className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
+                  >
+                    {savingRate ? 'Saving…' : 'Save rate'}
+                  </button>
+                </div>
+                {rateMessage && (
+                  <p className={`mt-3 text-xs ${rateMessage.startsWith('Save failed') || rateMessage.startsWith('Enter') ? 'text-[#991b1b]' : 'text-[#0f766e]'}`}>
+                    {rateMessage}
+                  </p>
+                )}
               </div>
             </section>
 

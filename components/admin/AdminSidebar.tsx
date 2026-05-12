@@ -35,9 +35,10 @@ const NAV_GROUPS = [
   {
     label: 'Admin',
     items: [
-      { href: '/admin/payments',      icon: 'payments',      label: 'Payments' },
-      { href: '/admin/notifications', icon: 'notifications', label: 'Notifications' },
-      { href: '/admin/settings',      icon: 'tune',          label: 'Settings' },
+      { href: '/admin/payments',      icon: 'payments',       label: 'Payments' },
+      { href: '/admin/notifications', icon: 'notifications',  label: 'Notifications' },
+      { href: '/admin/assistant',     icon: 'auto_awesome',   label: 'Assistant' },
+      { href: '/admin/settings',      icon: 'tune',           label: 'Settings' },
     ],
   },
 ]

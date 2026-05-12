@@ -4,6 +4,7 @@ import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
 import AlertBanner from '@/components/admin/dashboard/AlertBanner'
 import KpiCard from '@/components/admin/dashboard/KpiCard'
+import DashboardLiveMap from '@/components/admin/dashboard/DashboardLiveMap'
 
 type Shift = {
   id: string
@@ -129,6 +130,8 @@ export default async function AdminDashboard() {
   const [
     { data: sparkShifts },
     { data: sparkIncidents },
+    { data: mapShifts },
+    { data: initialStaffLocations },
   ] = await Promise.all([
     supabase
       .from('shifts')
@@ -138,6 +141,15 @@ export default async function AdminDashboard() {
       .from('incidents')
       .select('reported_at, status')
       .gte('reported_at', eightDaysAgo.toISOString()),
+    supabase
+      .from('shifts')
+      .select('id, staff_id, client_id, status, staff:profiles!staff_id(full_name), clients(full_name, address, lat, lng)')
+      .in('status', ['active', 'scheduled'])
+      .gte('start_time', new Date(Date.now() - 86_400_000).toISOString())
+      .order('start_time', { ascending: true }),
+    supabase
+      .from('staff_locations')
+      .select('staff_id, lat, lng, updated_at, shift_id'),
   ])
 
   const shiftsSpark: number[] = []
@@ -296,6 +308,11 @@ export default async function AdminDashboard() {
           spark={incidentsSpark}
         />
       </section>
+
+      <DashboardLiveMap
+        initialShifts={(mapShifts ?? []) as any}
+        initialStaffLocations={(initialStaffLocations ?? []) as any}
+      />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
         <div className="space-y-6">

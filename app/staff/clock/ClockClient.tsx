@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -26,7 +26,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
   // The shift currently clocked in (not yet clocked out)
   const activeShift = shifts.find((s: any) => s.clock_in_time && !s.clock_out_time)
 
-  // Live location tracking — runs only while a shift is active
+  // Live location tracking â€” runs only while a shift is active
   const { stopTracking } = useLocationTracker({
     staffId,
     shiftId: activeShift?.id ?? null,
@@ -199,15 +199,15 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
     <div className="space-y-4">
       {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
       {successMessage ? (
-        <div className="flex items-start gap-3 rounded-[22px] border border-[#e4c1f5] bg-[#f9f0ff] px-4 py-4 text-sm text-[#4a006f] shadow-[0_10px_24px_rgba(23,23,22,0.05)]">
+        <div className="flex items-start gap-3 rounded-[22px] border border-[#ccfbf1] bg-[#f0fdfa] px-4 py-4 text-sm text-[#0f766e] shadow-[0_10px_24px_rgba(26,26,24,0.04)]">
           <span className="material-symbols-outlined mt-0.5 text-[18px]">check_circle</span>
           <p>{successMessage}</p>
         </div>
       ) : null}
 
-      {/* Location sharing disclosure — shown while a shift is active */}
+      {/* Location sharing disclosure â€” shown while a shift is active */}
       {activeShift && (
-        <div className="flex items-center gap-2 rounded-2xl bg-[#f3e8ff] px-4 py-3 text-xs text-[#6b21a8]">
+        <div className="flex items-center gap-2 rounded-2xl bg-[#f0fdfa] px-4 py-3 text-xs text-[#0f766e]">
           <span className="material-symbols-outlined text-[16px]">location_on</span>
           <span>Your location is being shared with your coordinator while on shift.</span>
         </div>
@@ -219,14 +219,14 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
         const start = new Date(shift.start_time)
 
         return (
-          <article key={shift.id} className="rounded-[28px] border border-[#e7e1d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
+          <article key={shift.id} className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">
                   {start.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}
                 </p>
-                <h3 className="mt-2 font-headline text-xl font-semibold text-[#171716]">{shift.clients?.full_name ?? 'Client'}</h3>
-                <p className="mt-1 text-sm text-[#666258]">
+                <h3 className="mt-2 font-headline text-xl font-semibold text-[#0f172a]">{shift.clients?.full_name ?? 'Client'}</h3>
+                <p className="mt-1 text-sm text-[#64748b]">
                   {formatTime(shift.start_time)} to {formatTime(shift.end_time)}
                 </p>
               </div>
@@ -234,12 +234,12 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
             </div>
 
             {shift.clients?.address ? (
-              <div className="mt-4 rounded-[22px] bg-[#f4f1ea] px-4 py-3 text-sm text-[#666258]">
+              <div className="mt-4 rounded-[22px] bg-[#f7f8f9] px-4 py-3 text-sm text-[#64748b]">
                 <div className="flex items-start gap-2">
-                  <span className="material-symbols-outlined mt-0.5 text-[18px] text-[#171716]">location_on</span>
+                  <span className="material-symbols-outlined mt-0.5 text-[18px] text-[#0f172a]">location_on</span>
                   <div>
-                    <p className="font-medium text-[#171716]">{shift.clients.address}</p>
-                    <p className="mt-1 text-xs text-[#8b867b]">
+                    <p className="font-medium text-[#0f172a]">{shift.clients.address}</p>
+                    <p className="mt-1 text-xs text-[#64748b]">
                       Stay within 300 metres of the client location before attempting to clock in.
                     </p>
                   </div>
@@ -247,7 +247,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
               </div>
             ) : null}
 
-            {/* Mini geofence map — shows client pin + 300m zone */}
+            {/* Mini geofence map â€” shows client pin + 300m zone */}
             {shift.clients?.lat && shift.clients?.lng ? (() => {
               const clientMarkers: MapMarker[] = [{
                 id: `client-${shift.id}`,
@@ -265,7 +265,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
               )
             })() : null}
 
-            <div className="mt-4 rounded-[22px] border border-[#ece6dc] bg-[#fbfaf7] px-4 py-3 text-xs text-[#8b867b]">
+            <div className="mt-4 rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-xs text-[#64748b]">
               Clock in opens 15 minutes before shift start. Clock out captures your GPS position for attendance history.
             </div>
 
@@ -273,7 +273,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
               <button
                 onClick={() => handleClockOut(shift)}
                 disabled={!!loading}
-                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#1b1b1a] px-4 py-4 font-headline text-base font-semibold text-white transition hover:bg-black disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#0f172a] px-4 py-4 font-headline text-base font-semibold text-white transition hover:bg-black disabled:opacity-60"
               >
                 {isThisLoading ? (
                   <span className="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>
@@ -286,7 +286,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
               <button
                 onClick={() => handleClockIn(shift)}
                 disabled={!!loading}
-                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#8B45A6] px-4 py-4 font-headline text-base font-semibold text-[#171716] transition hover:brightness-95 disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#0d9488] px-4 py-4 font-headline text-base font-semibold text-[#0f172a] transition hover:brightness-95 disabled:opacity-60"
               >
                 {isThisLoading ? (
                   <span className="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>
@@ -299,10 +299,10 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
           </article>
         )
       }) : (
-        <section className="rounded-[28px] border border-dashed border-[#d7d1c6] bg-white px-6 py-14 text-center">
-          <span className="material-symbols-outlined text-[44px] text-[#b5afa5]">timer_off</span>
-          <p className="mt-3 text-sm font-semibold text-[#171716]">No shifts scheduled for today</p>
-          <p className="mt-1 text-xs text-[#8b867b]">When a coordinator assigns a visit, it will appear here for clock actions.</p>
+        <section className="rounded-[28px] border border-dashed border-[#e6e8ec] bg-white px-6 py-14 text-center">
+          <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">timer_off</span>
+          <p className="mt-3 text-sm font-semibold text-[#0f172a]">No shifts scheduled for today</p>
+          <p className="mt-1 text-xs text-[#64748b]">When a coordinator assigns a visit, it will appear here for clock actions.</p>
         </section>
       )}
     </div>

@@ -1,4 +1,4 @@
-// components/agreements/AgreementContent.tsx
+﻿// components/agreements/AgreementContent.tsx
 // Renders all 15 sections of the Vivid Care NDIS Service Agreement as HTML.
 // Mirrors the structure of AgreementPDF.tsx but uses Tailwind instead of react-pdf.
 
@@ -34,7 +34,7 @@ const PAYMENT_LABELS: Record<'eft' | 'cheque' | 'cash', string> = {
 
 function SectionHeading({ number, title }: { number: number; title: string }) {
   return (
-    <h3 className="mt-6 border-b border-[#e8e4dc] pb-2 text-sm font-bold uppercase tracking-[0.1em] text-[#1a1a18]">
+    <h3 className="mt-6 border-b border-[#e6e8ec] pb-2 text-sm font-bold uppercase tracking-[0.1em] text-[#0f172a]">
       {number}. {title}
     </h3>
   )
@@ -43,8 +43,8 @@ function SectionHeading({ number, title }: { number: number; title: string }) {
 function Clause({ letter, text }: { letter: string; text: string }) {
   return (
     <div className="flex gap-3 py-1 pl-2">
-      <span className="mt-0.5 shrink-0 text-xs font-semibold text-[#66635b]">({letter})</span>
-      <p className="text-sm leading-6 text-[#4f4c45]">{text}</p>
+      <span className="mt-0.5 shrink-0 text-xs font-semibold text-[#64748b]">({letter})</span>
+      <p className="text-sm leading-6 text-[#64748b]">{text}</p>
     </div>
   )
 }
@@ -52,21 +52,21 @@ function Clause({ letter, text }: { letter: string; text: string }) {
 function Bullet({ text }: { text: string }) {
   return (
     <div className="flex gap-3 py-1 pl-4">
-      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8a877f]" />
-      <p className="text-sm leading-6 text-[#4f4c45]">{text}</p>
+      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#64748b]" />
+      <p className="text-sm leading-6 text-[#64748b]">{text}</p>
     </div>
   )
 }
 
 function Body({ children }: { children: React.ReactNode }) {
-  return <p className="mt-2 text-sm leading-6 text-[#4f4c45]">{children}</p>
+  return <p className="mt-2 text-sm leading-6 text-[#64748b]">{children}</p>
 }
 
 function PartiesRow({ label, value, last }: { label: string; value: string; last?: boolean }) {
   return (
     <div className={`flex ${last ? '' : 'border-b border-[#e0dbd3]'}`}>
-      <div className="w-40 shrink-0 bg-[#1a1a18] px-3 py-2 text-xs font-semibold text-white">{label}</div>
-      <div className="flex-1 px-3 py-2 text-sm text-[#1a1a18]">{value}</div>
+      <div className="w-40 shrink-0 bg-[#0f172a] px-3 py-2 text-xs font-semibold text-white">{label}</div>
+      <div className="flex-1 px-3 py-2 text-sm text-[#0f172a]">{value}</div>
     </div>
   )
 }
@@ -87,42 +87,42 @@ export default function AgreementContent({
   const p = { ...VIVID_CARE, ...provider }
 
   return (
-    <div className="space-y-1 text-[#1a1a18]">
+    <div className="space-y-1 text-[#0f172a]">
       {/* Document header */}
-      <div className="rounded-2xl bg-[#1a1a18] px-5 py-4 text-center">
-        <p className="font-headline text-lg font-bold uppercase tracking-[0.2em] text-[#7BC143]">Service Agreement</p>
-        <p className="mt-1 text-[11px] text-[#8f8a80]">Vivid Care · NDIS Registered Service Provider</p>
+      <div className="rounded-2xl bg-[#0f172a] px-5 py-4 text-center">
+        <p className="font-headline text-lg font-bold uppercase tracking-[0.2em] text-[#0d9488]">Service Agreement</p>
+        <p className="mt-1 text-[11px] text-[#8f8a80]">Vivid Care Â· NDIS Registered Service Provider</p>
       </div>
 
       {/* Provider block */}
-      <div className="mt-4 border-l-4 border-[#7BC143] pl-4">
+      <div className="mt-4 border-l-4 border-[#0d9488] pl-4">
         <div className="space-y-1 text-xs">
-          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Company Name:</span><span>{p.name}</span></div>
-          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Address:</span><span>{p.address}</span></div>
-          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Phone:</span><span>{p.phone}</span></div>
-          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Email:</span><span>{p.email}</span></div>
-          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">ABN:</span><span>{p.abn}</span></div>
-          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#4f4c45]">Version:</span><span>{AGREEMENT_VERSION}</span></div>
+          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#64748b]">Company Name:</span><span>{p.name}</span></div>
+          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#64748b]">Address:</span><span>{p.address}</span></div>
+          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#64748b]">Phone:</span><span>{p.phone}</span></div>
+          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#64748b]">Email:</span><span>{p.email}</span></div>
+          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#64748b]">ABN:</span><span>{p.abn}</span></div>
+          <div className="flex gap-3"><span className="w-28 shrink-0 font-semibold text-[#64748b]">Version:</span><span>{AGREEMENT_VERSION}</span></div>
         </div>
       </div>
 
       {/* Meta row */}
       <div className="mt-4 flex gap-6">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Date Prepared</p>
+          <p className="text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Date Prepared</p>
           <p className="mt-1 text-sm font-semibold">{commencementDate}</p>
         </div>
         {expiryDate && (
           <div>
-            <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Review Date</p>
+            <p className="text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Review Date</p>
             <p className="mt-1 text-sm font-semibold">{expiryDate}</p>
           </div>
         )}
       </div>
 
       {/* Note box */}
-      <div className="mt-4 rounded-xl bg-[#f4f2ed] px-4 py-3">
-        <p className="text-xs italic leading-5 text-[#4f4c45]">
+      <div className="mt-4 rounded-xl bg-[#f7f8f9] px-4 py-3">
+        <p className="text-xs italic leading-5 text-[#64748b]">
           NOTE: A Service Agreement can be made between a participant and a provider or a participant&apos;s representative and a provider. A participant&apos;s representative is someone close to the participant, such as a family member or friend, or someone who manages the funding for supports under a participant&apos;s NDIS plan.
         </p>
       </div>
@@ -134,7 +134,7 @@ export default function AgreementContent({
       </Body>
       <div className="mt-3 overflow-hidden rounded-xl border border-[#e0dbd3]">
         <PartiesRow label="Participant" value={participantName} />
-        <PartiesRow label="Advocate / Participant's Representative" value={advocateName ?? '—'} last />
+        <PartiesRow label="Advocate / Participant's Representative" value={advocateName ?? 'â€”'} last />
       </div>
       <Body>and</Body>
       <div className="mt-2 overflow-hidden rounded-xl border border-[#e0dbd3]">
@@ -156,8 +156,8 @@ export default function AgreementContent({
       {/* Section 3: Schedule of Supports */}
       <SectionHeading number={3} title="Schedule of Supports" />
       <Body>Vivid Care agrees to provide the following supports to the participant:</Body>
-      <div className="mt-3 rounded-xl bg-[#f4f2ed] px-4 py-3">
-        <p className="text-sm leading-6 text-[#4f4c45]">{supportDescription}</p>
+      <div className="mt-3 rounded-xl bg-[#f7f8f9] px-4 py-3">
+        <p className="text-sm leading-6 text-[#64748b]">{supportDescription}</p>
       </div>
       <Body>
         The supports will be provided according to the participant&apos;s preferred times and schedule, as agreed between the parties. All prices are inclusive of GST (if applicable) and are in line with the NDIS Price Guide current at the time of delivery. Additional expenses not included as part of the participant&apos;s NDIS supports (such as entrance fees, meals, transport costs, and personal care products) are the responsibility of the participant or their representative.
@@ -165,9 +165,9 @@ export default function AgreementContent({
 
       {/* Section 4: Responsibilities of Vivid Care */}
       <SectionHeading number={4} title="Responsibilities of Vivid Care" />
-      <p className="mt-2 text-sm font-semibold text-[#1a1a18]">Vivid Care agrees to:</p>
+      <p className="mt-2 text-sm font-semibold text-[#0f172a]">Vivid Care agrees to:</p>
       <Clause letter="a" text="Review the provision of supports at least monthly with the participant or their representative." />
-      <Clause letter="b" text="Complete an individual evacuation plan if required — this plan will be added as an appendix to this agreement." />
+      <Clause letter="b" text="Complete an individual evacuation plan if required â€” this plan will be added as an appendix to this agreement." />
       <Clause letter="c" text="Once agreed, provide supports that meet the participant's needs at the participant's preferred times." />
       <Clause letter="d" text="Communicate openly and honestly in a timely manner." />
       <Clause letter="e" text="Treat the participant with courtesy and respect at all times." />
@@ -185,14 +185,14 @@ export default function AgreementContent({
       <Clause letter="q" text="Provide supports in a manner consistent with all relevant laws, including the National Disability Insurance Scheme Act 2013 and the Australian Consumer Law; keep accurate records on the supports provided." />
       <Clause letter="r" text="Issue regular invoices and statements of the supports delivered to the participant." />
       <div className="mt-3 rounded-xl bg-[#fff8e1] px-4 py-3">
-        <p className="text-sm font-semibold leading-6 text-[#1a1a18]">
+        <p className="text-sm font-semibold leading-6 text-[#0f172a]">
           Zero Tolerance Policy: Vivid Care has policies and procedures built on human rights. Where allegations of abuse, neglect, violence, exploitation, or discrimination are made, Vivid Care employs a Zero Tolerance policy.
         </p>
       </div>
 
       {/* Section 5: Responsibilities of the Participant */}
       <SectionHeading number={5} title="Responsibilities of the Participant / Participant's Representative" />
-      <p className="mt-2 text-sm font-semibold text-[#1a1a18]">The participant/participant&apos;s representative agrees to:</p>
+      <p className="mt-2 text-sm font-semibold text-[#0f172a]">The participant/participant&apos;s representative agrees to:</p>
       <Clause letter="a" text="Respect the rights of staff, ensuring their workplace is safe, healthy, and free from harassment." />
       <Clause letter="b" text="Abide by the terms of this Service Agreement." />
       <Clause letter="c" text="Understand that needs may change and, with this, services may need to change to meet those needs." />
@@ -267,13 +267,13 @@ export default function AgreementContent({
 
       {/* Section 13: Contact Details */}
       <SectionHeading number={13} title="Contact Details" />
-      <p className="mt-2 text-sm font-semibold text-[#1a1a18]">Participant / Representative:</p>
+      <p className="mt-2 text-sm font-semibold text-[#0f172a]">Participant / Representative:</p>
       <div className="mt-2 overflow-hidden rounded-xl border border-[#e0dbd3]">
         <PartiesRow label="Name" value={participantName} />
         {advocateName && <PartiesRow label="Representative" value={advocateName} />}
-        <PartiesRow label="Phone / Email" value="—" last />
+        <PartiesRow label="Phone / Email" value="â€”" last />
       </div>
-      <p className="mt-4 text-sm font-semibold text-[#1a1a18]">Provider (Vivid Care):</p>
+      <p className="mt-4 text-sm font-semibold text-[#0f172a]">Provider (Vivid Care):</p>
       <div className="mt-2 overflow-hidden rounded-xl border border-[#e0dbd3]">
         <PartiesRow label="Contact Name" value={p.contactName} />
         <PartiesRow label="Phone" value={p.phone} />
@@ -293,34 +293,34 @@ export default function AgreementContent({
         The parties agree to the terms and conditions of this Service Agreement. This agreement has been explained verbally and the participant has had the opportunity to ask questions.
       </Body>
 
-      <div className="mt-4 grid gap-4 border-t border-[#e8e4dc] pt-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 border-t border-[#e6e8ec] pt-4 sm:grid-cols-2">
         {/* Participant signature */}
         <div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Signature of Participant / Representative</p>
+          <p className="text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Signature of Participant / Representative</p>
           {signatureDataUrl ? (
-            <div className="mt-2 overflow-hidden rounded-xl border border-[#dfd9cf] bg-white">
+            <div className="mt-2 overflow-hidden rounded-xl border border-[#e6e8ec] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={signatureDataUrl} alt="Participant signature" className="h-[70px] w-full object-contain" />
             </div>
           ) : (
-            <div className="mt-2 h-[70px] rounded-xl border border-[#dfd9cf] bg-white" />
+            <div className="mt-2 h-[70px] rounded-xl border border-[#e6e8ec] bg-white" />
           )}
-          <p className="mt-2 text-sm font-semibold text-[#1a1a18]">{signerName || '—'}</p>
-          <p className="text-xs text-[#8a877f]">Date: {signedAt}</p>
+          <p className="mt-2 text-sm font-semibold text-[#0f172a]">{signerName || 'â€”'}</p>
+          <p className="text-xs text-[#64748b]">Date: {signedAt}</p>
         </div>
 
         {/* Provider signature */}
         <div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Authorised Person from Vivid Care</p>
-          <div className="mt-2 h-[70px] rounded-xl border border-[#dfd9cf] bg-white" />
-          <p className="mt-2 text-sm font-semibold text-[#1a1a18]">{p.contactName}</p>
-          <p className="text-xs text-[#8a877f]">Date: ___________________</p>
+          <p className="text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Authorised Person from Vivid Care</p>
+          <div className="mt-2 h-[70px] rounded-xl border border-[#e6e8ec] bg-white" />
+          <p className="mt-2 text-sm font-semibold text-[#0f172a]">{p.contactName}</p>
+          <p className="text-xs text-[#64748b]">Date: ___________________</p>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-6 border-t border-[#e8e4dc] pt-4 text-center text-[11px] text-[#a8a49d]">
-        <p>Vivid Care · ABN {p.abn} · {p.address} · {p.email}</p>
+      <div className="mt-6 border-t border-[#e6e8ec] pt-4 text-center text-[11px] text-[#a8a49d]">
+        <p>Vivid Care Â· ABN {p.abn} Â· {p.address} Â· {p.email}</p>
         {signedAt && <p className="mt-1">This document was digitally signed on {signedAt}. Generated by Vivid Care platform.</p>}
       </div>
     </div>

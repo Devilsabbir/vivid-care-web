@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getExpiryStatus } from '@/lib/utils/expiry'
 import StaffTable from './StaffTable'
@@ -97,23 +97,23 @@ export default async function StaffPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Staff</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">badge</span>
               operations
             </span>
           </div>
-          <p className="text-sm text-[#6c6b66]">Roster visibility, document readiness, and live workforce health in one view</p>
+          <p className="text-sm text-[#64748b]">Roster visibility, document readiness, and live workforce health in one view</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-[#f4f2ed] px-3 py-2 text-xs font-medium text-[#59564f]">
+          <span className="rounded-full bg-[#f7f8f9] px-3 py-2 text-xs font-medium text-[#64748b]">
             {summary.activeThisWeek} active this week
           </span>
           <Link
             href="/admin/staff/new"
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"
           >
             <span className="material-symbols-outlined text-[18px]">person_add</span>
             Add staff
@@ -121,11 +121,11 @@ export default async function StaffPage() {
         </div>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
-        <span className="rounded-full bg-[#1a1a18] px-4 py-2 text-white">All staff</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Active</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Inactive</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Expiring docs</span>
+      <nav className="flex flex-wrap gap-2 rounded-full bg-[#f0f1f3] p-1.5 text-xs font-medium">
+        <span className="rounded-full bg-[#0f172a] px-4 py-2 text-white">All staff</span>
+        <span className="rounded-full px-4 py-2 text-[#64748b]">Active</span>
+        <span className="rounded-full px-4 py-2 text-[#64748b]">Inactive</span>
+        <span className="rounded-full px-4 py-2 text-[#64748b]">Expiring docs</span>
       </nav>
 
       <section className="grid gap-4 md:grid-cols-3">
@@ -153,10 +153,10 @@ function SummaryCard({
   danger?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : danger ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#ca8a04]' : 'text-[#1a1a18]'}`}>{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#0f766e]' : danger ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#ca8a04]' : 'text-[#0f172a]'}`}>{value}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }

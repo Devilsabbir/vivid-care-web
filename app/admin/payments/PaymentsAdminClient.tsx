@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -54,17 +54,17 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
     {
       key: 'client',
       label: 'Client',
-      render: row => <span className="font-medium text-[#1a1a18]">{row.client_name ?? '—'}</span>,
+      render: row => <span className="font-medium text-[#0f172a]">{row.client_name ?? 'â€”'}</span>,
     },
     {
       key: 'staff',
       label: 'Staff',
-      render: row => row.staff_name ?? <span className="italic text-[#9b988f]">Unassigned</span>,
+      render: row => row.staff_name ?? <span className="italic text-[#94a3b8]">Unassigned</span>,
     },
     {
       key: 'service',
       label: 'Service',
-      render: row => row.support_type ?? '—',
+      render: row => row.support_type ?? 'â€”',
     },
     {
       key: 'hours',
@@ -103,13 +103,13 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
 
       {/* Search */}
       <div className="relative max-w-sm">
-        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#9b988f]" aria-hidden="true">search</span>
+        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#94a3b8]" aria-hidden="true">search</span>
         <input
           type="search"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search by client, staff, or service..."
-          className="w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] py-2.5 pl-10 pr-4 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+          className="w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] py-2.5 pl-10 pr-4 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
           aria-label="Search payments"
         />
       </div>
@@ -126,17 +126,17 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
       />
 
       {/* Payroll not enabled notice */}
-      <div className="rounded-[22px] border border-[#e8e4dc] bg-white p-6 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+      <div className="rounded-[22px] border border-[#e6e8ec] bg-white p-6 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#f4f2ed]">
-            <span className="material-symbols-outlined text-[20px] text-[#6f6b63]" aria-hidden="true">account_balance_wallet</span>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#f7f8f9]">
+            <span className="material-symbols-outlined text-[20px] text-[#64748b]" aria-hidden="true">account_balance_wallet</span>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Payroll processing is not enabled</h3>
-            <p className="mt-1 text-sm text-[#6c6b66]">
+            <h3 className="text-sm font-semibold text-[#0f172a]">Payroll processing is not enabled</h3>
+            <p className="mt-1 text-sm text-[#64748b]">
               This page shows a read-only summary of shift hours and clock activity. Invoice generation, NDIS claiming, and payment processing require a payroll integration that has not been configured for this organisation.
             </p>
-            <p className="mt-2 text-xs text-[#9b988f]">Contact your system administrator to enable payroll features.</p>
+            <p className="mt-2 text-xs text-[#94a3b8]">Contact your system administrator to enable payroll features.</p>
           </div>
         </div>
       </div>

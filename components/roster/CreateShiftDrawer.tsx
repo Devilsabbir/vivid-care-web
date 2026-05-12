@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import Drawer from '@/components/ui/Drawer'
@@ -167,12 +167,12 @@ export default function CreateShiftDrawer({
           required
         />
 
-        <label className="flex items-center gap-2 text-sm text-[#4f4c45]">
+        <label className="flex items-center gap-2 text-sm text-[#64748b]">
           <input
             type="checkbox"
             checked={form.overnight}
             onChange={e => setForm(f => ({ ...f, overnight: e.target.checked }))}
-            className="h-4 w-4 rounded border-[#dfd9cf]"
+            className="h-4 w-4 rounded border-[#e6e8ec]"
           />
           Overnight shift
         </label>
@@ -188,18 +188,18 @@ export default function CreateShiftDrawer({
           <RosterValidationPanel results={validationResults} />
         )}
 
-        <div className="flex justify-end gap-3 border-t border-[#f0ece5] pt-4">
+        <div className="flex justify-end gap-3 border-t border-[#f0f1f3] pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-2xl border border-[#ddd9d1] px-5 py-2.5 text-sm font-medium text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+            className="rounded-2xl border border-[#e6e8ec] px-5 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving || hasErrors}
-            className="rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2"
+            className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
           >
             {saving ? 'Saving...' : editingShiftId ? 'Update shift' : 'Create shift'}
           </button>

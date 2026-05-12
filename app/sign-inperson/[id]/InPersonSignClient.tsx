@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -28,12 +28,12 @@ export default function InPersonSignClient({
   if (status === 'signed') {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-[28px] border border-[#e8e4dc] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
+        <div className="w-full max-w-md rounded-[28px] border border-[#e6e8ec] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
           <p className="text-sm text-[#67635c]">This agreement has already been signed.</p>
           <button
             type="button"
             onClick={() => router.push('/admin/agreements')}
-            className="mt-6 rounded-2xl bg-[#1a1a18] px-6 py-3 text-sm font-semibold text-white"
+            className="mt-6 rounded-2xl bg-[#0f172a] px-6 py-3 text-sm font-semibold text-white"
           >
             Back to agreements
           </button>
@@ -45,11 +45,11 @@ export default function InPersonSignClient({
   if (done) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-[28px] border border-[#e8e4dc] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1a1a18]">
-            <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#8B45A6]">verified</span>
+        <div className="w-full max-w-md rounded-[28px] border border-[#e6e8ec] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#0f172a]">
+            <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#0d9488]">verified</span>
           </div>
-          <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#1a1a18]">Signed successfully</h2>
+          <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#0f172a]">Signed successfully</h2>
           <p className="mt-3 text-sm leading-6 text-[#67635c]">
             The agreement has been signed and the PDF has been generated.
           </p>
@@ -59,7 +59,7 @@ export default function InPersonSignClient({
                 href={pdfUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full rounded-2xl bg-[#8B45A6] px-4 py-3 text-sm font-semibold text-[#1a1a18] text-center"
+                className="w-full rounded-2xl bg-[#0d9488] px-4 py-3 text-sm font-semibold text-[#0f172a] text-center"
               >
                 Download PDF
               </a>
@@ -67,7 +67,7 @@ export default function InPersonSignClient({
             <button
               type="button"
               onClick={() => router.push('/admin/agreements')}
-              className="w-full rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white"
+              className="w-full rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white"
             >
               Back to agreements
             </button>
@@ -116,59 +116,59 @@ export default function InPersonSignClient({
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-[#e8e4dc]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-[#e6e8ec]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Vivid Care" className="h-9 w-9 object-contain" />
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[#8a877f]">Vivid Care · In-Person Signing</p>
-          <h1 className="text-xl font-semibold tracking-[-0.03em] text-[#1a1a18]">Service Agreement</h1>
+          <p className="text-[11px] uppercase tracking-[0.16em] text-[#94a3b8]">Vivid Care · In-Person Signing</p>
+          <h1 className="text-xl font-semibold tracking-[-0.03em] text-[#0f172a]">Service Agreement</h1>
         </div>
       </div>
 
-      <div className="mb-6 rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
-        <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Agreement for</p>
-        <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-[#1a1a18]">{participantName}</h2>
+      <div className="mb-6 rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
+        <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Agreement for</p>
+        <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-[#0f172a]">{participantName}</h2>
         <p className="mt-1 text-sm text-[#67635c]">{agreementTitle}</p>
         {expiresOn ? (
-          <p className="mt-1 text-xs text-[#8a877f]">
+          <p className="mt-1 text-xs text-[#94a3b8]">
             Expires: {new Date(expiresOn).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         ) : null}
       </div>
 
-      <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
-        <div className="mb-4 rounded-[20px] bg-[#f4f2ed] p-4 text-sm text-[#67635c]">
+      <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
+        <div className="mb-4 rounded-[20px] bg-[#f7f8f9] p-4 text-sm text-[#67635c]">
           Please hand this device to the participant or their representative to sign below.
         </div>
 
         <div className="mb-4">
-          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">
             Full name of signee *
           </label>
           <input
             type="text"
             value={signerName}
             onChange={e => setSignerName(e.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+            className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">
             Signature *
           </label>
-          <div className="mt-2 overflow-hidden rounded-[20px] border border-[#dfd9cf] bg-white">
+          <div className="mt-2 overflow-hidden rounded-[20px] border border-[#e6e8ec] bg-white">
             <SignatureCanvas
               ref={signatureRef}
-              penColor="#1a1a18"
+              penColor="#0f172a"
               canvasProps={{ className: 'h-[220px] w-full' }}
             />
           </div>
           <button
             type="button"
             onClick={() => signatureRef.current?.clear()}
-            className="mt-2 text-xs text-[#8a877f] underline"
+            className="mt-2 text-xs text-[#94a3b8] underline"
           >
             Clear signature
           </button>
@@ -184,7 +184,7 @@ export default function InPersonSignClient({
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
-          className="w-full rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          className="w-full rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
         >
           {submitting ? 'Signing and generating PDF...' : 'Submit Signature'}
         </button>

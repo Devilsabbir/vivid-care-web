@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -170,7 +170,7 @@ export default function ActiveShiftsClient({
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
         <StatCard label="Active now" value={active.length} sub="Shifts currently in progress" />
         <StatCard label="Scheduled next" value={scheduled.length} sub={`${geoReady}/${monitored} shifts have geofence coordinates`} accent />
-        <aside className="relative overflow-hidden rounded-[24px] bg-[#1a1a18] p-6 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
+        <aside className="relative overflow-hidden rounded-[24px] bg-[#0f172a] p-6 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
           <div className="absolute right-[-24px] top-[-24px] h-36 w-36 rounded-full bg-white/5" />
           <div className="relative flex h-full flex-col justify-between gap-8">
             <div>
@@ -181,7 +181,7 @@ export default function ActiveShiftsClient({
             </div>
             <Link
               href="/admin/roster"
-              className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-[#1a1a18]"
+              className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-[#0f172a]"
             >
               Open roster planner
               <span className="material-symbols-outlined text-[18px]">north_east</span>
@@ -190,23 +190,23 @@ export default function ActiveShiftsClient({
         </aside>
       </section>
 
-      {/* Live location map — visible when any staff have a GPS position */}
+      {/* Live location map â€” visible when any staff have a GPS position */}
       {mapMarkers.length > 0 && (
-        <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
+        <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Live location map</h3>
-              <p className="text-xs text-[#8a877f]">Staff positions update every 30 seconds</p>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Live location map</h3>
+              <p className="text-xs text-[#64748b]">Staff positions update every 30 seconds</p>
             </div>
-            <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#8a877f]">
+            <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#64748b]">
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-[#8B45A6]" /> Staff
+                <span className="h-3 w-3 rounded-full bg-[#0d9488]" /> Staff
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded-full bg-[#00AAEF]" /> Client
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full border-2 border-[#8B45A6]/30 bg-transparent" /> Geofence
+                <span className="h-3 w-3 rounded-full border-2 border-[#0d9488]/30 bg-transparent" /> Geofence
               </span>
             </div>
           </div>
@@ -215,13 +215,13 @@ export default function ActiveShiftsClient({
       )}
 
       {active.length > 0 ? (
-        <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
+        <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Live shift board</h3>
-              <p className="text-xs text-[#8a877f]">Staff currently onsite with attendance progress and location readiness</p>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Live shift board</h3>
+              <p className="text-xs text-[#64748b]">Staff currently onsite with attendance progress and location readiness</p>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#faf5ff] px-3 py-1.5 text-[11px] font-medium text-[#6b21a8]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#faf5ff] px-3 py-1.5 text-[11px] font-medium text-[#0f766e]">
               <span className="h-2.5 w-2.5 rounded-full bg-[#a855f7] animate-pulse" />
               Realtime feed
             </span>
@@ -235,13 +235,13 @@ export default function ActiveShiftsClient({
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
-        <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
+        <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Scheduled watchlist</h3>
-              <p className="text-xs text-[#8a877f]">Upcoming visits that are ready for clock-in monitoring</p>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Scheduled watchlist</h3>
+              <p className="text-xs text-[#64748b]">Upcoming visits that are ready for clock-in monitoring</p>
             </div>
-            <Link href="/admin/shift-history" className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45]">
+            <Link href="/admin/shift-history" className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b]">
               View history
             </Link>
           </div>
@@ -256,7 +256,7 @@ export default function ActiveShiftsClient({
             <EmptyState
               icon="event_available"
               title="No scheduled shifts in the watch window"
-              copy="As new shifts approach their start time, they’ll appear here for live monitoring."
+              copy="As new shifts approach their start time, theyâ€™ll appear here for live monitoring."
             />
           )}
         </section>
@@ -297,12 +297,12 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
   const progress = shiftProgress(shift)
 
   return (
-    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4 transition-colors hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
           <Avatar name={shift.staffName} tone="dark" />
           <div>
-            <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.staffName}</h4>
+            <h4 className="text-sm font-semibold text-[#0f172a]">{shift.staffName}</h4>
             <p className="text-[12px] text-[#7d7a73]">{shift.clientName}</p>
             <p className="text-[11px] text-[#9a978f]">
               {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
@@ -311,7 +311,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
         </div>
 
         <div className="md:ml-auto md:max-w-[14rem] md:text-right">
-          <span className="inline-flex rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]">
+          <span className="inline-flex rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]">
             Live now
           </span>
           <p className="mt-2 text-[12px] text-[#68655e]">{shift.clientAddress ?? 'No client address saved'}</p>
@@ -323,10 +323,10 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
         <div className="flex-1">
           <div className="flex items-center justify-between text-[11px] text-[#7c7972]">
             <span>Attendance progress</span>
-            <strong className="font-semibold text-[#1a1a18]">{progress}%</strong>
+            <strong className="font-semibold text-[#0f172a]">{progress}%</strong>
           </div>
           <div className="mt-2 h-2 rounded-full bg-[#ebe7df]">
-            <div className="h-2 rounded-full bg-[#1a1a18]" style={{ width: `${progress}%` }} />
+            <div className="h-2 rounded-full bg-[#0f172a]" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -335,7 +335,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
             {shift.hasGeofence ? 'Geofence ready' : 'Geofence missing'}
           </span>
           {shift.clockInTime ? (
-            <span className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[#5f5c55]">
+            <span className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[#64748b]">
               Clocked in {formatTime(shift.clockInTime)}
             </span>
           ) : null}
@@ -347,11 +347,11 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
 
 function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
   return (
-    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#ece8df] bg-[#faf9f6] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
       <div className="flex items-center gap-3">
         <Avatar name={shift.staffName} tone="accent" />
         <div>
-          <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.staffName}</h4>
+          <h4 className="text-sm font-semibold text-[#0f172a]">{shift.staffName}</h4>
           <p className="text-[12px] text-[#7d7a73]">{shift.clientName}</p>
           <p className="text-[11px] text-[#9a978f]">{formatDate(shift.startTime)}</p>
         </div>
@@ -384,21 +384,21 @@ function StatCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }
 
 function InfoRail({ title, items }: { title: string; items: string[] }) {
   return (
-    <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-      <div className="border-b border-[#f0ece5] px-4 py-3">
-        <h3 className="text-sm font-semibold text-[#1a1a18]">{title}</h3>
+    <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0f1f3] px-4 py-3">
+        <h3 className="text-sm font-semibold text-[#0f172a]">{title}</h3>
       </div>
-      <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#66635b]">
+      <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#64748b]">
         {items.map(item => (
           <p key={item}>{item}</p>
         ))}
@@ -417,10 +417,10 @@ function EmptyState({
   copy: string
 }) {
   return (
-    <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
-      <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">{icon}</span>
-      <p className="mt-3 text-sm font-medium text-[#1a1a18]">{title}</p>
-      <p className="mt-1 text-xs text-[#8a877f]">{copy}</p>
+    <div className="rounded-[24px] border border-dashed border-[#e6e8ec] bg-white px-6 py-16 text-center">
+      <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">{icon}</span>
+      <p className="mt-3 text-sm font-medium text-[#0f172a]">{title}</p>
+      <p className="mt-1 text-xs text-[#64748b]">{copy}</p>
     </div>
   )
 }
@@ -449,7 +449,7 @@ function formatDate(value: string) {
 
 function Avatar({ name, tone }: { name: string; tone: 'dark' | 'accent' }) {
   return (
-    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#1a1a18] text-[#8B45A6]' : 'bg-[#8B45A6] text-[#1a1a18]'}`}>
+    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#0f172a] text-[#0d9488]' : 'bg-[#0d9488] text-[#0f172a]'}`}>
       {name
         .split(' ')
         .filter(Boolean)
@@ -462,6 +462,6 @@ function Avatar({ name, tone }: { name: string; tone: 'dark' | 'accent' }) {
 
 function pillClass(tone: 'green' | 'amber') {
   return tone === 'green'
-    ? 'rounded-full bg-[#f3e8ff] px-3 py-1.5 text-[#6b21a8]'
+    ? 'rounded-full bg-[#f0fdfa] px-3 py-1.5 text-[#0f766e]'
     : 'rounded-full bg-[#fef9c3] px-3 py-1.5 text-[#92400e]'
 }

@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 
@@ -58,17 +58,17 @@ export default async function CompliancePage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Document</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]"><span className="material-symbols-outlined text-[18px]">description</span>hub</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]"><span className="material-symbols-outlined text-[18px]">description</span>hub</span>
           </div>
-          <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]"><span className="font-headline">and compliance</span></div>
-          <p className="text-sm text-[#6c6b66]">Live document health across staff, client, and compliance records</p>
+          <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]"><span className="font-headline">and compliance</span></div>
+          <p className="text-sm text-[#64748b]">Live document health across staff, client, and compliance records</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span></Link>
-          <Link href="/admin/staff" aria-label="Staff directory" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">badge</span></Link>
-          <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"><span className="material-symbols-outlined text-[18px]">upload_file</span>Review uploads</Link>
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span></Link>
+          <Link href="/admin/staff" aria-label="Staff directory" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">badge</span></Link>
+          <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"><span className="material-symbols-outlined text-[18px]">upload_file</span>Review uploads</Link>
         </div>
       </header>
 
@@ -82,39 +82,39 @@ export default async function CompliancePage() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
         <div className="space-y-6">
-          <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-            <div className="flex flex-col gap-4 border-b border-[#f0ece5] px-5 py-4 md:flex-row md:items-center md:justify-between md:px-6">
-              <div><h3 className="text-sm font-semibold text-[#1a1a18]">Compliance documents</h3><p className="text-xs text-[#8a877f]">Renewals, qualifications, screening, and client-facing records</p></div>
-              <div className="flex items-center gap-2"><span className="inline-flex items-center gap-1 rounded-xl bg-[#f7f5f0] px-3 py-1.5 text-[11px] text-[#66635b]"><span className="material-symbols-outlined text-[16px]">filter_alt</span>Sorted by expiry</span><Link href="/admin/staff" className="inline-flex items-center gap-1 rounded-xl bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white"><span className="material-symbols-outlined text-[16px]">upload</span>Upload entry</Link></div>
+          <section className="overflow-hidden rounded-[28px] border border-[#e6e8ec] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+            <div className="flex flex-col gap-4 border-b border-[#f0f1f3] px-5 py-4 md:flex-row md:items-center md:justify-between md:px-6">
+              <div><h3 className="text-sm font-semibold text-[#0f172a]">Compliance documents</h3><p className="text-xs text-[#64748b]">Renewals, qualifications, screening, and client-facing records</p></div>
+              <div className="flex items-center gap-2"><span className="inline-flex items-center gap-1 rounded-xl bg-[#f7f8f9] px-3 py-1.5 text-[11px] text-[#64748b]"><span className="material-symbols-outlined text-[16px]">filter_alt</span>Sorted by expiry</span><Link href="/admin/staff" className="inline-flex items-center gap-1 rounded-xl bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white"><span className="material-symbols-outlined text-[16px]">upload</span>Upload entry</Link></div>
             </div>
-            {rows.length > 0 ? <div className="overflow-x-auto"><table className="min-w-full border-collapse"><thead><tr className="text-left text-[10px] uppercase tracking-[0.14em] text-[#adaba4]"><th className="px-6 py-3 font-medium">Document</th><th className="px-6 py-3 font-medium">Owner</th><th className="px-6 py-3 font-medium">Expires</th><th className="px-6 py-3 font-medium">Status</th><th className="px-6 py-3 font-medium text-right">Action</th></tr></thead><tbody>{rows.slice(0, 10).map(doc => <tr key={doc.id} className="border-t border-[#f5f1ea] text-sm text-[#1a1a18]"><td className="px-6 py-4"><div className="flex items-center gap-3"><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${doc.status === 'expired' ? 'bg-[#fee2e2] text-[#dc2626]' : doc.status === 'near_expiry' ? 'bg-[#fef9c3] text-[#ca8a04]' : 'bg-[#f3e8ff] text-[#9333ea]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><div><p className="font-medium text-[#1a1a18]">{doc.doc_type}</p><p className="text-[11px] text-[#a19e95]">{labelFile(doc.file_name)}</p></div></div></td><td className="px-6 py-4"><Link href={doc.href} className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[12px] text-[#4f4c45]"><span className={`flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>{short(doc.name)}</span>{doc.name}</Link></td><td className={`px-6 py-4 text-[12px] font-medium ${doc.status === 'expired' ? 'text-[#dc2626]' : doc.status === 'near_expiry' ? 'text-[#ca8a04]' : 'text-[#6f6b63]'}`}>{formatDate(doc.expiry_date)}</td><td className="px-6 py-4"><span className={chip(doc.status)}>{copyStatus(doc.status, doc.days)}</span></td><td className="px-6 py-4 text-right">{doc.file_url ? <a href={doc.file_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-[#e5e1d9] px-3 py-1.5 text-[11px] text-[#555149]">Open<span className="material-symbols-outlined text-[14px]">north_east</span></a> : <span className="text-[11px] text-[#aaa79f]">No file</span>}</td></tr>)}</tbody></table></div> : <div className="px-6 py-14 text-center"><span className="material-symbols-outlined text-[40px] text-[#b2aea4]">description</span><p className="mt-3 text-sm font-medium text-[#1a1a18]">No compliance documents with expiry dates yet</p><p className="mt-1 text-xs text-[#8a877f]">Upload documents from staff and client profiles to activate this workspace.</p></div>}
+            {rows.length > 0 ? <div className="overflow-x-auto"><table className="min-w-full border-collapse"><thead><tr className="text-left text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]"><th className="px-6 py-3 font-medium">Document</th><th className="px-6 py-3 font-medium">Owner</th><th className="px-6 py-3 font-medium">Expires</th><th className="px-6 py-3 font-medium">Status</th><th className="px-6 py-3 font-medium text-right">Action</th></tr></thead><tbody>{rows.slice(0, 10).map(doc => <tr key={doc.id} className="border-t border-[#f0f1f3] text-sm text-[#0f172a]"><td className="px-6 py-4"><div className="flex items-center gap-3"><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${doc.status === 'expired' ? 'bg-[#fee2e2] text-[#dc2626]' : doc.status === 'near_expiry' ? 'bg-[#fef9c3] text-[#ca8a04]' : 'bg-[#f0fdfa] text-[#0d9488]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><div><p className="font-medium text-[#0f172a]">{doc.doc_type}</p><p className="text-[11px] text-[#94a3b8]">{labelFile(doc.file_name)}</p></div></div></td><td className="px-6 py-4"><Link href={doc.href} className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[12px] text-[#64748b]"><span className={`flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#0f766e]'}`}>{short(doc.name)}</span>{doc.name}</Link></td><td className={`px-6 py-4 text-[12px] font-medium ${doc.status === 'expired' ? 'text-[#dc2626]' : doc.status === 'near_expiry' ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{formatDate(doc.expiry_date)}</td><td className="px-6 py-4"><span className={chip(doc.status)}>{copyStatus(doc.status, doc.days)}</span></td><td className="px-6 py-4 text-right">{doc.file_url ? <a href={doc.file_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-[#e6e8ec] px-3 py-1.5 text-[11px] text-[#64748b]">Open<span className="material-symbols-outlined text-[14px]">north_east</span></a> : <span className="text-[11px] text-[#94a3b8]">No file</span>}</td></tr>)}</tbody></table></div> : <div className="px-6 py-14 text-center"><span className="material-symbols-outlined text-[40px] text-[#94a3b8]">description</span><p className="mt-3 text-sm font-medium text-[#0f172a]">No compliance documents with expiry dates yet</p><p className="mt-1 text-xs text-[#64748b]">Upload documents from staff and client profiles to activate this workspace.</p></div>}
           </section>
 
-          <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-            <div className="flex items-center justify-between gap-3 border-b border-[#f0ece5] px-5 py-4 md:px-6"><div><h3 className="text-sm font-semibold text-[#1a1a18]">Policy and handbook hub</h3><p className="text-xs text-[#8a877f]">Starter structure for the policy-library module in the next implementation slice</p></div><span className="rounded-xl bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white">Phase 2 ready</span></div>
+          <section className="overflow-hidden rounded-[28px] border border-[#e6e8ec] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+            <div className="flex items-center justify-between gap-3 border-b border-[#f0f1f3] px-5 py-4 md:px-6"><div><h3 className="text-sm font-semibold text-[#0f172a]">Policy and handbook hub</h3><p className="text-xs text-[#64748b]">Starter structure for the policy-library module in the next implementation slice</p></div><span className="rounded-xl bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white">Phase 2 ready</span></div>
             <div className="grid gap-3 p-5 md:grid-cols-3 md:p-6">
-              {policyCards.map(([title, meta, tone]) => <div key={title} className={`rounded-[18px] p-4 ${tone === 'dashed' ? 'border border-dashed border-[#dad5cb] bg-[#faf9f6] text-center' : 'border border-[#ece8e1] bg-white'}`}><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'indigo' ? 'bg-[#eef2ff] text-[#3b5bdb]' : tone === 'accent' ? 'bg-[#8B45A6] text-[#1a1a18]' : 'bg-[#f0ede7] text-[#88847d]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><p className="mt-4 text-sm font-medium text-[#1a1a18]">{title}</p><p className="mt-1 text-[11px] text-[#9c998f]">{meta}</p></div>)}
+              {policyCards.map(([title, meta, tone]) => <div key={title} className={`rounded-[18px] p-4 ${tone === 'dashed' ? 'border border-dashed border-[#dad5cb] bg-[#fafbfc] text-center' : 'border border-[#ece8e1] bg-white'}`}><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'indigo' ? 'bg-[#eef2ff] text-[#3b5bdb]' : tone === 'accent' ? 'bg-[#0d9488] text-[#0f172a]' : 'bg-[#f0ede7] text-[#88847d]'}`}><span className="material-symbols-outlined text-[18px]">description</span></div><p className="mt-4 text-sm font-medium text-[#0f172a]">{title}</p><p className="mt-1 text-[11px] text-[#94a3b8]">{meta}</p></div>)}
             </div>
           </section>
         </div>
 
         <aside className="space-y-4">
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="border-b border-[#f0ece5] px-4 py-3"><h3 className="text-sm font-semibold text-[#1a1a18]">Expiring within 45 days</h3></div>
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <div className="border-b border-[#f0f1f3] px-4 py-3"><h3 className="text-sm font-semibold text-[#0f172a]">Expiring within 45 days</h3></div>
             <div className="space-y-1 p-2">
-              {soon.concat(expired).slice(0, 5).map(doc => <Link key={doc.id} href={doc.href} className="flex items-center gap-3 rounded-[18px] px-3 py-3 hover:bg-[#faf9f6]"><span className={`flex h-8 w-8 items-center justify-center rounded-full text-[9px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>{short(doc.name)}</span><div className="min-w-0 flex-1"><p className="truncate text-[12px] font-medium text-[#1a1a18]">{doc.name}</p><p className="truncate text-[10px] text-[#a19e95]">{doc.doc_type}</p></div><span className={`text-[10px] font-medium ${doc.status === 'expired' ? 'text-[#dc2626]' : 'text-[#ca8a04]'}`}>{doc.days !== null && doc.days < 0 ? `${Math.abs(doc.days)}d` : `${doc.days ?? 0}d`}</span></Link>)}
+              {soon.concat(expired).slice(0, 5).map(doc => <Link key={doc.id} href={doc.href} className="flex items-center gap-3 rounded-[18px] px-3 py-3 hover:bg-[#fafbfc]"><span className={`flex h-8 w-8 items-center justify-center rounded-full text-[9px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#0f766e]'}`}>{short(doc.name)}</span><div className="min-w-0 flex-1"><p className="truncate text-[12px] font-medium text-[#0f172a]">{doc.name}</p><p className="truncate text-[10px] text-[#94a3b8]">{doc.doc_type}</p></div><span className={`text-[10px] font-medium ${doc.status === 'expired' ? 'text-[#dc2626]' : 'text-[#ca8a04]'}`}>{doc.days !== null && doc.days < 0 ? `${Math.abs(doc.days)}d` : `${doc.days ?? 0}d`}</span></Link>)}
               {soon.length + expired.length === 0 ? <div className="px-4 py-6 text-center text-xs text-[#7c7a72]">Nothing is approaching expiry right now.</div> : null}
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="border-b border-[#f0ece5] px-4 py-3"><h3 className="text-sm font-semibold text-[#1a1a18]">Agreement signatures</h3></div>
-            <div className="space-y-3 px-4 py-4"><div className="rounded-[18px] bg-[#faf9f6] p-4"><p className="text-[12px] font-medium text-[#1a1a18]">Reserved for the agreement module</p><p className="mt-1 text-[11px] leading-5 text-[#8a877f]">The current schema does not have agreement or signature tables yet, so this panel stays honest while keeping the UI structure ready.</p></div><div className="rounded-[18px] border border-dashed border-[#dad5cb] px-4 py-3 text-[11px] text-[#8a877f]">Next step: wire agreement templates, signature capture, and renewal statuses into this rail.</div></div>
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <div className="border-b border-[#f0f1f3] px-4 py-3"><h3 className="text-sm font-semibold text-[#0f172a]">Agreement signatures</h3></div>
+            <div className="space-y-3 px-4 py-4"><div className="rounded-[18px] bg-[#fafbfc] p-4"><p className="text-[12px] font-medium text-[#0f172a]">Reserved for the agreement module</p><p className="mt-1 text-[11px] leading-5 text-[#64748b]">The current schema does not have agreement or signature tables yet, so this panel stays honest while keeping the UI structure ready.</p></div><div className="rounded-[18px] border border-dashed border-[#dad5cb] px-4 py-3 text-[11px] text-[#64748b]">Next step: wire agreement templates, signature capture, and renewal statuses into this rail.</div></div>
           </section>
 
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="border-b border-[#f0ece5] px-4 py-3"><h3 className="text-sm font-semibold text-[#1a1a18]">Upload a document</h3></div>
-            <div className="p-4"><Link href="/admin/staff" className="flex flex-col items-center gap-3 rounded-[18px] border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-5 py-6 text-center"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#8a877f]"><span className="material-symbols-outlined text-[18px]">upload_file</span></div><div><p className="text-sm font-medium text-[#1a1a18]">Open upload workflow</p><p className="mt-1 text-[11px] leading-5 text-[#8a877f]">Staff and client profile pages already hold the current upload entry point.</p></div><span className="rounded-xl bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white">Go to profiles</span></Link></div>
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <div className="border-b border-[#f0f1f3] px-4 py-3"><h3 className="text-sm font-semibold text-[#0f172a]">Upload a document</h3></div>
+            <div className="p-4"><Link href="/admin/staff" className="flex flex-col items-center gap-3 rounded-[18px] border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-5 py-6 text-center"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#64748b]"><span className="material-symbols-outlined text-[18px]">upload_file</span></div><div><p className="text-sm font-medium text-[#0f172a]">Open upload workflow</p><p className="mt-1 text-[11px] leading-5 text-[#64748b]">Staff and client profile pages already hold the current upload entry point.</p></div><span className="rounded-xl bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white">Go to profiles</span></Link></div>
           </section>
         </aside>
       </div>
@@ -134,11 +134,11 @@ function Tile({
   danger?: 'amber' | 'red'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'accent' ? 'bg-black/10 text-[#1a1a18]' : 'bg-[#f3f1eb] text-[#6c6962]'}`}><span className="material-symbols-outlined text-[18px]">{icon}</span></div>
-      <p className={`mt-4 text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'accent' ? 'bg-black/10 text-[#0f172a]' : 'bg-[#f3f1eb] text-[#6c6962]'}`}><span className="material-symbols-outlined text-[18px]">{icon}</span></div>
+      <p className={`mt-4 text-[12px] ${tone === 'accent' ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
       {badge ? <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold ${danger === 'red' ? 'bg-[#fee2e2] text-[#991b1b]' : 'bg-[#fef9c3] text-[#92400e]'}`}>{badge}</span> : null}
     </div>
   )
@@ -164,7 +164,7 @@ function formatDate(value: string | null) {
 function chip(status: 'expired' | 'near_expiry' | 'active' | 'none') {
   if (status === 'expired') return 'inline-flex rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'near_expiry') return 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  return 'inline-flex rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
+  return 'inline-flex rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
 }
 
 function copyStatus(status: 'expired' | 'near_expiry' | 'active' | 'none', days: number | null) {

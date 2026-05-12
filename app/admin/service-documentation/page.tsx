@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import DocumentationAdminClient from './DocumentationAdminClient'
 
@@ -33,17 +33,17 @@ export default async function ServiceDocumentationPage() {
     <div className="space-y-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Service documentation</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">fact_check</span>
               NDIS engine
             </span>
           </div>
-          <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">review and approval workspace</span>
           </div>
-          <p className="text-sm text-[#6c6b66]">
+          <p className="text-sm text-[#64748b]">
             Track required post-shift records, review submissions, and approve compliance documentation.
           </p>
         </div>

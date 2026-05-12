@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -57,21 +57,21 @@ export default function NewStaffPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-3">
-          <button onClick={() => router.back()} className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55]">
+          <button onClick={() => router.back()} className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b]">
             <span className="material-symbols-outlined text-[16px]">arrow_back</span>
             Back to staff
           </button>
           <div>
-            <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+            <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
               <span className="font-headline">Create staff account</span>
             </h1>
-            <p className="text-sm text-[#6c6b66]">Create a support worker profile and generate their initial login credentials</p>
+            <p className="text-sm text-[#64748b]">Create a support worker profile and generate their initial login credentials</p>
           </div>
         </div>
       </header>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
-        <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+        <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid gap-4 md:grid-cols-2">
               <Field
@@ -105,7 +105,7 @@ export default function NewStaffPage() {
               />
             </div>
 
-            <div className="rounded-[18px] bg-[#faf9f6] p-4 text-[12px] leading-6 text-[#66635b]">
+            <div className="rounded-[18px] bg-[#fafbfc] p-4 text-[12px] leading-6 text-[#64748b]">
               Staff created from this flow will be able to sign in immediately and can change their password after their first login.
             </div>
 
@@ -119,14 +119,14 @@ export default function NewStaffPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="flex-1 rounded-2xl bg-[#f4f2ed] px-4 py-3 text-sm font-semibold text-[#4f4c45]"
+                className="flex-1 rounded-2xl bg-[#f7f8f9] px-4 py-3 text-sm font-semibold text-[#64748b]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {saving ? 'Creating account...' : 'Create staff account'}
               </button>
@@ -175,7 +175,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
         {label}{required ? ' *' : ''}
       </label>
       <input
@@ -184,7 +184,7 @@ function Field({
         onChange={event => onChange(event.target.value)}
         placeholder={placeholder}
         required={required}
-        className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
       />
     </div>
   )
@@ -192,11 +192,11 @@ function Field({
 
 function InfoRail({ title, items }: { title: string; items: string[] }) {
   return (
-    <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-      <div className="border-b border-[#f0ece5] px-4 py-3">
-        <h3 className="text-sm font-semibold text-[#1a1a18]">{title}</h3>
+    <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0f1f3] px-4 py-3">
+        <h3 className="text-sm font-semibold text-[#0f172a]">{title}</h3>
       </div>
-      <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#66635b]">
+      <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#64748b]">
         {items.map(item => (
           <p key={item}>{item}</p>
         ))}

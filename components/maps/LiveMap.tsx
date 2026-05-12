@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import dynamic from 'next/dynamic'
 
@@ -26,14 +26,14 @@ const MapInner = dynamic(() => import('./MapInner'), {
   ssr: false,
   loading: () => (
     <div
-      className="flex items-center justify-center rounded-[20px] bg-[#f4f2ed]"
+      className="flex items-center justify-center rounded-[20px] bg-[#f7f8f9]"
       style={{ height: '380px' }}
     >
       <div className="text-center">
-        <span className="material-symbols-outlined animate-pulse text-[32px] text-[#b5afa5]">
+        <span className="material-symbols-outlined animate-pulse text-[32px] text-[#94a3b8]">
           map
         </span>
-        <p className="mt-2 text-xs text-[#8a877f]">Loading map...</p>
+        <p className="mt-2 text-xs text-[#64748b]">Loading map...</p>
       </div>
     </div>
   ),

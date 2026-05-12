@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { type ReactNode } from 'react'
 
 interface Action {
@@ -13,8 +13,8 @@ export default function ProfileHeader({
   subtitle,
   backHref,
   backLabel,
-  avatarBg = 'bg-[#1a1a18]',
-  avatarColor = 'text-[#8B45A6]',
+  avatarBg = 'bg-[#0f172a]',
+  avatarColor = 'text-[#0d9488]',
   statusBadge,
   actions = [],
   children,
@@ -41,7 +41,7 @@ export default function ProfileHeader({
       <div className="space-y-3">
         <Link
           href={backHref}
-          className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+          className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
         >
           <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
           {backLabel}
@@ -52,12 +52,12 @@ export default function ProfileHeader({
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
                 <span className="font-headline">{name}</span>
               </h1>
               {statusBadge}
             </div>
-            <p className="text-sm text-[#6c6b66]">{subtitle}</p>
+            <p className="text-sm text-[#64748b]">{subtitle}</p>
           </div>
         </div>
         {children}
@@ -70,7 +70,7 @@ export default function ProfileHeader({
               <Link
                 key={action.label}
                 href={action.href}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
               >
                 <span className="material-symbols-outlined text-[18px]" aria-hidden="true">{action.icon}</span>
                 {action.label}
@@ -80,7 +80,7 @@ export default function ProfileHeader({
                 key={action.label}
                 type="button"
                 onClick={action.onClick}
-                className="inline-flex items-center gap-2 rounded-2xl border border-[#ddd9d1] bg-white px-4 py-2.5 text-sm font-semibold text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-2xl border border-[#e6e8ec] bg-white px-4 py-2.5 text-sm font-semibold text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
               >
                 <span className="material-symbols-outlined text-[18px]" aria-hidden="true">{action.icon}</span>
                 {action.label}

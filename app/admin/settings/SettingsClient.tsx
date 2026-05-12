@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -226,7 +226,7 @@ export default function SettingsClient({
       ) : null}
 
       {message ? (
-        <section className="rounded-[24px] border border-[#e4c1f5] bg-[#f9f0ff] p-4 text-sm text-[#4a006f]">
+        <section className="rounded-[24px] border border-[#ccfbf1] bg-[#f0fdfa] p-4 text-sm text-[#0f766e]">
           {message}
         </section>
       ) : null}
@@ -250,17 +250,17 @@ export default function SettingsClient({
       />
 
       {activeTab === 'organization' && (
-        <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Organization</p>
-              <h3 className="mt-2 text-lg font-semibold text-[#1a1a18]">Platform defaults</h3>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Organization</p>
+              <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">Platform defaults</h3>
             </div>
             <button
               type="button"
               onClick={handleSaveSettings}
               disabled={saving === 'settings'}
-              className="rounded-2xl bg-[#1a1a18] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+              className="rounded-2xl bg-[#0f172a] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
             >
               {saving === 'settings' ? 'Saving...' : 'Save settings'}
             </button>
@@ -281,12 +281,12 @@ export default function SettingsClient({
             <Input label="Pay period" value={settingsForm.pay_period} onChange={value => setSettingsForm(current => ({ ...current, pay_period: value }))} />
             <Input label="Warning days" value={settingsForm.doc_warning_days} onChange={value => setSettingsForm(current => ({ ...current, doc_warning_days: value }))} />
             <div className="md:col-span-2">
-              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Address</label>
+              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Address</label>
               <textarea
                 value={settingsForm.address ?? ''}
                 onChange={event => setSettingsForm(current => ({ ...current, address: event.target.value }))}
                 rows={3}
-                className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
               />
             </div>
           </div>
@@ -294,11 +294,11 @@ export default function SettingsClient({
       )}
 
       {activeTab === 'documents' && (
-        <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Documents</p>
-              <h3 className="mt-2 text-lg font-semibold text-[#1a1a18]">Upload rules</h3>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Documents</p>
+              <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">Upload rules</h3>
             </div>
             <div className="grid gap-3 md:grid-cols-4">
               <SmallInput label="Name" value={docConfig.name} onChange={value => setDocConfig(current => ({ ...current, name: value }))} />
@@ -312,7 +312,7 @@ export default function SettingsClient({
                 ]}
               />
               <SmallInput label="Category" value={docConfig.category} onChange={value => setDocConfig(current => ({ ...current, category: value }))} />
-              <label className="flex items-end gap-2 text-sm text-[#4f4c45]">
+              <label className="flex items-end gap-2 text-sm text-[#64748b]">
                 <input
                   type="checkbox"
                   checked={docConfig.requires_expiry}
@@ -324,7 +324,7 @@ export default function SettingsClient({
                 type="button"
                 onClick={handleAddDocumentType}
                 disabled={saving === 'document-type'}
-                className="rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60 md:col-span-4"
+                className="rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60 md:col-span-4"
               >
                 {saving === 'document-type' ? 'Adding...' : 'Add document type'}
               </button>
@@ -333,11 +333,11 @@ export default function SettingsClient({
 
           <div className="mt-5 grid gap-3 md:grid-cols-2">
             {documentTypes.map(documentType => (
-              <article key={documentType.id} className="rounded-[20px] border border-[#efebe4] bg-[#faf9f6] p-4">
+              <article key={documentType.id} className="rounded-[20px] border border-[#f0f1f3] bg-[#fafbfc] p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-[#1a1a18]">{documentType.name}</p>
-                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#8a877f]">
+                    <p className="text-sm font-semibold text-[#0f172a]">{documentType.name}</p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#64748b]">
                       {documentType.owner_type} / {documentType.category}
                     </p>
                   </div>
@@ -353,28 +353,28 @@ export default function SettingsClient({
       )}
 
       {activeTab === 'support-types' && (
-        <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Support types</p>
-          <h3 className="mt-2 text-lg font-semibold text-[#1a1a18]">NDIS configuration</h3>
+        <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Support types</p>
+          <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">NDIS configuration</h3>
 
           <div className="mt-5 grid gap-3">
             <SmallInput label="Key" value={supportTypeForm.key} onChange={value => setSupportTypeForm(current => ({ ...current, key: slugify(value) }))} />
             <SmallInput label="Title" value={supportTypeForm.title} onChange={value => setSupportTypeForm(current => ({ ...current, title: value }))} />
             <SmallInput label="Item number" value={supportTypeForm.item_number} onChange={value => setSupportTypeForm(current => ({ ...current, item_number: value }))} />
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Description</label>
+              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Description</label>
               <textarea
                 rows={3}
                 value={supportTypeForm.description}
                 onChange={event => setSupportTypeForm(current => ({ ...current, description: event.target.value }))}
-                className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
               />
             </div>
             <button
               type="button"
               onClick={handleAddSupportType}
               disabled={saving === 'support-type'}
-              className="rounded-2xl bg-[#8B45A6] px-4 py-3 text-sm font-semibold text-[#1a1a18] disabled:opacity-60"
+              className="rounded-2xl bg-[#0d9488] px-4 py-3 text-sm font-semibold text-[#0f172a] disabled:opacity-60"
             >
               {saving === 'support-type' ? 'Adding...' : 'Add support type'}
             </button>
@@ -384,13 +384,13 @@ export default function SettingsClient({
             {supportTypes.map(type => {
               const requirementCount = requirementCounts.find(entry => entry.key === type.key)?.count ?? 0
               return (
-                <article key={type.key} className="rounded-[20px] border border-[#efebe4] bg-[#faf9f6] p-4">
+                <article key={type.key} className="rounded-[20px] border border-[#f0f1f3] bg-[#fafbfc] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-[#1a1a18]">{type.title}</p>
-                      <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#8a877f]">{type.key}</p>
+                      <p className="text-sm font-semibold text-[#0f172a]">{type.title}</p>
+                      <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#64748b]">{type.key}</p>
                     </div>
-                    <span className="rounded-full bg-[#1a1a18] px-2.5 py-1 text-[10px] font-semibold text-white">
+                    <span className="rounded-full bg-[#0f172a] px-2.5 py-1 text-[10px] font-semibold text-white">
                       {requirementCount} forms
                     </span>
                   </div>
@@ -403,9 +403,9 @@ export default function SettingsClient({
       )}
 
       {activeTab === 'requirements' && (
-        <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Documentation rules</p>
-          <h3 className="mt-2 text-lg font-semibold text-[#1a1a18]">Required forms per support type</h3>
+        <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Documentation rules</p>
+          <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">Required forms per support type</h3>
 
           <div className="mt-5 grid gap-3">
             <SelectInput
@@ -416,7 +416,7 @@ export default function SettingsClient({
             />
             <SmallInput label="Form key" value={requirementForm.form_key} onChange={value => setRequirementForm(current => ({ ...current, form_key: slugify(value) }))} />
             <SmallInput label="Label" value={requirementForm.label} onChange={value => setRequirementForm(current => ({ ...current, label: value }))} />
-            <label className="flex items-end gap-2 text-sm text-[#4f4c45]">
+            <label className="flex items-end gap-2 text-sm text-[#64748b]">
               <input
                 type="checkbox"
                 checked={requirementForm.required}
@@ -428,7 +428,7 @@ export default function SettingsClient({
               type="button"
               onClick={handleAddRequirement}
               disabled={saving === 'requirement'}
-              className="rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+              className="rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
             >
               {saving === 'requirement' ? 'Adding...' : 'Add requirement'}
             </button>
@@ -436,16 +436,16 @@ export default function SettingsClient({
 
           <div className="mt-5 space-y-3">
             {supportTypes.map(type => (
-              <div key={type.key} className="rounded-[20px] border border-[#efebe4] bg-[#faf9f6] p-4">
-                <p className="text-sm font-semibold text-[#1a1a18]">{type.title}</p>
+              <div key={type.key} className="rounded-[20px] border border-[#f0f1f3] bg-[#fafbfc] p-4">
+                <p className="text-sm font-semibold text-[#0f172a]">{type.title}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {requirements.filter(requirement => requirement.support_type_key === type.key).map(requirement => (
-                    <span key={requirement.id} className="rounded-full bg-white px-3 py-1.5 text-[11px] text-[#4f4c45]">
+                    <span key={requirement.id} className="rounded-full bg-white px-3 py-1.5 text-[11px] text-[#64748b]">
                       {requirement.label}
                     </span>
                   ))}
                   {!requirements.some(requirement => requirement.support_type_key === type.key) ? (
-                    <span className="text-[11px] text-[#8a877f]">No requirements yet.</span>
+                    <span className="text-[11px] text-[#64748b]">No requirements yet.</span>
                   ) : null}
                 </div>
               </div>
@@ -469,10 +469,10 @@ function MetricCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }
@@ -490,12 +490,12 @@ function Input({
 }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">{label}</label>
+      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{label}</label>
       <input
         type={type}
         value={value}
         onChange={event => onChange(event.target.value)}
-        className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
       />
     </div>
   )
@@ -512,11 +512,11 @@ function SmallInput({
 }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">{label}</label>
+      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{label}</label>
       <input
         value={value}
         onChange={event => onChange(event.target.value)}
-        className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
       />
     </div>
   )
@@ -535,11 +535,11 @@ function SelectInput({
 }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">{label}</label>
+      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{label}</label>
       <select
         value={value}
         onChange={event => onChange(event.target.value)}
-        className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
       >
         {options.map(([optionValue, labelValue]) => (
           <option key={optionValue} value={optionValue}>

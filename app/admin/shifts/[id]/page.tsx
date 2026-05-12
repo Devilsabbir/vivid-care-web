@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ShiftDetailClient from './ShiftDetailClient'
@@ -66,16 +66,16 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
         <div className="space-y-3">
           <Link
             href="/admin/shifts"
-            className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
           >
             <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
             Back to shifts
           </Link>
           <div className="space-y-2">
-            <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+            <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
               <span className="font-headline">Shift detail</span>
             </h1>
-            <p className="text-sm text-[#6c6b66]">
+            <p className="text-sm text-[#64748b]">
               {clientRecord?.full_name ?? 'Client'} · {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
           </div>

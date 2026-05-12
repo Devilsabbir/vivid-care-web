@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import StatusBadge from '@/components/ui/StatusBadge'
@@ -58,18 +58,18 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       {/* Back link */}
       <Link
         href="/staff/home"
-        className="inline-flex items-center gap-1 text-xs font-medium text-[#8a877f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] rounded"
+        className="inline-flex items-center gap-1 text-xs font-medium text-[#94a3b8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] rounded"
       >
         <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
         Back to home
       </Link>
 
       {/* Status header */}
-      <div className="rounded-[24px] bg-[#1a1a18] p-5 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
+      <div className="rounded-[24px] bg-[#0f172a] p-5 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
         <div className="flex items-center justify-between">
           <StatusBadge status={state.status as any} label={state.label} />
           {geoReady ? (
-            <span className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium text-[#7BC143]">
+            <span className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium text-[#0d9488]">
               <span className="material-symbols-outlined text-[14px]" aria-hidden="true">location_on</span>
               Geofence active
             </span>
@@ -84,36 +84,36 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       </div>
 
       {/* Client card */}
-      <div className="rounded-[24px] border border-[#e8e4dc] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-        <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Client</p>
-        <p className="mt-2 text-lg font-semibold text-[#1a1a18]">{client?.full_name ?? 'Client'}</p>
+      <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Client</p>
+        <p className="mt-2 text-lg font-semibold text-[#0f172a]">{client?.full_name ?? 'Client'}</p>
         {client?.address && (
-          <p className="mt-1 text-sm text-[#66635b]">{client.address}</p>
+          <p className="mt-1 text-sm text-[#64748b]">{client.address}</p>
         )}
       </div>
 
       {/* Shift details */}
-      <div className="rounded-[24px] border border-[#e8e4dc] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-        <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Shift details</p>
+      <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Shift details</p>
         <div className="mt-3 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-[20px] text-[#8a877f]" aria-hidden="true">calendar_today</span>
-            <span className="text-sm text-[#1a1a18]">{formatDate(startDate)}</span>
+            <span className="material-symbols-outlined text-[20px] text-[#94a3b8]" aria-hidden="true">calendar_today</span>
+            <span className="text-sm text-[#0f172a]">{formatDate(startDate)}</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-[20px] text-[#8a877f]" aria-hidden="true">schedule</span>
-            <span className="text-sm text-[#1a1a18]">{formatTime(startDate)} – {formatTime(endDate)}</span>
+            <span className="material-symbols-outlined text-[20px] text-[#94a3b8]" aria-hidden="true">schedule</span>
+            <span className="text-sm text-[#0f172a]">{formatTime(startDate)} – {formatTime(endDate)}</span>
           </div>
           {shift.support_type && (
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[20px] text-[#8a877f]" aria-hidden="true">category</span>
-              <span className="text-sm text-[#1a1a18]">{shift.support_type}</span>
+              <span className="material-symbols-outlined text-[20px] text-[#94a3b8]" aria-hidden="true">category</span>
+              <span className="text-sm text-[#0f172a]">{shift.support_type}</span>
             </div>
           )}
           {client?.address && (
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[20px] text-[#8a877f]" aria-hidden="true">location_on</span>
-              <span className="text-sm text-[#1a1a18]">{client.address}</span>
+              <span className="material-symbols-outlined text-[20px] text-[#94a3b8]" aria-hidden="true">location_on</span>
+              <span className="text-sm text-[#0f172a]">{client.address}</span>
             </div>
           )}
         </div>
@@ -121,23 +121,23 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
 
       {/* Notes */}
       {shift.notes && (
-        <div className="rounded-[24px] border border-[#e8e4dc] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Notes</p>
-          <p className="mt-2 text-sm leading-6 text-[#4f4c45]">{shift.notes}</p>
+        <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Notes</p>
+          <p className="mt-2 text-sm leading-6 text-[#64748b]">{shift.notes}</p>
         </div>
       )}
 
       {/* Clock events */}
       {clockEvents.length > 0 && (
-        <div className="rounded-[24px] border border-[#e8e4dc] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Clock history</p>
+        <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Clock history</p>
           <div className="mt-3 space-y-2">
             {clockEvents.map((event: any) => (
-              <div key={event.id} className="flex items-center gap-3 rounded-[16px] bg-[#faf9f6] px-3 py-2">
-                <span className={`material-symbols-outlined text-[16px] ${event.type === 'clock_in' ? 'text-[#166534]' : 'text-[#6b21a8]'}`} aria-hidden="true">
+              <div key={event.id} className="flex items-center gap-3 rounded-[16px] bg-[#fafbfc] px-3 py-2">
+                <span className={`material-symbols-outlined text-[16px] ${event.type === 'clock_in' ? 'text-[#166534]' : 'text-[#0f766e]'}`} aria-hidden="true">
                   {event.type === 'clock_in' ? 'login' : 'logout'}
                 </span>
-                <span className="text-sm text-[#1a1a18]">
+                <span className="text-sm text-[#0f172a]">
                   {event.type === 'clock_in' ? 'Clock in' : 'Clock out'} – {new Date(event.created_at).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
                 </span>
               </div>
@@ -150,7 +150,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       {state.canClockIn && (
         <Link
           href="/staff/clock"
-          className="block w-full rounded-2xl bg-[#7BC143] py-4 text-center text-sm font-bold text-[#1a1a18] shadow-[0_14px_32px_rgba(123,193,67,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2"
+          className="block w-full rounded-2xl bg-[#0d9488] py-4 text-center text-sm font-bold text-[#0f172a] shadow-[0_14px_32px_rgba(13,148,136,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
         >
           <span className="material-symbols-outlined mr-2 text-[18px] align-middle" aria-hidden="true">timer</span>
           Go to clock
@@ -160,7 +160,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       {state.status === 'in_progress' && (
         <Link
           href="/staff/clock"
-          className="block w-full rounded-2xl bg-[#1a1a18] py-4 text-center text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2"
+          className="block w-full rounded-2xl bg-[#0f172a] py-4 text-center text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
         >
           <span className="material-symbols-outlined mr-2 text-[18px] align-middle" aria-hidden="true">timer</span>
           Clock out

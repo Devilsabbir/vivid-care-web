@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { VIVID_CARE } from '@/lib/agreements/constants'
 import ClientAgreementsClient from './ClientAgreementsClient'
@@ -20,8 +20,8 @@ export default async function ClientAgreementsPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center px-4 text-center">
         <div>
-          <p className="text-lg font-semibold text-[#1a1a18]">Account not linked</p>
-          <p className="mt-2 text-sm text-[#8a877f]">
+          <p className="text-lg font-semibold text-[#0f172a]">Account not linked</p>
+          <p className="mt-2 text-sm text-[#64748b]">
             Your portal account is not yet linked to a client record. Please contact Vivid Care.
           </p>
         </div>

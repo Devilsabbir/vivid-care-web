@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -36,7 +36,7 @@ export default function IncidentStatusUpdate({
 
   return (
     <div className="space-y-3">
-      <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Workflow status</p>
+      <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Workflow status</p>
       <div className="space-y-2">
         {STATUSES.map(option => {
           const active = status === option
@@ -47,7 +47,7 @@ export default function IncidentStatusUpdate({
               disabled={saving || active}
               onClick={() => update(option)}
               className={`flex w-full items-center justify-between rounded-[18px] px-4 py-3 text-left text-sm font-medium transition-colors disabled:opacity-60 ${
-                active ? 'bg-[#1a1a18] text-white' : 'bg-[#f4f2ed] text-[#4f4c45] hover:bg-[#ebe7df]'
+                active ? 'bg-[#0f172a] text-white' : 'bg-[#f7f8f9] text-[#64748b] hover:bg-[#ebe7df]'
               }`}
             >
               <span className="capitalize">{option === 'investigating' ? 'Under review' : option}</span>

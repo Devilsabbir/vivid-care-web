@@ -1,4 +1,4 @@
-// components/agreements/AgreementPDF.tsx
+﻿// components/agreements/AgreementPDF.tsx
 
 import {
   Document,
@@ -14,20 +14,20 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
     fontSize: 10,
-    color: '#1a1a18',
+    color: '#0f172a',
     paddingTop: 48,
     paddingBottom: 56,
     paddingHorizontal: 48,
   },
   headerBar: {
-    backgroundColor: '#1a1a18',
+    backgroundColor: '#0f172a',
     paddingVertical: 16,
     paddingHorizontal: 24,
     marginBottom: 24,
     borderRadius: 4,
   },
   headerTitle: {
-    color: '#7BC143',
+    color: '#0d9488',
     fontSize: 22,
     fontFamily: 'Helvetica-Bold',
     textAlign: 'center',
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   providerBlock: {
     marginBottom: 20,
     borderLeftWidth: 3,
-    borderLeftColor: '#7BC143',
+    borderLeftColor: '#0d9488',
     paddingLeft: 10,
   },
   providerRow: {
@@ -53,11 +53,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
     fontSize: 9,
     width: 90,
-    color: '#4f4c45',
+    color: '#64748b',
   },
   providerValue: {
     fontSize: 9,
-    color: '#1a1a18',
+    color: '#0f172a',
     flex: 1,
   },
   metaRow: {
@@ -70,30 +70,30 @@ const styles = StyleSheet.create({
   },
   metaLabel: {
     fontSize: 8,
-    color: '#8a877f',
+    color: '#64748b',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 2,
   },
   metaValue: {
     fontSize: 9,
-    color: '#1a1a18',
+    color: '#0f172a',
     fontFamily: 'Helvetica-Bold',
   },
   sectionHeading: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 12,
-    color: '#1a1a18',
+    color: '#0f172a',
     marginTop: 16,
     marginBottom: 6,
     borderBottomWidth: 1,
-    borderBottomColor: '#e8e4dc',
+    borderBottomColor: '#e6e8ec',
     paddingBottom: 4,
   },
   subHeading: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 10,
-    color: '#1a1a18',
+    color: '#0f172a',
     marginTop: 8,
     marginBottom: 4,
   },
@@ -120,14 +120,14 @@ const styles = StyleSheet.create({
     color: '#3a3832',
   },
   infoBox: {
-    backgroundColor: '#f4f2ed',
+    backgroundColor: '#f7f8f9',
     borderRadius: 4,
     padding: 10,
     marginBottom: 10,
   },
   infoBoxText: {
     fontSize: 9,
-    color: '#4f4c45',
+    color: '#64748b',
     lineHeight: 1.5,
     fontFamily: 'Helvetica-Oblique',
   },
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   partiesLabel: {
-    backgroundColor: '#1a1a18',
+    backgroundColor: '#0f172a',
     color: '#ffffff',
     fontFamily: 'Helvetica-Bold',
     fontSize: 9,
@@ -157,13 +157,13 @@ const styles = StyleSheet.create({
   partiesValue: {
     flex: 1,
     fontSize: 9.5,
-    color: '#1a1a18',
+    color: '#0f172a',
     padding: 8,
   },
   signatureSection: {
     marginTop: 20,
     borderTopWidth: 1,
-    borderTopColor: '#e8e4dc',
+    borderTopColor: '#e6e8ec',
     paddingTop: 16,
   },
   signatureRow: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   signatureLabel: {
     fontSize: 8,
-    color: '#8a877f',
+    color: '#64748b',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 6,
@@ -185,20 +185,20 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 70,
     borderWidth: 1,
-    borderColor: '#dfd9cf',
+    borderColor: '#e6e8ec',
     borderRadius: 4,
     backgroundColor: '#ffffff',
     objectFit: 'contain',
   },
   signatureName: {
     fontSize: 9,
-    color: '#1a1a18',
+    color: '#0f172a',
     marginTop: 6,
     fontFamily: 'Helvetica-Bold',
   },
   signatureDate: {
     fontSize: 9,
-    color: '#8a877f',
+    color: '#64748b',
     marginTop: 2,
   },
   footerNote: {
@@ -227,7 +227,7 @@ function Clause({ letter, text }: { letter: string; text: string }) {
 function Bullet({ text }: { text: string }) {
   return (
     <View style={styles.listItem}>
-      <Text style={styles.listBullet}>•</Text>
+      <Text style={styles.listBullet}>â€¢</Text>
       <Text style={styles.listText}>{text}</Text>
     </View>
   )
@@ -287,13 +287,13 @@ export default function AgreementPDF({
   const p = { ...VIVID_CARE, ...provider }
   return (
     <Document
-      title={`Vivid Care Service Agreement — ${participantName}`}
+      title={`Vivid Care Service Agreement â€” ${participantName}`}
       author="Vivid Care"
     >
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBar}>
           <Text style={styles.headerTitle}>SERVICE AGREEMENT</Text>
-          <Text style={styles.headerSub}>Vivid Care · NDIS Registered Service Provider</Text>
+          <Text style={styles.headerSub}>Vivid Care Â· NDIS Registered Service Provider</Text>
         </View>
 
         <View style={styles.providerBlock}>
@@ -354,7 +354,7 @@ export default function AgreementPDF({
           </View>
           <View style={styles.partiesRowLast}>
             <Text style={styles.partiesLabel}>Advocate / Participant's Representative</Text>
-            <Text style={styles.partiesValue}>{advocateName ?? '—'}</Text>
+            <Text style={styles.partiesValue}>{advocateName ?? 'â€”'}</Text>
           </View>
         </View>
 
@@ -395,7 +395,7 @@ export default function AgreementPDF({
         <Text style={styles.sectionHeading}>4. Responsibilities of Vivid Care</Text>
         <Text style={[styles.subHeading, { marginTop: 4 }]}>Vivid Care agrees to:</Text>
         <Clause letter="a" text="Review the provision of supports at least monthly with the participant or their representative." />
-        <Clause letter="b" text="Complete an individual evacuation plan if required — this plan will be added as an appendix to this agreement." />
+        <Clause letter="b" text="Complete an individual evacuation plan if required â€” this plan will be added as an appendix to this agreement." />
         <Clause letter="c" text="Once agreed, provide supports that meet the participant's needs at the participant's preferred times." />
         <Clause letter="d" text="Communicate openly and honestly in a timely manner." />
         <Clause letter="e" text="Treat the participant with courtesy and respect at all times." />
@@ -506,7 +506,7 @@ export default function AgreementPDF({
           ) : null}
           <View style={styles.partiesRowLast}>
             <Text style={styles.partiesLabel}>Phone / Email</Text>
-            {/* Left blank — participant fills in their own contact details on the paper copy */}
+            {/* Left blank â€” participant fills in their own contact details on the paper copy */}
             <Text style={styles.partiesValue}></Text>
           </View>
         </View>
@@ -563,7 +563,7 @@ export default function AgreementPDF({
         </View>
 
         <Text style={styles.footerNote}>
-          Vivid Care · ABN {p.abn} · {p.address} · {p.email}
+          Vivid Care Â· ABN {p.abn} Â· {p.address} Â· {p.email}
           {'\n'}This document was digitally signed on {signedAt}. Generated by Vivid Care platform.
         </Text>
       </Page>

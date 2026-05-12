@@ -1,37 +1,82 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── VividCare Design System ───────────────────────────────────────── */
+:root {
+  /* Primary — teal */
+  --vc-primary:     #0d9488;
+  --vc-primary-700: #0f766e;
+  --vc-primary-800: #115e59;
+  --vc-primary-50:  #f0fdfa;
+  --vc-primary-100: #ccfbf1;
+
+  /* Surface */
+  --vc-bg:           #f7f8f9;
+  --vc-surface:      #ffffff;
+  --vc-surface-2:    #fafbfc;
+  --vc-border:       #e6e8ec;
+  --vc-border-strong:#d1d5db;
+
+  /* Text */
+  --vc-text:   #0f172a;
+  --vc-text-2: #475569;
+  --vc-text-3: #64748b;
+  --vc-text-4: #94a3b8;
+
+  /* Status */
+  --vc-emerald:    #059669;
+  --vc-emerald-50: #ecfdf5;
+  --vc-amber:      #d97706;
+  --vc-amber-50:   #fffbeb;
+  --vc-red:        #dc2626;
+  --vc-red-50:     #fef2f2;
+  --vc-blue:       #2563eb;
+  --vc-blue-50:    #eff6ff;
+
+  /* Radius */
+  --vc-radius:    12px;
+  --vc-radius-lg: 16px;
+  --vc-radius-sm: 8px;
+
+  /* Shadows */
+  --vc-shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --vc-shadow:    0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --vc-shadow-lg: 0 8px 24px rgba(15,23,42,0.08), 0 2px 6px rgba(15,23,42,0.04);
+}
+
 @layer utilities {
   @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateX(-50%) translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
   }
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 ::selection {
-  background: rgba(205, 255, 82, 0.75);
-  color: #1a1a18;
+  background: rgba(13, 148, 136, 0.18);
+  color: var(--vc-text);
 }
 
 body {
-  background-color: #edecea;
-  color: #1a1a18;
-  font-family: var(--font-body), sans-serif;
+  background-color: var(--vc-bg);
+  color: var(--vc-text);
+  font-family: var(--font-body), 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .font-headline {
-  font-family: var(--font-headline), sans-serif;
+  font-family: var(--font-body), 'IBM Plex Sans', ui-sans-serif, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.font-mono {
+  font-family: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .material-symbols-outlined {
@@ -53,7 +98,7 @@ body {
 }
 
 .primary-gradient {
-  background: linear-gradient(135deg, #1a1a18 0%, #353530 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #353530 100%);
 }
 
 .glass-header {
@@ -81,29 +126,29 @@ body {
 }
 
 .vivid-roster-calendar .fc .fc-toolbar-title {
-  font-family: var(--font-headline), sans-serif;
+  font-family: var(--font-body), 'IBM Plex Sans', sans-serif;
   font-size: 1.125rem;
-  font-weight: 700;
-  color: #1a1a18;
-  letter-spacing: -0.03em;
+  font-weight: 600;
+  color: var(--vc-text);
+  letter-spacing: -0.02em;
 }
 
 .vivid-roster-calendar .fc .fc-button {
-  background: #1a1a18 !important;
+  background: var(--vc-primary) !important;
   border: none !important;
-  border-radius: 9999px !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
   color: #ffffff !important;
-  font-family: var(--font-body), sans-serif !important;
+  font-family: var(--font-body), 'IBM Plex Sans', sans-serif !important;
   font-size: 0.8125rem !important;
-  font-weight: 600 !important;
-  padding: 0.55rem 0.95rem !important;
+  font-weight: 500 !important;
+  padding: 0.45rem 0.85rem !important;
 }
 
 .vivid-roster-calendar .fc .fc-button:hover,
 .vivid-roster-calendar .fc .fc-button-primary:not(:disabled):active,
 .vivid-roster-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
-  background: #2d2d28 !important;
+  background: var(--vc-primary-700) !important;
 }
 
 .vivid-roster-calendar .fc .fc-button:focus {
@@ -112,12 +157,12 @@ body {
 
 .vivid-roster-calendar .fc .fc-daygrid-day.fc-day-today,
 .vivid-roster-calendar .fc .fc-timegrid-col.fc-day-today {
-  background-color: rgba(205, 255, 82, 0.16) !important;
+  background-color: rgba(13, 148, 136, 0.06) !important;
 }
 
 .vivid-roster-calendar .fc .fc-timegrid-slot-label-cushion,
 .vivid-roster-calendar .fc .fc-col-header-cell-cushion {
-  color: #8a877f;
+  color: #94a3b8;
   font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;

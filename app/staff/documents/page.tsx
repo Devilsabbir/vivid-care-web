@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import DocumentsClient from './DocumentsClient'
@@ -39,7 +39,7 @@ export default async function StaffDocumentsPage() {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[28px] bg-[#171717] px-5 py-5 text-white shadow-[0_24px_44px_rgba(23,23,22,0.18)]">
+      <section className="rounded-[28px] bg-[#0f172a] px-5 py-5 text-white shadow-[0_24px_44px_rgba(15,23,42,0.10)]">
         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Documents</p>
         <h1 className="mt-3 font-headline text-[1.85rem] font-semibold leading-none tracking-[-0.05em]">Stay compliance ready</h1>
         <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
@@ -47,7 +47,7 @@ export default async function StaffDocumentsPage() {
         </p>
         <Link
           href="/staff/documentation"
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-2 text-sm font-semibold text-[#171716]"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-2 text-sm font-semibold text-[#0f172a]"
         >
           Open service documentation
           <span className="material-symbols-outlined text-[18px]">arrow_forward</span>

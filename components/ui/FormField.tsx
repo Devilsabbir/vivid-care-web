@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { type ReactNode, useId } from 'react'
 
@@ -37,8 +37,8 @@ interface TextareaFieldProps {
   className?: string
 }
 
-const baseInput = 'mt-2 w-full rounded-2xl border bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-1'
-const normalBorder = 'border-[#dfd9cf]'
+const baseInput = 'mt-2 w-full rounded-2xl border bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-1'
+const normalBorder = 'border-[#e6e8ec]'
 const errorBorder = 'border-[#ef4444]'
 
 export function FormField({
@@ -57,7 +57,7 @@ export function FormField({
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
         {label}
         {required && <span className="text-[#ef4444]" aria-hidden="true"> *</span>}
       </label>
@@ -96,7 +96,7 @@ export function SelectField({
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
         {label}
         {required && <span className="text-[#ef4444]" aria-hidden="true"> *</span>}
       </label>
@@ -136,7 +136,7 @@ export function TextareaField({
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
         {label}
         {required && <span className="text-[#ef4444]" aria-hidden="true"> *</span>}
       </label>

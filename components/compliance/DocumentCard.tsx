@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { ExpiryBadge } from '@/components/ui/Badge'
@@ -49,17 +49,17 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
   }
 
   return (
-    <article className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+    <article className="rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#6f6b63]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0ede7] text-[#64748b]">
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">description</span>
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-[#1a1a18]">{doc.doc_type}</h4>
-            <p className="text-[11px] text-[#8a877f]">
+            <h4 className="text-sm font-semibold text-[#0f172a]">{doc.doc_type}</h4>
+            <p className="text-[11px] text-[#64748b]">
               {doc.file_name ?? 'Document file'}
-              {showOwnerType && ownerType ? ` · ${ownerType}` : ''}
+              {showOwnerType && ownerType ? ` Â· ${ownerType}` : ''}
             </p>
             {errorMsg ? (
               <p className="mt-0.5 text-[11px] text-red-600">{errorMsg}</p>
@@ -72,10 +72,10 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
             <button
               onClick={handleOpen}
               disabled={opening}
-              aria-label={opening ? 'Opening document…' : 'Open document file'}
-              className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45] transition hover:bg-[#ece6dc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] disabled:opacity-60"
+              aria-label={opening ? 'Opening documentâ€¦' : 'Open document file'}
+              className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b] transition hover:bg-[#e6e8ec] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:opacity-60"
             >
-              {opening ? 'Opening…' : 'Open file'}
+              {opening ? 'Openingâ€¦' : 'Open file'}
             </button>
           ) : null}
         </div>

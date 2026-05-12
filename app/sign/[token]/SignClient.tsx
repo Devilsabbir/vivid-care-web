@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRef, useState } from 'react'
 import SignatureCanvas from 'react-signature-canvas'
@@ -73,34 +73,34 @@ export default function SignClient({
     <div className="mx-auto max-w-2xl px-4 py-10">
       {/* Header */}
       <div className="mb-8 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-[#e8e4dc]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-[#e6e8ec]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Vivid Care" className="h-9 w-9 object-contain" />
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[#8a877f]">Vivid Care · NDIS Service Provider</p>
-          <h1 className="text-xl font-semibold tracking-[-0.03em] text-[#1a1a18]">Service Agreement</h1>
+          <p className="text-[11px] uppercase tracking-[0.16em] text-[#94a3b8]">Vivid Care · NDIS Service Provider</p>
+          <h1 className="text-xl font-semibold tracking-[-0.03em] text-[#0f172a]">Service Agreement</h1>
         </div>
       </div>
 
-      <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
-        <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Agreement for</p>
-        <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-[#1a1a18]">{participantName}</h2>
+      <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
+        <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Agreement for</p>
+        <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-[#0f172a]">{participantName}</h2>
         <p className="mt-1 text-sm text-[#67635c]">{agreementTitle}</p>
         {expiresOn ? (
-          <p className="mt-1 text-xs text-[#8a877f]">
+          <p className="mt-1 text-xs text-[#94a3b8]">
             Expires: {new Date(expiresOn).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         ) : null}
       </div>
 
-      <div className="mt-6 rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
-        <p className="mb-4 text-sm leading-6 text-[#4f4c45]">
+      <div className="mt-6 rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.06)]">
+        <p className="mb-4 text-sm leading-6 text-[#64748b]">
           By signing below, you confirm that you have read and agree to the terms of this Vivid Care NDIS Service Agreement. A signed PDF copy will be generated and stored securely.
         </p>
 
         <div className="mb-4">
-          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">
             Full name of signee *
           </label>
           <input
@@ -108,25 +108,25 @@ export default function SignClient({
             value={signerName}
             onChange={e => setSignerName(e.target.value)}
             placeholder="Enter your full name"
-            className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+            className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+          <label className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">
             Signature *
           </label>
-          <div className="mt-2 overflow-hidden rounded-[20px] border border-[#dfd9cf] bg-white">
+          <div className="mt-2 overflow-hidden rounded-[20px] border border-[#e6e8ec] bg-white">
             <SignatureCanvas
               ref={signatureRef}
-              penColor="#1a1a18"
+              penColor="#0f172a"
               canvasProps={{ className: 'h-[200px] w-full' }}
             />
           </div>
           <button
             type="button"
             onClick={() => signatureRef.current?.clear()}
-            className="mt-2 text-xs text-[#8a877f] underline"
+            className="mt-2 text-xs text-[#94a3b8] underline"
           >
             Clear signature
           </button>
@@ -142,7 +142,7 @@ export default function SignClient({
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
-          className="w-full rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          className="w-full rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
         >
           {submitting ? 'Signing and generating PDF...' : 'Sign Agreement'}
         </button>
@@ -154,11 +154,11 @@ export default function SignClient({
 function StatusScreen({ title, message, icon }: { title: string; message: string; icon: string }) {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-[28px] border border-[#e8e4dc] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1a1a18]">
-          <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#8B45A6]">{icon}</span>
+      <div className="w-full max-w-md rounded-[28px] border border-[#e6e8ec] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#0f172a]">
+          <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#0d9488]">{icon}</span>
         </div>
-        <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#1a1a18]">{title}</h2>
+        <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#0f172a]">{title}</h2>
         <p className="mt-3 text-sm leading-6 text-[#67635c]">{message}</p>
       </div>
     </div>

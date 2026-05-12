@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ClientDetailClient from './ClientDetailClient'
@@ -31,12 +31,12 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-3">
-          <Link href="/admin/clients" className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+          <Link href="/admin/clients" className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
             <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
             Back to clients
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#8B45A6] text-xl font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0d9488] text-xl font-semibold uppercase tracking-[0.14em] text-[#0f172a]">
               {(client.full_name ?? 'C')
                 .split(' ')
                 .filter(Boolean)
@@ -45,19 +45,19 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
                 .join('')}
             </div>
             <div>
-              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
                 <span className="font-headline">{client.full_name ?? 'Client profile'}</span>
               </h1>
-              <p className="text-sm text-[#6c6b66]">Support plan detail, linked documents, and recent care activity for this client record</p>
+              <p className="text-sm text-[#64748b]">Support plan detail, linked documents, and recent care activity for this client record</p>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]" aria-label="Go to scheduler">
+          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]" aria-label="Go to scheduler">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
           </Link>
-          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2">
+          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2">
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">description</span>
             Document hub
           </Link>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -24,20 +24,20 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
   }, [search, staff])
 
   return (
-    <section className="overflow-hidden rounded-[28px] border border-[#e8e4dc] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-      <div className="border-b border-[#f0ece5] px-5 py-4 md:px-6">
+    <section className="overflow-hidden rounded-[28px] border border-[#e6e8ec] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+      <div className="border-b border-[#f0f1f3] px-5 py-4 md:px-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Team directory</h3>
-            <p className="text-xs text-[#8a877f]">Search the workforce and review roster load and document readiness</p>
+            <h3 className="text-sm font-semibold text-[#0f172a]">Team directory</h3>
+            <p className="text-xs text-[#64748b]">Search the workforce and review roster load and document readiness</p>
           </div>
-          <div className="flex items-center gap-2 rounded-2xl border border-[#e5e1d9] bg-[#faf9f6] px-4 py-2.5 md:w-[320px]">
+          <div className="flex items-center gap-2 rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 md:w-[320px]">
             <span className="material-symbols-outlined text-[18px] text-[#918d85]">search</span>
             <input
               value={search}
               onChange={event => setSearch(event.target.value)}
               placeholder="Search staff..."
-              className="w-full bg-transparent text-sm text-[#1a1a18] placeholder:text-[#9d998f] outline-none"
+              className="w-full bg-transparent text-sm text-[#0f172a] placeholder:text-[#9d998f] outline-none"
             />
           </div>
         </div>
@@ -49,15 +49,15 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
             <Link
               key={member.id}
               href={`/admin/staff/${member.id}`}
-              className="rounded-[22px] border border-[#e8e4dc] bg-[#faf9f6] p-5 transition-colors hover:bg-[#f4f2ed]"
+              className="rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-5 transition-colors hover:bg-[#f7f8f9]"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#0d9488]">
                   {initials(member.full_name)}
                 </div>
                 <div className="min-w-0">
-                  <h4 className="truncate text-sm font-semibold text-[#1a1a18]">{member.full_name}</h4>
-                  <p className="truncate text-xs text-[#8a877f]">{member.phone ?? 'Care team member'}</p>
+                  <h4 className="truncate text-sm font-semibold text-[#0f172a]">{member.full_name}</h4>
+                  <p className="truncate text-xs text-[#64748b]">{member.phone ?? 'Care team member'}</p>
                 </div>
               </div>
 
@@ -75,11 +75,11 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
         </div>
       ) : (
         <div className="px-6 py-16 text-center">
-          <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">badge</span>
-          <p className="mt-3 text-sm font-medium text-[#1a1a18]">
+          <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">badge</span>
+          <p className="mt-3 text-sm font-medium text-[#0f172a]">
             {search ? 'No staff match your search' : 'No staff records yet'}
           </p>
-          <p className="mt-1 text-xs text-[#8a877f]">
+          <p className="mt-1 text-xs text-[#64748b]">
             {search ? 'Try a different name or phone number.' : 'Add your first team member to start rostering.'}
           </p>
         </div>
@@ -91,8 +91,8 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[14px] bg-white px-3 py-3">
-      <p className="text-[10px] text-[#9b988f]">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[#1a1a18]">{value}</p>
+      <p className="text-[10px] text-[#94a3b8]">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-[#0f172a]">{value}</p>
     </div>
   )
 }
@@ -116,6 +116,6 @@ function statusLabel(state: StaffCard['docState']) {
 function statusClass(state: StaffCard['docState']) {
   if (state === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (state === 'near_expiry') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (state === 'active') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
-  return 'rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6c6860]'
+  if (state === 'active') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
+  return 'rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]'
 }

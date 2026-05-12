@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+﻿import { type ReactNode } from 'react'
 import EmptyState from './EmptyState'
 
 export interface Column<T> {
@@ -33,23 +33,23 @@ export default function DataTable<T>({
   }
 
   return (
-    <div className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+    <div className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[#f0ece5]">
+            <tr className="border-b border-[#f0f1f3]">
               {columns.map(col => (
                 <th
                   key={col.key}
                   scope="col"
-                  className={`px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#9b988f] ${col.srOnly ? 'sr-only' : ''} ${col.className ?? ''}`}
+                  className={`px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#94a3b8] ${col.srOnly ? 'sr-only' : ''} ${col.className ?? ''}`}
                 >
                   {col.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f5f3ee]">
+          <tbody className="divide-y divide-[#f7f8f9]">
             {rows.map(row => {
               const key = getRowKey(row)
               const isClickable = Boolean(onRowClick)
@@ -57,7 +57,7 @@ export default function DataTable<T>({
                 <tr
                   key={key}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={`${isClickable ? 'cursor-pointer hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#8B45A6]' : ''}`}
+                  className={`${isClickable ? 'cursor-pointer hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0d9488]' : ''}`}
                   tabIndex={isClickable ? 0 : undefined}
                   onKeyDown={
                     isClickable
@@ -72,7 +72,7 @@ export default function DataTable<T>({
                   role={isClickable ? 'button' : undefined}
                 >
                   {columns.map(col => (
-                    <td key={col.key} className={`px-4 py-3 text-[#4f4c45] ${col.className ?? ''}`}>
+                    <td key={col.key} className={`px-4 py-3 text-[#64748b] ${col.className ?? ''}`}>
                       {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
                     </td>
                   ))}

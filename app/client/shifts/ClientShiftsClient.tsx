@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 
@@ -26,22 +26,22 @@ export default function ClientShiftsClient({ shifts }: { shifts: Shift[] }) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Your care schedule</p>
-        <h1 className="mt-1 font-headline text-2xl font-semibold tracking-[-0.04em] text-[#171716]">Visits</h1>
-        <p className="mt-1 text-sm text-[#8b867b]">
-          {upcoming.length} upcoming · {past.length} past
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Your care schedule</p>
+        <h1 className="mt-1 font-headline text-2xl font-semibold tracking-[-0.04em] text-[#0f172a]">Visits</h1>
+        <p className="mt-1 text-sm text-[#64748b]">
+          {upcoming.length} upcoming Â· {past.length} past
         </p>
       </div>
 
       {/* Tab toggle */}
-      <div className="flex gap-1 rounded-[22px] border border-[#e6e0d7] bg-white p-1.5 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+      <div className="flex gap-1 rounded-[22px] border border-[#e6e8ec] bg-white p-1.5 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         {(['upcoming', 'past'] as Tab[]).map(value => (
           <button
             key={value}
             type="button"
             onClick={() => setTab(value)}
-            className={`flex-1 rounded-[18px] py-3 text-sm font-semibold capitalize transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] ${
-              tab === value ? 'bg-[#171717] text-white' : 'text-[#676359] hover:text-[#171716]'
+            className={`flex-1 rounded-[18px] py-3 text-sm font-semibold capitalize transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] ${
+              tab === value ? 'bg-[#0f172a] text-white' : 'text-[#64748b] hover:text-[#0f172a]'
             }`}
           >
             {value === 'upcoming' ? `Upcoming (${upcoming.length})` : `Past (${past.length})`}
@@ -56,14 +56,14 @@ export default function ClientShiftsClient({ shifts }: { shifts: Shift[] }) {
           ))}
         </div>
       ) : (
-        <div className="rounded-[28px] border border-dashed border-[#d7d1c6] bg-white px-6 py-14 text-center">
-          <span className="material-symbols-outlined text-[44px] text-[#b5afa5]">
+        <div className="rounded-[28px] border border-dashed border-[#e6e8ec] bg-white px-6 py-14 text-center">
+          <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">
             {tab === 'upcoming' ? 'calendar_today' : 'history'}
           </span>
-          <p className="mt-3 text-sm font-semibold text-[#171716]">
+          <p className="mt-3 text-sm font-semibold text-[#0f172a]">
             {tab === 'upcoming' ? 'No upcoming visits' : 'No past visits'}
           </p>
-          <p className="mt-1 text-xs text-[#8b867b]">
+          <p className="mt-1 text-xs text-[#64748b]">
             {tab === 'upcoming'
               ? 'Your upcoming care schedule will appear here once visits are arranged.'
               : 'Your completed visits will appear here.'}
@@ -82,9 +82,9 @@ function ShiftCard({ shift }: { shift: Shift }) {
     : shift.staff?.full_name
 
   const statusStyles: Record<string, string> = {
-    scheduled: 'bg-[#f4f1ea] text-[#5c5850]',
-    active: 'bg-[#8B45A6] text-[#171717]',
-    completed: 'bg-[#f3e8ff] text-[#6b21a8]',
+    scheduled: 'bg-[#f7f8f9] text-[#5c5850]',
+    active: 'bg-[#0d9488] text-[#0f172a]',
+    completed: 'bg-[#f0fdfa] text-[#0f766e]',
   }
   const statusLabels: Record<string, string> = {
     scheduled: 'Scheduled',
@@ -93,12 +93,12 @@ function ShiftCard({ shift }: { shift: Shift }) {
   }
 
   return (
-    <article className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+    <article className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
       <div className="flex items-start gap-4">
         {/* Date block */}
-        <div className="flex w-14 shrink-0 flex-col items-center rounded-2xl bg-[#f4f1ea] py-3">
-          <p className="font-headline text-xl font-semibold leading-none text-[#171716]">{start.getDate()}</p>
-          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8b867b]">
+        <div className="flex w-14 shrink-0 flex-col items-center rounded-2xl bg-[#f7f8f9] py-3">
+          <p className="font-headline text-xl font-semibold leading-none text-[#0f172a]">{start.getDate()}</p>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#64748b]">
             {start.toLocaleDateString('en-AU', { month: 'short' })}
           </p>
         </div>
@@ -107,14 +107,14 @@ function ShiftCard({ shift }: { shift: Shift }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="font-headline text-sm font-semibold text-[#171716]">
+              <p className="font-headline text-sm font-semibold text-[#0f172a]">
                 {staffName ?? 'Vivid Care staff'}
               </p>
-              <p className="mt-0.5 text-xs text-[#666258]">
+              <p className="mt-0.5 text-xs text-[#64748b]">
                 {start.toLocaleDateString('en-AU', { weekday: 'short' })}
-                {' · '}
+                {' Â· '}
                 {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
-                {' – '}
+                {' â€“ '}
                 {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
               </p>
             </div>
@@ -124,14 +124,14 @@ function ShiftCard({ shift }: { shift: Shift }) {
           </div>
 
           {shift.support_type && (
-            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#f4f1ea] px-2.5 py-1">
-              <span className="material-symbols-outlined text-[12px] text-[#8b867b]">label</span>
+            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#f7f8f9] px-2.5 py-1">
+              <span className="material-symbols-outlined text-[12px] text-[#64748b]">label</span>
               <span className="text-[11px] text-[#5c5850]">{shift.support_type}</span>
             </div>
           )}
 
           {shift.notes && (
-            <p className="mt-2 text-xs leading-5 text-[#8b867b]">{shift.notes}</p>
+            <p className="mt-2 text-xs leading-5 text-[#64748b]">{shift.notes}</p>
           )}
         </div>
       </div>

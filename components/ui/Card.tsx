@@ -1,12 +1,12 @@
-import { type ReactNode } from 'react'
+﻿import { type ReactNode } from 'react'
 
 type CardVariant = 'default' | 'accent' | 'dark' | 'rail'
 
 const variantStyles: Record<CardVariant, string> = {
-  default: 'border border-[#e8e4dc] bg-white shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
-  accent: 'bg-[#8B45A6] shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
-  dark: 'bg-[#1a1a18] text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]',
-  rail: 'border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)] overflow-hidden',
+  default: 'border border-[#e6e8ec] bg-white shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
+  accent: 'bg-[#0d9488] shadow-[0_14px_32px_rgba(26,26,24,0.04)]',
+  dark: 'bg-[#0f172a] text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]',
+  rail: 'border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)] overflow-hidden',
 }
 
 export function Card({
@@ -38,8 +38,8 @@ export function RailCard({
 }) {
   return (
     <Card variant="rail">
-      <div className="border-b border-[#f0ece5] px-4 py-3">
-        <h3 className="text-sm font-semibold text-[#1a1a18]">{title}</h3>
+      <div className="border-b border-[#f0f1f3] px-4 py-3">
+        <h3 className="text-sm font-semibold text-[#0f172a]">{title}</h3>
       </div>
       <div className="px-4 py-4">{children}</div>
     </Card>

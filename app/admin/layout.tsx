@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-[#edecea] text-[#1a1a18]">
+    <div className="min-h-screen bg-[#f7f8f9] text-[#0f172a]">
       <AdminSidebar adminName={adminName} />
       <main className="min-h-screen pl-0 pt-16 lg:pl-[220px] lg:pt-0">
         <div className="mx-auto w-full max-w-[1480px] px-4 py-6 md:px-6 md:py-7">

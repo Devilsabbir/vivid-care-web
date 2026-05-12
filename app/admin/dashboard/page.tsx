@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
@@ -102,57 +102,57 @@ export default async function AdminDashboard() {
       <DashboardRealtimeRefresh />
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.45rem]">
             <span className="font-headline">Managing</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">group</span>
               your team
             </span>
             <span className="font-headline">and</span>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.45rem]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">neurology</span>
               workflows
             </span>
             <span className="font-headline">at a glance</span>
           </div>
-          <p className="text-sm text-[#6c6b66]">
+          <p className="text-sm text-[#64748b]">
             Scheduler snapshot for {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
           </Link>
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span>
           </Link>
-          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2">
+          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2">
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
             New shift
           </Link>
         </div>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
-        <Link href="/admin/dashboard" className="rounded-full bg-[#1a1a18] px-4 py-2 text-white">Scheduler</Link>
-        <Link href="/admin/staff" className="rounded-full px-4 py-2 text-[#6d6b64]">Staff</Link>
-        <Link href="/admin/clients" className="rounded-full px-4 py-2 text-[#6d6b64]">Clients</Link>
-        <Link href="/admin/compliance" className="rounded-full px-4 py-2 text-[#6d6b64]">Documents</Link>
-        <Link href="/admin/incidents" className="rounded-full px-4 py-2 text-[#6d6b64]">Incidents</Link>
-        <Link href="/admin/payments" className="rounded-full px-4 py-2 text-[#6d6b64]">Payroll</Link>
-        <Link href="/admin/settings" className="rounded-full px-4 py-2 text-[#6d6b64]">Settings</Link>
+      <nav className="flex flex-wrap gap-2 rounded-full bg-[#f0f1f3] p-1.5 text-xs font-medium">
+        <Link href="/admin/dashboard" className="rounded-full bg-[#0f172a] px-4 py-2 text-white">Scheduler</Link>
+        <Link href="/admin/staff" className="rounded-full px-4 py-2 text-[#64748b]">Staff</Link>
+        <Link href="/admin/clients" className="rounded-full px-4 py-2 text-[#64748b]">Clients</Link>
+        <Link href="/admin/compliance" className="rounded-full px-4 py-2 text-[#64748b]">Documents</Link>
+        <Link href="/admin/incidents" className="rounded-full px-4 py-2 text-[#64748b]">Incidents</Link>
+        <Link href="/admin/payments" className="rounded-full px-4 py-2 text-[#64748b]">Payroll</Link>
+        <Link href="/admin/settings" className="rounded-full px-4 py-2 text-[#64748b]">Settings</Link>
       </nav>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
-        <div className="rounded-[24px] border border-[#e8e4dc] bg-white p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
           <div className="flex items-start justify-between">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f1eb]">
               <span className="material-symbols-outlined text-[20px]">calendar_month</span>
             </span>
-            <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[11px] font-semibold text-[#4f4c45]">{percent(completed, planned)}%</span>
+            <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[11px] font-semibold text-[#64748b]">{percent(completed, planned)}%</span>
           </div>
           <p className="mt-5 text-[12px] text-[#9a978f]">Shifts this week</p>
           <div className="mt-2 flex items-end gap-2">
@@ -162,22 +162,22 @@ export default async function AdminDashboard() {
           <p className="mt-3 text-xs text-[#9a978f]">Across {clientCount ?? 0} active clients</p>
         </div>
 
-        <div className="rounded-[24px] bg-[#8B45A6] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[24px] bg-[#0d9488] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
           <div className="flex items-start justify-between">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10">
               <span className="material-symbols-outlined text-[20px]">badge</span>
             </span>
-            <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-[#1a1a18]">{percent(liveStaff, staffCount ?? 0)}%</span>
+            <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-[#0f172a]">{percent(liveStaff, staffCount ?? 0)}%</span>
           </div>
-          <p className="mt-5 text-[12px] text-[#5e0087]">Staff on shift</p>
+          <p className="mt-5 text-[12px] text-[#0f766e]">Staff on shift</p>
           <div className="mt-2 flex items-end gap-2">
             <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{liveStaff}</span>
-            <span className="pb-1 text-xs text-[#5e0087]">/ {staffCount ?? 0}</span>
+            <span className="pb-1 text-xs text-[#0f766e]">/ {staffCount ?? 0}</span>
           </div>
-          <p className="mt-3 text-xs text-[#5e0087]">Live clock-in coverage right now</p>
+          <p className="mt-3 text-xs text-[#0f766e]">Live clock-in coverage right now</p>
         </div>
 
-        <div className="relative overflow-hidden rounded-[24px] bg-[#1a1a18] p-6 text-white">
+        <div className="relative overflow-hidden rounded-[24px] bg-[#0f172a] p-6 text-white">
           <div className="absolute right-[-24px] top-[-24px] h-36 w-36 rounded-full bg-white/5" />
           <div className="relative flex h-full flex-col justify-between gap-8">
             <div>
@@ -186,7 +186,7 @@ export default async function AdminDashboard() {
                 Keep your roster ready for AI suggestions and conflict review.
               </h2>
             </div>
-            <Link href="/admin/roster" className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-[#1a1a18]">
+            <Link href="/admin/roster" className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-[#0f172a]">
               Open roster planner
               <span className="material-symbols-outlined text-[18px]">north_east</span>
             </Link>
@@ -196,7 +196,7 @@ export default async function AdminDashboard() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
         <div className="space-y-6">
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
+          <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[20px]">bar_chart</span>
@@ -204,15 +204,15 @@ export default async function AdminDashboard() {
               </div>
               <div className="flex items-center gap-3 text-[11px] text-[#87847d]">
                 <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#1a1a18]" />
+                  <span className="h-2 w-2 rounded-full bg-[#0f172a]" />
                   Completed
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#8B45A6]" />
+                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#0d9488]" />
                   Upcoming
                 </span>
               </div>
-              <span className="ml-auto rounded-xl bg-[#f4f2ed] px-3 py-1.5 text-[11px] text-[#78756e]">
+              <span className="ml-auto rounded-xl bg-[#f7f8f9] px-3 py-1.5 text-[11px] text-[#64748b]">
                 {today.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
               </span>
             </div>
@@ -226,10 +226,10 @@ export default async function AdminDashboard() {
                   return (
                     <div key={day.label} className="flex flex-col items-center gap-3">
                       <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
-                        <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#cfcac1] bg-[#efebe4]' : 'bg-[#1a1a18]'}`} style={{ height: `${completeHeight}px` }} />
-                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#8B45A6]'}`} style={{ height: `${upcomingHeight}px` }} />
+                        <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#d1d5db] bg-[#f0f1f3]' : 'bg-[#0f172a]'}`} style={{ height: `${completeHeight}px` }} />
+                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#e6e8ec] bg-[#f7f8f9]' : 'border border-[#94a3b8] bg-[#0d9488]'}`} style={{ height: `${upcomingHeight}px` }} />
                       </div>
-                      <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#1a1a18]' : 'text-[#97938a]'}`}>{day.label}</span>
+                      <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#0f172a]' : 'text-[#97938a]'}`}>{day.label}</span>
                     </div>
                   )
                 })}
@@ -237,35 +237,35 @@ export default async function AdminDashboard() {
             </div>
           </section>
 
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
+          <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Live roster board</h3>
-                <p className="text-xs text-[#8a877f]">
+                <h3 className="text-sm font-semibold text-[#0f172a]">Live roster board</h3>
+                <p className="text-xs text-[#64748b]">
                   {activeBoard.length > 0 ? `${activeBoard.length} active shifts right now` : 'Next scheduled shifts ready to review'}
                 </p>
               </div>
-              <Link href="/admin/active-shifts" className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45]">View live board</Link>
+              <Link href="/admin/active-shifts" className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b]">View live board</Link>
             </div>
 
             {liveBoard.length > 0 ? (
               <div className="space-y-3">
                 {liveBoard.map(shift => (
-                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#f0f1f3] bg-[#fafbfc] p-4 md:flex-row md:items-center hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#0d9488]">
                         {initials(shift.staff?.full_name)}
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.staff?.full_name ?? 'Unassigned staff'}</h4>
-                        <p className="text-xs text-[#8a877f]">
+                        <h4 className="text-sm font-semibold text-[#0f172a]">{shift.staff?.full_name ?? 'Unassigned staff'}</h4>
+                        <p className="text-xs text-[#64748b]">
                           {shift.clients?.full_name ?? 'Client pending'}
-                          {shift.clients?.address ? ` · ${shift.clients.address}` : ''}
+                          {shift.clients?.address ? ` Â· ${shift.clients.address}` : ''}
                         </p>
                       </div>
                     </div>
                     <div className="md:ml-auto md:text-right">
-                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
+                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
                         {shift.status === 'active' ? 'Active now' : 'Scheduled'}
                       </span>
                       <p className="mt-2 text-xs text-[#68655e]">{clock(shift.start_time)} - {clock(shift.end_time)}</p>
@@ -274,18 +274,18 @@ export default async function AdminDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-[22px] border border-dashed border-[#d8d3ca] bg-[#faf9f6] px-6 py-12 text-center">
-                <span className="material-symbols-outlined text-[36px] text-[#b2aea4]">calendar_month</span>
-                <p className="mt-3 text-sm font-medium text-[#1a1a18]">No active or scheduled shifts in this window</p>
-                <p className="mt-1 text-xs text-[#8a877f]">Use the scheduler to publish the next wave of care visits.</p>
+              <div className="rounded-[22px] border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-6 py-12 text-center">
+                <span className="material-symbols-outlined text-[36px] text-[#94a3b8]">calendar_month</span>
+                <p className="mt-3 text-sm font-medium text-[#0f172a]">No active or scheduled shifts in this window</p>
+                <p className="mt-1 text-xs text-[#64748b]">Use the scheduler to publish the next wave of care visits.</p>
               </div>
             )}
           </section>
         </div>
 
         <aside className="space-y-4">
-          <section className="rounded-[24px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Quick links</h3>
+          <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <h3 className="text-sm font-semibold text-[#0f172a]">Quick links</h3>
             <div className="mt-4 grid grid-cols-2 gap-3">
               {[
                 ['Roster', '/admin/roster', 'calendar_month'],
@@ -293,26 +293,26 @@ export default async function AdminDashboard() {
                 ['Staff', '/admin/staff', 'badge'],
                 ['Clients', '/admin/clients', 'group'],
               ].map(([label, href, icon]) => (
-                <Link key={href} href={href} className="flex flex-col gap-3 rounded-[18px] border border-[#ece8e1] bg-[#faf9f6] p-3">
+                <Link key={href} href={href} className="flex flex-col gap-3 rounded-[18px] border border-[#ece8e1] bg-[#fafbfc] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f0ede7] text-[#69665e]">
                       <span className="material-symbols-outlined text-[18px]">{icon}</span>
                     </div>
-                    <span className="material-symbols-outlined text-[16px] text-[#8a877f]">north_east</span>
+                    <span className="material-symbols-outlined text-[16px] text-[#64748b]">north_east</span>
                   </div>
-                  <span className="text-[12px] font-medium text-[#1a1a18]">{label}</span>
+                  <span className="text-[12px] font-medium text-[#0f172a]">{label}</span>
                 </Link>
               ))}
             </div>
           </section>
 
-          <section className="rounded-[24px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+          <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Compliance watch</h3>
-                <p className="text-xs text-[#8a877f]">Expiring within 45 days</p>
+                <h3 className="text-sm font-semibold text-[#0f172a]">Compliance watch</h3>
+                <p className="text-xs text-[#64748b]">Expiring within 45 days</p>
               </div>
-              <Link href="/admin/compliance" className="text-[11px] font-medium text-[#4f4c45]">Open</Link>
+              <Link href="/admin/compliance" className="text-[11px] font-medium text-[#64748b]">Open</Link>
             </div>
             <div className="mt-4 space-y-3">
               {urgentDocs.length > 0 ? urgentDocs.map(doc => {
@@ -321,12 +321,12 @@ export default async function AdminDashboard() {
                   ? `/admin/staff/${doc.owner_id}?tab=documents`
                   : `/admin/clients/${doc.owner_id}?tab=documents`
                 return (
-                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3 hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>
+                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-3 py-3 hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#0f766e]'}`}>
                       {doc.owner_type === 'staff' ? 'ST' : 'CL'}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[12px] font-medium text-[#1a1a18]">{doc.doc_type}</p>
+                      <p className="truncate text-[12px] font-medium text-[#0f172a]">{doc.doc_type}</p>
                       <p className="text-[10px] text-[#98958c]">{doc.owner_type === 'staff' ? 'Staff document' : 'Client document'}</p>
                     </div>
                     <span className={getExpiryStatus(doc.expiry_date) === 'expired' ? 'inline-flex rounded-full bg-[#fee2e2] px-2 py-1 text-[10px] font-semibold text-[#991b1b]' : 'inline-flex rounded-full bg-[#fef9c3] px-2 py-1 text-[10px] font-semibold text-[#92400e]'}>
@@ -335,22 +335,22 @@ export default async function AdminDashboard() {
                   </Link>
                 )
               }) : (
-                <div className="rounded-[18px] bg-[#faf9f6] px-4 py-6 text-center text-xs text-[#7c7a72]">No urgent document renewals in the current queue.</div>
+                <div className="rounded-[18px] bg-[#fafbfc] px-4 py-6 text-center text-xs text-[#7c7a72]">No urgent document renewals in the current queue.</div>
               )}
             </div>
           </section>
 
-          <section className="rounded-[24px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Operational pulse</h3>
+          <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <h3 className="text-sm font-semibold text-[#0f172a]">Operational pulse</h3>
             <div className="mt-4 space-y-3">
               {[
                 { label: 'Open incidents', href: '/admin/incidents', value: incidents?.length ?? 0 },
                 { label: 'Unread notifications', href: '/admin/notifications', value: unreadNotifications?.length ?? 0 },
                 { label: 'Active clients', href: '/admin/clients', value: clientCount ?? 0 },
               ].map(item => (
-                <Link key={item.href} href={item.href} className="flex items-center justify-between rounded-[18px] bg-[#faf9f6] px-3 py-3">
+                <Link key={item.href} href={item.href} className="flex items-center justify-between rounded-[18px] bg-[#fafbfc] px-3 py-3">
                   <span className="text-[12px] text-[#58554f]">{item.label}</span>
-                  <span className="font-headline text-xl tracking-[-0.05em] text-[#1a1a18]">{item.value}</span>
+                  <span className="font-headline text-xl tracking-[-0.05em] text-[#0f172a]">{item.value}</span>
                 </Link>
               ))}
             </div>

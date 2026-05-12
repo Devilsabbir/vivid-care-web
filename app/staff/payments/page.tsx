@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function StaffPaymentsPage() {
@@ -23,7 +23,7 @@ export default async function StaffPaymentsPage() {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[28px] bg-[#171717] px-5 py-5 text-white shadow-[0_24px_44px_rgba(23,23,22,0.18)]">
+      <section className="rounded-[28px] bg-[#0f172a] px-5 py-5 text-white shadow-[0_24px_44px_rgba(15,23,42,0.10)]">
         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Payments</p>
         <h1 className="mt-3 font-headline text-[1.85rem] font-semibold leading-none tracking-[-0.05em]">Completed hours</h1>
         <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
@@ -37,12 +37,12 @@ export default async function StaffPaymentsPage() {
         </div>
       </section>
 
-      <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+      <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#8B45A6] text-[#171716]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0d9488] text-[#0f172a]">
             <span className="material-symbols-outlined text-[20px]">info</span>
           </div>
-          <p className="text-sm leading-6 text-[#666258]">
+          <p className="text-sm leading-6 text-[#64748b]">
             Payment processing is managed by admin. If hours look incorrect, raise it with your coordinator before payroll cut-off.
           </p>
         </div>
@@ -51,8 +51,8 @@ export default async function StaffPaymentsPage() {
       {(shifts ?? []).length > 0 ? (
         <section className="space-y-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">History</p>
-            <h2 className="mt-1 text-lg font-semibold text-[#171716]">Completed shift log</h2>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">History</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#0f172a]">Completed shift log</h2>
           </div>
 
           <div className="space-y-3">
@@ -63,18 +63,18 @@ export default async function StaffPaymentsPage() {
               const start = new Date(shift.start_time)
 
               return (
-                <article key={shift.id} className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+                <article key={shift.id} className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-[#171716]">{shift.clients?.full_name ?? 'Client'}</p>
-                      <p className="mt-1 text-xs text-[#8b867b]">
+                      <p className="text-sm font-semibold text-[#0f172a]">{shift.clients?.full_name ?? 'Client'}</p>
+                      <p className="mt-1 text-xs text-[#64748b]">
                         {start.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} - {new Date(shift.start_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()} to {new Date(shift.end_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
                       </p>
                     </div>
 
                     <div className="text-right">
-                      <p className="font-headline text-lg font-semibold text-[#171716]">{hours ? `${hours}h` : '-'}</p>
-                      <span className="rounded-full bg-[#f4f1ea] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6a665f]">
+                      <p className="font-headline text-lg font-semibold text-[#0f172a]">{hours ? `${hours}h` : '-'}</p>
+                      <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
                         Completed
                       </span>
                     </div>
@@ -85,10 +85,10 @@ export default async function StaffPaymentsPage() {
           </div>
         </section>
       ) : (
-        <section className="rounded-[28px] border border-dashed border-[#d7d1c6] bg-white px-6 py-14 text-center">
-          <span className="material-symbols-outlined text-[44px] text-[#b5afa5]">payments</span>
-          <p className="mt-3 text-sm font-semibold text-[#171716]">No completed shifts yet</p>
-          <p className="mt-1 text-xs text-[#8b867b]">Completed visits with clock records will appear here for payroll review.</p>
+        <section className="rounded-[28px] border border-dashed border-[#e6e8ec] bg-white px-6 py-14 text-center">
+          <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">payments</span>
+          <p className="mt-3 text-sm font-semibold text-[#0f172a]">No completed shifts yet</p>
+          <p className="mt-1 text-xs text-[#64748b]">Completed visits with clock records will appear here for payroll review.</p>
         </section>
       )}
     </div>
@@ -97,8 +97,8 @@ export default async function StaffPaymentsPage() {
 
 function MiniStat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#8B45A6] text-[#171716]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>{label}</p>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#0d9488] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#0f766e]' : 'text-[#8f8a80]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>
     </div>
   )

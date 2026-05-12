@@ -94,7 +94,7 @@ export default function Drawer({ open, onClose, title, wide, children }: DrawerP
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             aria-label="Close drawer"
           >
             <span className="material-symbols-outlined text-xl" aria-hidden="true">close</span>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -182,7 +182,7 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
         <div className={`rounded-2xl px-4 py-3 text-sm ${
           message.startsWith('Failed') || message.startsWith('Bulk mark-paid failed')
             ? 'bg-[#fee2e2] text-[#991b1b]'
-            : 'bg-[#f0fdfa] text-[#0f766e]'
+            : 'bg-[#F4ECF8] text-[#54206F]'
         }`}>
           {message}
         </div>
@@ -276,7 +276,7 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by staff, client, or service…"
-            className="w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] py-2.5 pl-10 pr-4 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+            className="w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] py-2.5 pl-10 pr-4 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
           />
         </div>
       </div>
@@ -336,7 +336,7 @@ export default function PaymentsAdminClient({ shifts }: { shifts: PaymentShift[]
                           className={`inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-[11px] font-semibold disabled:opacity-60 ${
                             row.payment_status === 'paid'
                               ? 'border border-[#e6e8ec] bg-white text-[#64748b] hover:text-[#0f172a]'
-                              : 'bg-[#0d9488] text-[#0f172a]'
+                              : 'bg-[#6B2C91] text-[#0f172a]'
                           }`}
                         >
                           {busyId === row.id ? 'Working…' : row.payment_status === 'paid' ? 'Revert' : 'Mark paid'}

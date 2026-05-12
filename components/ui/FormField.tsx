@@ -37,7 +37,7 @@ interface TextareaFieldProps {
   className?: string
 }
 
-const baseInput = 'mt-2 w-full rounded-2xl border bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-1'
+const baseInput = 'mt-2 w-full rounded-2xl border bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-1'
 const normalBorder = 'border-[#e6e8ec]'
 const errorBorder = 'border-[#ef4444]'
 

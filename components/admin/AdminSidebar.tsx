@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -71,9 +71,9 @@ function NavItems({
                 aria-current={active ? 'page' : undefined}
                 className={[
                   'flex h-8 w-full items-center gap-2.5 rounded-[7px] px-2.5 text-[13px] font-medium transition-all duration-100',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]',
                   active
-                    ? 'bg-[#f0fdfa] text-[#0f766e]'
+                    ? 'bg-[#F4ECF8] text-[#54206F]'
                     : 'text-[#475569] hover:bg-[#f7f8f9] hover:text-[#0f172a]',
                 ].join(' ')}
               >
@@ -117,7 +117,7 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
       {/* Logo */}
       <div className="flex items-center gap-2.5 border-b border-[#e6e8ec] px-4 py-[18px]">
         <Link href="/admin/dashboard" title="Vivid Care" onClick={onClose} className="flex items-center gap-2.5">
-          <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#0d9488]">
+          <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#6B2C91]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="" className="h-4 w-4 object-contain brightness-0 invert" />
           </div>
@@ -154,7 +154,7 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
       <div className="border-t border-[#e6e8ec] px-3 py-3">
         <div className="flex items-center gap-2.5">
           <div
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f0fdfa] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#0f766e]"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F4ECF8] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#54206F]"
             title={adminName ?? 'Admin'}
           >
             {initials}
@@ -192,13 +192,13 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Open navigation menu"
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] hover:bg-[#f7f8f9] hover:text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] hover:bg-[#f7f8f9] hover:text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
         >
           <span className="material-symbols-outlined text-[20px]">menu</span>
         </button>
 
         <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[7px] bg-[#0d9488]">
+          <div className="flex h-7 w-7 items-center justify-center rounded-[7px] bg-[#6B2C91]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Vivid Care" className="h-4 w-4 object-contain brightness-0 invert" />
           </div>
@@ -206,7 +206,7 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
         </Link>
 
         <div
-          className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f0fdfa] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#0f766e]"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F4ECF8] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#54206F]"
           title={adminName ?? 'Admin'}
         >
           {initials}

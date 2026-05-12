@@ -192,14 +192,14 @@ export default function CreateShiftDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-2xl border border-[#e6e8ec] px-5 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+            className="rounded-2xl border border-[#e6e8ec] px-5 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving || hasErrors}
-            className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
+            className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
           >
             {saving ? 'Saving...' : editingShiftId ? 'Update shift' : 'Create shift'}
           </button>

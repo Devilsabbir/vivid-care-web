@@ -184,7 +184,7 @@ export default function StaffDetailClient({
                         step="0.5"
                         value={hourlyRate}
                         onChange={e => setHourlyRate(e.target.value)}
-                        className="w-32 rounded-xl border border-[#e6e8ec] bg-white px-3 py-2 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                        className="w-32 rounded-xl border border-[#e6e8ec] bg-white px-3 py-2 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                       />
                       <span className="text-sm text-[#94a3b8]">/ hr</span>
                     </div>
@@ -194,13 +194,13 @@ export default function StaffDetailClient({
                     type="button"
                     onClick={handleSaveRate}
                     disabled={savingRate}
-                    className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
+                    className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
                   >
                     {savingRate ? 'Saving…' : 'Save rate'}
                   </button>
                 </div>
                 {rateMessage && (
-                  <p className={`mt-3 text-xs ${rateMessage.startsWith('Save failed') || rateMessage.startsWith('Enter') ? 'text-[#991b1b]' : 'text-[#0f766e]'}`}>
+                  <p className={`mt-3 text-xs ${rateMessage.startsWith('Save failed') || rateMessage.startsWith('Enter') ? 'text-[#991b1b]' : 'text-[#54206F]'}`}>
                     {rateMessage}
                   </p>
                 )}
@@ -222,7 +222,7 @@ export default function StaffDetailClient({
                     <Link
                       key={shift.id}
                       href={`/admin/shifts/${shift.id}`}
-                      className="flex items-center justify-between rounded-[18px] border border-[#e6e8ec] bg-white px-4 py-3 hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                      className="flex items-center justify-between rounded-[18px] border border-[#e6e8ec] bg-white px-4 py-3 hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                     >
                       <div>
                         <p className="text-sm font-medium text-[#0f172a]">{shift.clients?.full_name ?? 'Client'}</p>
@@ -277,21 +277,21 @@ export default function StaffDetailClient({
               <form onSubmit={handleUpload} className="mt-5 grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="doc-type" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Document type</label>
-                  <select id="doc-type" value={docType} onChange={e => setDocType(e.target.value)} required className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+                  <select id="doc-type" value={docType} onChange={e => setDocType(e.target.value)} required className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
                     <option value="">Select document</option>
                     {DOC_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
                   </select>
                 </div>
                 <div>
                   <label htmlFor="expiry" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Expiry date</label>
-                  <input id="expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]" />
+                  <input id="expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]" />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="file-upload" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">File</label>
                   <input id="file-upload" type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="mt-2 w-full rounded-2xl border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#64748b] outline-none" />
                 </div>
                 <div className="md:col-span-2 flex justify-end">
-                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#0f172a] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2">
+                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#0f172a] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2">
                     {uploading ? 'Uploading...' : 'Upload document'}
                   </button>
                 </div>
@@ -328,7 +328,7 @@ export default function StaffDetailClient({
                 <Link
                   key={shift.id}
                   href={`/admin/shifts/${shift.id}`}
-                  className="block rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                  className="block rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                 >
                   <div className="flex flex-col gap-3 md:flex-row md:items-center">
                     <div>

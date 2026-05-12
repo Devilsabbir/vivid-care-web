@@ -116,11 +116,11 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
       </section>
 
       {activeShift ? (
-        <section className="rounded-[28px] bg-[#0d9488] p-5 shadow-[0_18px_36px_rgba(13,148,136,0.16)]">
+        <section className="rounded-[28px] bg-[#6B2C91] p-5 shadow-[0_18px_36px_rgba(107,44,145,0.16)]">
           <Link href={`/staff/shifts/${activeShift.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a] rounded-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#0f766e]">Live shift</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#54206F]">Live shift</p>
                 <h2 className="mt-2 font-headline text-xl font-semibold text-[#0f172a]">{activeShift.clients?.full_name ?? 'Current shift'}</h2>
                 <p className="mt-1 text-sm text-[#3d0061]">
                   {formatTime(activeShift.start_time)} to {formatTime(activeShift.end_time)}
@@ -139,14 +139,14 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
 
           <Link
             href="/staff/clock"
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f172a] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f172a] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
           >
             Open clock screen
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
           </Link>
         </section>
       ) : nextShift ? (
-        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Next up</p>
@@ -244,7 +244,7 @@ function ShiftCard({ shift }: { shift: any }) {
   return (
     <Link
       href={`/staff/shifts/${shift.id}`}
-      className="flex items-center gap-4 rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+      className="flex items-center gap-4 rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
     >
       <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-2xl bg-[#f7f8f9] py-3">
         <p className="font-headline text-xl font-semibold leading-none text-[#0f172a]">{start.getDate()}</p>
@@ -279,7 +279,7 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
       href={href}
       className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e8ec] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#0d9488]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#6B2C91]">
         <span className="material-symbols-outlined text-[20px]">{icon}</span>
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0f172a]">{label}</span>
@@ -289,8 +289,8 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
 
 function MetricCard({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#0d9488] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#0f766e]' : 'text-[#8f8a80]'}`}>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#6B2C91] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#54206F]' : 'text-[#8f8a80]'}`}>
         {label}
       </p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>

@@ -156,7 +156,7 @@ function StatusScreen({ title, message, icon }: { title: string; message: string
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-[28px] border border-[#e6e8ec] bg-white p-10 text-center shadow-[0_20px_50px_rgba(26,26,24,0.08)]">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#0f172a]">
-          <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#0d9488]">{icon}</span>
+          <span className="material-symbols-outlined material-symbols-filled text-[30px] text-[#6B2C91]">{icon}</span>
         </div>
         <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#0f172a]">{title}</h2>
         <p className="mt-3 text-sm leading-6 text-[#67635c]">{message}</p>

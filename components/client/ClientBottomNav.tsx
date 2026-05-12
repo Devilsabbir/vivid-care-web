@@ -26,11 +26,11 @@ export default function ClientBottomNav({ isNdis = true }: { isNdis?: boolean })
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 aria-label={label}
-                className={`flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] ${
+                className={`flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] ${
                   active ? 'text-[#0f172a]' : 'text-[#989389] hover:text-white'
                 }`}
               >
-                <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${active ? 'bg-[#0d9488]' : 'bg-transparent'}`}>
+                <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${active ? 'bg-[#6B2C91]' : 'bg-transparent'}`}>
                   <span
                     className="material-symbols-outlined text-[20px]"
                     style={active ? { fontVariationSettings: "'FILL' 1" } : {}}

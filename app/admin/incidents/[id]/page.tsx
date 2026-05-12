@@ -163,10 +163,10 @@ function InfoTile({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#94a3b8]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#94a3b8]'}`}>{label}</p>
       <p className="mt-2 text-lg font-semibold text-[#0f172a]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#94a3b8]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#94a3b8]'}`}>{sub}</p>
     </div>
   )
 }
@@ -188,12 +188,12 @@ function relationRow<T>(value: T | T[] | null): T | null {
 function severityBadge(severity: IncidentDetail['severity']) {
   if (severity === 'emergency' || severity === 'high') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
   if (severity === 'medium') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]'
+  return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
 }
 
 function statusBadge(status: IncidentDetail['status']) {
   if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]'
+  if (status === 'resolved') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
   return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
 }
 
@@ -249,7 +249,7 @@ function responseChecklist(
       label: 'Linked shift confirmed',
       meta: linkedShift ? 'A related shift window is attached to this record.' : 'No shift window was attached to this case.',
       done: linkedShift,
-      doneClass: 'bg-[#f0fdfa] text-[#0f766e]',
+      doneClass: 'bg-[#F4ECF8] text-[#54206F]',
     },
   ]
 }

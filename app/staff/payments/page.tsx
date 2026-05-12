@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 function fmtMoney(value: number): string {
@@ -88,7 +88,7 @@ export default async function StaffPaymentsPage() {
                         {start.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} · {shift.hours.toFixed(1)}h
                       </p>
                       {shift.paid_at && (
-                        <p className="mt-1 text-[11px] text-[#0f766e]">Paid {new Date(shift.paid_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}</p>
+                        <p className="mt-1 text-[11px] text-[#54206F]">Paid {new Date(shift.paid_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}</p>
                       )}
                     </div>
 
@@ -96,7 +96,7 @@ export default async function StaffPaymentsPage() {
                       <p className="font-headline text-lg font-semibold text-[#0f172a]">{fmtMoney(shift.amount)}</p>
                       <span className={`mt-1 inline-block rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${
                         shift.paymentStatus === 'paid'
-                          ? 'bg-[#f0fdfa] text-[#0f766e]'
+                          ? 'bg-[#F4ECF8] text-[#54206F]'
                           : 'bg-[#fef9c3] text-[#92400e]'
                       }`}>
                         {shift.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
@@ -121,8 +121,8 @@ export default async function StaffPaymentsPage() {
 
 function MiniStat({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#0d9488] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#0f766e]' : 'text-[#8f8a80]'}`}>{label}</p>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#6B2C91] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#54206F]' : 'text-[#8f8a80]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[1.5rem] font-semibold leading-none tracking-[-0.04em]">{value}</p>
     </div>
   )

@@ -82,7 +82,7 @@ export default function ShiftDetailDrawer({
           {shift.client_id && (
             <Link
               href={`/admin/clients/${shift.client_id}`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#f7f8f9] px-4 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#f7f8f9] px-4 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             >
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">person</span>
               View client
@@ -91,7 +91,7 @@ export default function ShiftDetailDrawer({
           {shift.staff_id && (
             <Link
               href={`/admin/staff/${shift.staff_id}`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#f7f8f9] px-4 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#f7f8f9] px-4 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             >
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">badge</span>
               View staff
@@ -99,7 +99,7 @@ export default function ShiftDetailDrawer({
           )}
           <Link
             href={`/admin/shifts/${shift.id}`}
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-4 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-4 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
           >
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">open_in_new</span>
             Full shift detail

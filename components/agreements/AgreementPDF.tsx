@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   headerTitle: {
-    color: '#0d9488',
+    color: '#6B2C91',
     fontSize: 22,
     fontFamily: 'Helvetica-Bold',
     textAlign: 'center',
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   providerBlock: {
     marginBottom: 20,
     borderLeftWidth: 3,
-    borderLeftColor: '#0d9488',
+    borderLeftColor: '#6B2C91',
     paddingLeft: 10,
   },
   providerRow: {

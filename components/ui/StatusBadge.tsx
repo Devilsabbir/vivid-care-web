@@ -11,7 +11,7 @@
 const variantStyles: Record<string, string> = {
   active: 'bg-[#dcfce7] text-[#166534]',
   scheduled: 'bg-[#dbeafe] text-[#1d4ed8]',
-  completed: 'bg-[#f0fdfa] text-[#0f766e]',
+  completed: 'bg-[#F4ECF8] text-[#54206F]',
   cancelled: 'bg-[#f3f4f6] text-[#6b7280]',
   missed: 'bg-[#fee2e2] text-[#991b1b]',
   in_progress: 'bg-[#fef9c3] text-[#92400e]',
@@ -20,13 +20,13 @@ const variantStyles: Record<string, string> = {
   open: 'bg-[#fee2e2] text-[#991b1b]',
   investigating: 'bg-[#fef9c3] text-[#92400e]',
   under_review: 'bg-[#fef9c3] text-[#92400e]',
-  resolved: 'bg-[#f0fdfa] text-[#0f766e]',
+  resolved: 'bg-[#F4ECF8] text-[#54206F]',
   closed: 'bg-[#f3f4f6] text-[#6b7280]',
 
   emergency: 'bg-[#fee2e2] text-[#991b1b]',
   high: 'bg-[#fee2e2] text-[#991b1b]',
   medium: 'bg-[#fef9c3] text-[#92400e]',
-  low: 'bg-[#f0fdfa] text-[#0f766e]',
+  low: 'bg-[#F4ECF8] text-[#54206F]',
 
   expired: 'bg-[#fee2e2] text-[#991b1b]',
   near_expiry: 'bg-[#fef9c3] text-[#92400e]',

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
 
@@ -89,7 +89,7 @@ export default function Modal({ open, onClose, title, children, wide }: ModalPro
           <h2 id="modal-title" className="text-lg font-semibold text-[#0f172a]">{title}</h2>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748b] hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748b] hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             aria-label="Close dialog"
           >
             <span className="material-symbols-outlined text-xl" aria-hidden="true">close</span>

@@ -42,7 +42,7 @@ export default async function ShiftHistoryPage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Shift history</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">history</span>
               payroll view
             </span>
@@ -84,7 +84,7 @@ export default async function ShiftHistoryPage() {
                   <tr key={shift.id} className="border-t border-[#f0f1f3] text-sm text-[#0f172a] transition-colors hover:bg-[#fafbfc]">
                     <td className="px-6 py-4">
                       <Link href={`/admin/shifts/${shift.id}`} className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0f172a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0d9488]">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0f172a] text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6B2C91]">
                           {initials(shift.staffName)}
                         </div>
                         <span className="font-medium">{shift.staffName}</span>
@@ -99,7 +99,7 @@ export default async function ShiftHistoryPage() {
                     </td>
                     <td className="px-6 py-4 font-medium text-[#0f172a]">{hoursLabel(shift)}</td>
                     <td className="px-6 py-4">
-                      <span className={shift.status === 'completed' ? 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]' : 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'}>
+                      <span className={shift.status === 'completed' ? 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]' : 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'}>
                         {shift.status === 'completed' ? 'Completed' : 'Cancelled'}
                       </span>
                     </td>
@@ -134,8 +134,8 @@ function SummaryCard({
   danger?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#0f766e]' : danger ? 'text-[#dc2626]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : danger ? 'text-[#dc2626]' : 'text-[#64748b]'}`}>{label}</p>
       <div className="mt-2 flex items-end gap-1">
         <p className={`font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#dc2626]' : 'text-[#0f172a]'}`}>{value}</p>
         {suffix ? <span className="pb-1 text-xs text-[#64748b]">{suffix}</span> : null}

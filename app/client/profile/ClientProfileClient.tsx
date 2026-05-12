@@ -42,14 +42,14 @@ export default function ClientProfileClient({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex flex-col items-center gap-4 rounded-[30px] bg-[#0f172a] px-5 py-8 text-white shadow-[0_26px_54px_rgba(15,23,42,0.10)]">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#0d9488] font-headline text-2xl font-bold text-[#0f172a] shadow-[0_8px_24px_rgba(13,148,136,0.20)]">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#6B2C91] font-headline text-2xl font-bold text-[#0f172a] shadow-[0_8px_24px_rgba(107,44,145,0.20)]">
           {initials}
         </div>
         <div className="text-center">
           <h1 className="font-headline text-xl font-semibold">{clientName || 'Client'}</h1>
           <p className="mt-1 text-xs text-[#8f8a80]">NDIS Participant</p>
         </div>
-        <span className="rounded-full bg-[#0d9488]/20 px-3 py-1 text-xs font-semibold text-[#0d9488]">
+        <span className="rounded-full bg-[#6B2C91]/20 px-3 py-1 text-xs font-semibold text-[#6B2C91]">
           Client portal
         </span>
       </div>
@@ -109,7 +109,7 @@ export default function ClientProfileClient({
         type="button"
         onClick={handleSignOut}
         disabled={signingOut}
-        className="flex w-full items-center justify-center gap-3 rounded-[24px] border border-[#f3d7d7] bg-[#fff1f1] px-4 py-4 text-sm font-semibold text-[#9b3434] transition hover:bg-[#fee2e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-3 rounded-[24px] border border-[#f3d7d7] bg-[#fff1f1] px-4 py-4 text-sm font-semibold text-[#9b3434] transition hover:bg-[#fee2e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:opacity-60"
       >
         {signingOut ? (
           <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>

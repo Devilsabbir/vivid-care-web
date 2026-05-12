@@ -199,7 +199,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
     <div className="space-y-4">
       {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
       {successMessage ? (
-        <div className="flex items-start gap-3 rounded-[22px] border border-[#ccfbf1] bg-[#f0fdfa] px-4 py-4 text-sm text-[#0f766e] shadow-[0_10px_24px_rgba(26,26,24,0.04)]">
+        <div className="flex items-start gap-3 rounded-[22px] border border-[#E6D4F0] bg-[#F4ECF8] px-4 py-4 text-sm text-[#54206F] shadow-[0_10px_24px_rgba(26,26,24,0.04)]">
           <span className="material-symbols-outlined mt-0.5 text-[18px]">check_circle</span>
           <p>{successMessage}</p>
         </div>
@@ -207,7 +207,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
 
       {/* Location sharing disclosure â€” shown while a shift is active */}
       {activeShift && (
-        <div className="flex items-center gap-2 rounded-2xl bg-[#f0fdfa] px-4 py-3 text-xs text-[#0f766e]">
+        <div className="flex items-center gap-2 rounded-2xl bg-[#F4ECF8] px-4 py-3 text-xs text-[#54206F]">
           <span className="material-symbols-outlined text-[16px]">location_on</span>
           <span>Your location is being shared with your coordinator while on shift.</span>
         </div>
@@ -286,7 +286,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
               <button
                 onClick={() => handleClockIn(shift)}
                 disabled={!!loading}
-                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#0d9488] px-4 py-4 font-headline text-base font-semibold text-[#0f172a] transition hover:brightness-95 disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#6B2C91] px-4 py-4 font-headline text-base font-semibold text-[#0f172a] transition hover:brightness-95 disabled:opacity-60"
               >
                 {isThisLoading ? (
                   <span className="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>

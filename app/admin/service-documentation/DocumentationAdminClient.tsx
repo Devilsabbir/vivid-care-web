@@ -120,7 +120,7 @@ export default function DocumentationAdminClient({
       ) : null}
 
       {message ? (
-        <section className="rounded-[24px] border border-[#ccfbf1] bg-[#f0fdfa] p-4 text-sm text-[#0f766e]">
+        <section className="rounded-[24px] border border-[#E6D4F0] bg-[#F4ECF8] p-4 text-sm text-[#54206F]">
           {message}
         </section>
       ) : null}
@@ -232,7 +232,7 @@ export default function DocumentationAdminClient({
                     </div>
 
                     {expandedDocId === doc.id ? (
-                      <pre className="mt-4 overflow-auto rounded-[18px] bg-[#0f172a] p-4 text-xs leading-6 text-[#0d9488]">
+                      <pre className="mt-4 overflow-auto rounded-[18px] bg-[#0f172a] p-4 text-xs leading-6 text-[#6B2C91]">
                         {JSON.stringify(doc.payload, null, 2)}
                       </pre>
                     ) : null}
@@ -260,10 +260,10 @@ function MetricCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }
@@ -293,7 +293,7 @@ function labelSupportType(value: string | null) {
 }
 
 function documentationStatusClass(status: string) {
-  if (status === 'documented') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
+  if (status === 'documented') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   if (status === 'in_progress') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
   if (status === 'overdue') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'not_required') return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'
@@ -309,7 +309,7 @@ function copyDocumentationStatus(status: string) {
 }
 
 function docStatusClass(status: DocRow['status']) {
-  if (status === 'approved') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
+  if (status === 'approved') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   if (status === 'submitted') return 'rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold text-[#1d4ed8]'
   if (status === 'amended') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
   return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'

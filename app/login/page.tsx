@@ -92,7 +92,7 @@ function LoginPageInner() {
     <div className="min-h-screen bg-[#f7f8f9]">
       <div className="grid min-h-screen lg:grid-cols-[1.1fr_0.9fr]">
         <section className="relative overflow-hidden bg-[#0f172a] px-6 py-10 text-white md:px-10 lg:px-14">
-          <div className="absolute left-[-4rem] top-[-3rem] h-40 w-40 rounded-full bg-[#0d9488]/16 blur-3xl" />
+          <div className="absolute left-[-4rem] top-[-3rem] h-40 w-40 rounded-full bg-[#6B2C91]/16 blur-3xl" />
           <div className="absolute bottom-[-5rem] right-[-3rem] h-56 w-56 rounded-full bg-white/6 blur-3xl" />
 
           <div className="relative flex h-full flex-col justify-between gap-10">

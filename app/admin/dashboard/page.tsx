@@ -104,14 +104,14 @@ export default async function AdminDashboard() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.45rem]">
             <span className="font-headline">Managing</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">group</span>
               your team
             </span>
             <span className="font-headline">and</span>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.45rem]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">neurology</span>
               workflows
             </span>
@@ -123,13 +123,13 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
           </Link>
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span>
           </Link>
-          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2">
+          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2">
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
             New shift
           </Link>
@@ -162,19 +162,19 @@ export default async function AdminDashboard() {
           <p className="mt-3 text-xs text-[#9a978f]">Across {clientCount ?? 0} active clients</p>
         </div>
 
-        <div className="rounded-[24px] bg-[#0d9488] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+        <div className="rounded-[24px] bg-[#6B2C91] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
           <div className="flex items-start justify-between">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10">
               <span className="material-symbols-outlined text-[20px]">badge</span>
             </span>
             <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-[#0f172a]">{percent(liveStaff, staffCount ?? 0)}%</span>
           </div>
-          <p className="mt-5 text-[12px] text-[#0f766e]">Staff on shift</p>
+          <p className="mt-5 text-[12px] text-[#54206F]">Staff on shift</p>
           <div className="mt-2 flex items-end gap-2">
             <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{liveStaff}</span>
-            <span className="pb-1 text-xs text-[#0f766e]">/ {staffCount ?? 0}</span>
+            <span className="pb-1 text-xs text-[#54206F]">/ {staffCount ?? 0}</span>
           </div>
-          <p className="mt-3 text-xs text-[#0f766e]">Live clock-in coverage right now</p>
+          <p className="mt-3 text-xs text-[#54206F]">Live clock-in coverage right now</p>
         </div>
 
         <div className="relative overflow-hidden rounded-[24px] bg-[#0f172a] p-6 text-white">
@@ -208,7 +208,7 @@ export default async function AdminDashboard() {
                   Completed
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#0d9488]" />
+                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#6B2C91]" />
                   Upcoming
                 </span>
               </div>
@@ -227,7 +227,7 @@ export default async function AdminDashboard() {
                     <div key={day.label} className="flex flex-col items-center gap-3">
                       <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
                         <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#d1d5db] bg-[#f0f1f3]' : 'bg-[#0f172a]'}`} style={{ height: `${completeHeight}px` }} />
-                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#e6e8ec] bg-[#f7f8f9]' : 'border border-[#94a3b8] bg-[#0d9488]'}`} style={{ height: `${upcomingHeight}px` }} />
+                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#e6e8ec] bg-[#f7f8f9]' : 'border border-[#94a3b8] bg-[#6B2C91]'}`} style={{ height: `${upcomingHeight}px` }} />
                       </div>
                       <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#0f172a]' : 'text-[#97938a]'}`}>{day.label}</span>
                     </div>
@@ -251,9 +251,9 @@ export default async function AdminDashboard() {
             {liveBoard.length > 0 ? (
               <div className="space-y-3">
                 {liveBoard.map(shift => (
-                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#f0f1f3] bg-[#fafbfc] p-4 md:flex-row md:items-center hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#f0f1f3] bg-[#fafbfc] p-4 md:flex-row md:items-center hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#0d9488]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#6B2C91]">
                         {initials(shift.staff?.full_name)}
                       </div>
                       <div>
@@ -265,7 +265,7 @@ export default async function AdminDashboard() {
                       </div>
                     </div>
                     <div className="md:ml-auto md:text-right">
-                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
+                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
                         {shift.status === 'active' ? 'Active now' : 'Scheduled'}
                       </span>
                       <p className="mt-2 text-xs text-[#68655e]">{clock(shift.start_time)} - {clock(shift.end_time)}</p>
@@ -321,8 +321,8 @@ export default async function AdminDashboard() {
                   ? `/admin/staff/${doc.owner_id}?tab=documents`
                   : `/admin/clients/${doc.owner_id}?tab=documents`
                 return (
-                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-3 py-3 hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#0f766e]'}`}>
+                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-3 py-3 hover:bg-[#f7f8f9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#54206F]'}`}>
                       {doc.owner_type === 'staff' ? 'ST' : 'CL'}
                     </div>
                     <div className="min-w-0 flex-1">

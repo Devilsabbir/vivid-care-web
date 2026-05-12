@@ -169,7 +169,7 @@ export default function AgreementsClient({
       ) : null}
 
       {message ? (
-        <section className="rounded-[24px] border border-[#ccfbf1] bg-[#f0fdfa] p-4 text-sm text-[#0f766e]">
+        <section className="rounded-[24px] border border-[#E6D4F0] bg-[#F4ECF8] p-4 text-sm text-[#54206F]">
           {message}
         </section>
       ) : null}
@@ -210,7 +210,7 @@ export default function AgreementsClient({
                     <p className="text-sm font-semibold text-[#0f172a]">{template.name}</p>
                     <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#64748b]">{template.target_type}</p>
                   </div>
-                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${template.active ? 'bg-[#f0fdfa] text-[#0f766e]' : 'bg-[#e5e7eb] text-[#4b5563]'}`}>
+                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${template.active ? 'bg-[#F4ECF8] text-[#54206F]' : 'bg-[#e5e7eb] text-[#4b5563]'}`}>
                     {template.active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
@@ -248,7 +248,7 @@ export default function AgreementsClient({
                         <button
                           type="button"
                           onClick={() => router.push(`/sign-inperson/${agreement.id}`)}
-                          className="rounded-2xl bg-[#0d9488] px-4 py-2 text-sm font-semibold text-[#0f172a]"
+                          className="rounded-2xl bg-[#6B2C91] px-4 py-2 text-sm font-semibold text-[#0f172a]"
                         >
                           Sign in person
                         </button>
@@ -304,7 +304,7 @@ export default function AgreementsClient({
             <SelectField label="Target" value={createForm.target_id} onChange={value => setCreateForm(current => ({ ...current, target_id: value }))} options={targetOptions.map(option => [option.id, option.full_name ?? 'Unnamed record'])} />
             {createForm.target_type === 'client' && (
               <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#64748b]">
-                <span className="material-symbols-outlined text-[14px] text-[#0d9488]">info</span>
+                <span className="material-symbols-outlined text-[14px] text-[#6B2C91]">info</span>
                 Only NDIS clients are shown. Standard clients do not require service agreements.
               </p>
             )}
@@ -409,10 +409,10 @@ function MetricCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }
@@ -471,7 +471,7 @@ function SelectField({
 }
 
 function statusClass(status: AgreementRow['status']) {
-  if (status === 'signed') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
+  if (status === 'signed') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   if (status === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'draft') return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'
   return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'

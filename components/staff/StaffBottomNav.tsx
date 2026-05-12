@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -33,14 +33,14 @@ export default function StaffBottomNav() {
               aria-label={label}
               className={[
                 'flex flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-center transition-all',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]',
-                active ? 'text-[#0f766e]' : 'text-[#94a3b8] hover:text-[#475569]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]',
+                active ? 'text-[#54206F]' : 'text-[#94a3b8] hover:text-[#475569]',
               ].join(' ')}
             >
               <span
                 className={[
                   'flex h-9 w-9 items-center justify-center rounded-xl transition-all',
-                  active ? 'bg-[#f0fdfa]' : '',
+                  active ? 'bg-[#F4ECF8]' : '',
                 ].join(' ')}
               >
                 <span

@@ -71,7 +71,7 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
       {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
       <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#0d9488]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#6B2C91]">
             <span className="material-symbols-outlined text-[20px]">shield</span>
           </div>
           <div>

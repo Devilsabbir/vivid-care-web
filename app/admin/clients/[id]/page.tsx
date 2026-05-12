@@ -31,12 +31,12 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-3">
-          <Link href="/admin/clients" className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+          <Link href="/admin/clients" className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
             <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
             Back to clients
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0d9488] text-xl font-semibold uppercase tracking-[0.14em] text-[#0f172a]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#6B2C91] text-xl font-semibold uppercase tracking-[0.14em] text-[#0f172a]">
               {(client.full_name ?? 'C')
                 .split(' ')
                 .filter(Boolean)
@@ -51,7 +51,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
                 </h1>
                 <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold ${
                   client.client_type !== 'standard'
-                    ? 'bg-[#eef2ff] text-[#3b5bdb]'
+                    ? 'bg-[#E6F5FC] text-[#1380AB]'
                     : 'bg-[#f7f8f9] text-[#64748b]'
                 }`}>
                   {client.client_type !== 'standard' ? 'NDIS Client' : 'Client'}
@@ -63,10 +63,10 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]" aria-label="Go to scheduler">
+          <Link href="/admin/roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]" aria-label="Go to scheduler">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
           </Link>
-          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2">
+          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2">
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">description</span>
             Document hub
           </Link>

@@ -138,7 +138,7 @@ function statusStyle(status: ShiftStatus, unassigned: boolean): {
   if (unassigned && status !== 'cancelled')
     return { bg: '#fffbeb', borderLeft: '#f59e0b', text: '#78350f', muted: '#92400e' }
   if (status === 'active')
-    return { bg: '#faf0ff', borderLeft: '#0d9488', text: '#0f766e', muted: '#0f766e' }
+    return { bg: '#faf0ff', borderLeft: '#6B2C91', text: '#54206F', muted: '#54206F' }
   if (status === 'completed')
     return { bg: '#f3f0ec', borderLeft: '#b9b3a8', text: '#59554f', muted: '#78746b' }
   if (status === 'cancelled')
@@ -192,7 +192,7 @@ function statusLabel(s: ShiftStatus): string {
 }
 
 function statusBadgeCls(s: ShiftStatus): string {
-  if (s === 'active')    return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]'
+  if (s === 'active')    return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
   if (s === 'completed') return 'rounded-full bg-[#ebe7df] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#59554f]'
   if (s === 'cancelled') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
   return 'rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1d4ed8]'
@@ -212,7 +212,7 @@ function ShiftPill({
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-lg text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+      className="w-full rounded-lg text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
       style={{
         background: s.bg,
         borderLeft: `3px solid ${s.borderLeft}`,
@@ -227,8 +227,8 @@ function ShiftPill({
           {fmtHour(shift.startHour)}â€“{fmtHour(shift.endHour)}
         </span>
         {isActive && (
-          <span className="ml-auto flex items-center gap-1 text-[9px] font-bold" style={{ color: '#0d9488' }}>
-            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#0d9488]" />
+          <span className="ml-auto flex items-center gap-1 text-[9px] font-bold" style={{ color: '#6B2C91' }}>
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#6B2C91]" />
             LIVE
           </span>
         )}
@@ -319,13 +319,13 @@ function WeekView({
             >
               <div
                 className="text-[10px] font-semibold uppercase tracking-[0.08em]"
-                style={{ color: isToday ? '#0d9488' : '#94a3b8' }}
+                style={{ color: isToday ? '#6B2C91' : '#94a3b8' }}
               >
                 {DAY_LABELS[i]}
               </div>
               <div
                 className="text-[13px] font-semibold"
-                style={{ color: isToday ? '#0d9488' : '#0f172a' }}
+                style={{ color: isToday ? '#6B2C91' : '#0f172a' }}
               >
                 {d.getDate()}
                 {isToday && (
@@ -389,7 +389,7 @@ function WeekView({
                 <div
                   key={day}
                   className="flex min-h-[72px] flex-col gap-1 border-b border-l border-[#e6e8ec] p-1.5"
-                  style={{ background: isToday ? 'rgba(13,148,136,0.04)' : undefined }}
+                  style={{ background: isToday ? 'rgba(107,44,145,0.04)' : undefined }}
                 >
                   {items.map(s => (
                     <ShiftPill key={s.id} shift={s} onClick={() => onShiftClick(s.id)} />
@@ -505,15 +505,15 @@ function DayView({
                 left: 60, right: 0,
                 top: (nowHour - HOUR_START) * ROW_H,
                 height: 0,
-                borderTop: '2px solid #0d9488',
+                borderTop: '2px solid #6B2C91',
               }}
             >
               <div
-                className="absolute -left-1 -top-[5px] h-2.5 w-2.5 rounded-full bg-[#0d9488]"
+                className="absolute -left-1 -top-[5px] h-2.5 w-2.5 rounded-full bg-[#6B2C91]"
               />
               <div
-                className="absolute left-3 -top-[14px] rounded px-1.5 py-0.5 text-[9px] font-bold text-[#0d9488]"
-                style={{ background: 'white', border: '1px solid #f0fdfa' }}
+                className="absolute left-3 -top-[14px] rounded px-1.5 py-0.5 text-[9px] font-bold text-[#6B2C91]"
+                style={{ background: 'white', border: '1px solid #F4ECF8' }}
               >
                 {fmtHour(nowHour)}
               </div>
@@ -611,7 +611,7 @@ function StaffView({
                 {/* Now line */}
                 {nowHour >= HOUR_START && nowHour <= HOUR_END && (
                   <div
-                    className="pointer-events-none absolute top-0 bottom-0 z-10 w-px bg-[#0d9488]"
+                    className="pointer-events-none absolute top-0 bottom-0 z-10 w-px bg-[#6B2C91]"
                     style={{ left: (nowHour - HOUR_START) * HOUR_PX }}
                   />
                 )}
@@ -720,7 +720,7 @@ function FilterBar({
                 onClick={() => setSelectedDay(d)}
                 className={`h-7 rounded-[9px] px-2.5 text-[11px] font-medium transition-all ${
                   isSelected
-                    ? 'bg-[#0f172a] text-[#0d9488] shadow-sm'
+                    ? 'bg-[#0f172a] text-[#6B2C91] shadow-sm'
                     : 'text-[#64748b] hover:text-[#0f172a]'
                 }`}
               >
@@ -913,7 +913,7 @@ export default function RosterClient({
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Roster</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">calendar_month</span>
               planner
             </span>
@@ -963,7 +963,7 @@ export default function RosterClient({
             key={card.label}
             className={`rounded-[20px] p-4 shadow-[0_8px_24px_rgba(26,26,24,0.04)] ${
               card.accent
-                ? 'bg-[#0d9488]'
+                ? 'bg-[#6B2C91]'
                 : card.warn
                 ? 'border border-[#fde8c8] bg-[#fff8f0]'
                 : 'border border-[#e6e8ec] bg-white'
@@ -978,13 +978,13 @@ export default function RosterClient({
             >
               <span className="material-symbols-outlined text-[16px]">{card.icon}</span>
             </div>
-            <p className={`mt-3 text-[11px] font-medium ${card.accent ? 'text-[#0f766e]' : card.warn ? 'text-[#92400e]' : 'text-[#64748b]'}`}>
+            <p className={`mt-3 text-[11px] font-medium ${card.accent ? 'text-[#54206F]' : card.warn ? 'text-[#92400e]' : 'text-[#64748b]'}`}>
               {card.label}
             </p>
             <p className="font-headline text-[1.75rem] leading-none tracking-[-0.06em] text-[#0f172a]">
               {card.value}
             </p>
-            <p className={`mt-1 text-[11px] ${card.accent ? 'text-[#0f766e]' : card.warn ? 'text-[#92400e]' : 'text-[#64748b]'}`}>
+            <p className={`mt-1 text-[11px] ${card.accent ? 'text-[#54206F]' : card.warn ? 'text-[#92400e]' : 'text-[#64748b]'}`}>
               {card.sub}
             </p>
           </div>
@@ -1106,7 +1106,7 @@ export default function RosterClient({
                     {
                       label: 'Staff assigned',
                       done: Boolean(selectedShift.staffId),
-                      doneClass: 'bg-[#f0fdfa] text-[#0f766e]',
+                      doneClass: 'bg-[#F4ECF8] text-[#54206F]',
                     },
                     {
                       label: 'Location set',
@@ -1116,12 +1116,12 @@ export default function RosterClient({
                     {
                       label: 'Notes ready',
                       done: Boolean(selectedShift.notes),
-                      doneClass: 'bg-[#f0fdfa] text-[#6d28d9]',
+                      doneClass: 'bg-[#F4ECF8] text-[#6d28d9]',
                     },
                     {
                       label: 'Clock-in done',
                       done: selectedShift.status === 'active' || selectedShift.status === 'completed',
-                      doneClass: 'bg-[#f0fdfa] text-[#0f766e]',
+                      doneClass: 'bg-[#F4ECF8] text-[#54206F]',
                     },
                     {
                       label: 'Completed',
@@ -1186,7 +1186,7 @@ export default function RosterClient({
                           {i === 0 ? 'Best match' : 'Available'}
                         </p>
                       </div>
-                      <span className="rounded-full bg-[#f0fdfa] px-2 py-0.5 text-[10px] font-semibold text-[#6d28d9]">
+                      <span className="rounded-full bg-[#F4ECF8] px-2 py-0.5 text-[10px] font-semibold text-[#6d28d9]">
                         {98 - i * 6}%
                       </span>
                     </div>

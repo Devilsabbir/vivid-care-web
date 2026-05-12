@@ -56,7 +56,7 @@ function fmtShiftDate(iso: string): string {
 
 // ─── Shared form field style ──────────────────────────────────────────────────
 
-const inputCls = 'w-full rounded-xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]'
+const inputCls = 'w-full rounded-xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]'
 const labelCls = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]'
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -418,7 +418,7 @@ export default function ShiftDetailClient({
                     <div className="mt-4 flex flex-wrap gap-3 text-[11px] text-[#94a3b8]">
                       {client?.lat && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#00AAEF]" />Client</span>}
                       {(shift.clock_in_lat || shift.clock_out_lat) && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#22c55e]" />Clock in / out</span>}
-                      {liveLocation && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#0d9488]" />Live</span>}
+                      {liveLocation && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#6B2C91]" />Live</span>}
                     </div>
                     <div className="mt-3 overflow-hidden rounded-[16px]">
                       <LiveMap markers={locationMarkers} height="220px" showGeofences />
@@ -436,7 +436,7 @@ export default function ShiftDetailClient({
                   <div className="mt-4 space-y-3">
                     {clockEvents.map((event: any) => (
                       <div key={event.id} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-4 py-3">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${event.type === 'clock_in' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#f0fdfa] text-[#0f766e]'}`}>
+                        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${event.type === 'clock_in' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#F4ECF8] text-[#54206F]'}`}>
                           <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
                             {event.type === 'clock_in' ? 'login' : 'logout'}
                           </span>
@@ -469,7 +469,7 @@ export default function ShiftDetailClient({
                       <Link
                         key={incident.id}
                         href={`/admin/incidents/${incident.id}`}
-                        className="flex items-center justify-between rounded-[18px] bg-[#fafbfc] px-4 py-3 hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                        className="flex items-center justify-between rounded-[18px] bg-[#fafbfc] px-4 py-3 hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                       >
                         <span className="text-sm font-medium text-[#0f172a]">{incident.title}</span>
                         <div className="flex gap-2">
@@ -495,7 +495,7 @@ export default function ShiftDetailClient({
                   {staff.email && <p className="text-xs text-[#64748b]">{staff.email}</p>}
                   <Link
                     href={`/admin/staff/${staff.id}`}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-[#0d9488] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-[#6B2C91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                   >
                     View profile
                     <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>
@@ -514,7 +514,7 @@ export default function ShiftDetailClient({
                   {client.address && <p className="text-xs text-[#64748b]">{client.address}</p>}
                   <Link
                     href={`/admin/clients/${client.id}`}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-[#0d9488] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-[#6B2C91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                   >
                     View profile
                     <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>
@@ -553,7 +553,7 @@ export default function ShiftDetailClient({
                   type="button"
                   onClick={() => { setActionError(''); setEditOpen(true) }}
                   disabled={!isEditable}
-                  className="w-full rounded-2xl border border-[#e6e8ec] px-4 py-2.5 text-left text-sm font-medium text-[#0f172a] transition hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="w-full rounded-2xl border border-[#e6e8ec] px-4 py-2.5 text-left text-sm font-medium text-[#0f172a] transition hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="Edit shift"
                 >
                   <span className="material-symbols-outlined mr-2 align-middle text-[16px]" aria-hidden="true">edit</span>
@@ -564,7 +564,7 @@ export default function ShiftDetailClient({
                   type="button"
                   onClick={() => { setActionError(''); setReassignOpen(true); setNewStaffId('') }}
                   disabled={!isEditable}
-                  className="w-full rounded-2xl border border-[#e6e8ec] px-4 py-2.5 text-left text-sm font-medium text-[#0f172a] transition hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="w-full rounded-2xl border border-[#e6e8ec] px-4 py-2.5 text-left text-sm font-medium text-[#0f172a] transition hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="Reassign staff"
                 >
                   <span className="material-symbols-outlined mr-2 align-middle text-[16px]" aria-hidden="true">swap_horiz</span>
@@ -784,7 +784,7 @@ export default function ShiftDetailClient({
             <button
               type="submit"
               disabled={saving || !newStaffId}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#0d9488] py-2.5 text-sm font-semibold text-[#0f172a] disabled:opacity-60"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#6B2C91] py-2.5 text-sm font-semibold text-[#0f172a] disabled:opacity-60"
             >
               {saving && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
               {saving ? 'Saving…' : 'Reassign'}

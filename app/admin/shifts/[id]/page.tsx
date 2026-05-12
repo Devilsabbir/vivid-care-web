@@ -66,7 +66,7 @@ export default async function ShiftDetailPage({ params }: { params: { id: string
         <div className="space-y-3">
           <Link
             href="/admin/shifts"
-            className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
           >
             <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
             Back to shifts

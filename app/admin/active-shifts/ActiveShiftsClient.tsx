@@ -200,13 +200,13 @@ export default function ActiveShiftsClient({
             </div>
             <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#64748b]">
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-[#0d9488]" /> Staff
+                <span className="h-3 w-3 rounded-full bg-[#6B2C91]" /> Staff
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded-full bg-[#00AAEF]" /> Client
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full border-2 border-[#0d9488]/30 bg-transparent" /> Geofence
+                <span className="h-3 w-3 rounded-full border-2 border-[#6B2C91]/30 bg-transparent" /> Geofence
               </span>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function ActiveShiftsClient({
               <h3 className="text-sm font-semibold text-[#0f172a]">Live shift board</h3>
               <p className="text-xs text-[#64748b]">Staff currently onsite with attendance progress and location readiness</p>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#faf5ff] px-3 py-1.5 text-[11px] font-medium text-[#0f766e]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#faf5ff] px-3 py-1.5 text-[11px] font-medium text-[#54206F]">
               <span className="h-2.5 w-2.5 rounded-full bg-[#a855f7] animate-pulse" />
               Realtime feed
             </span>
@@ -297,7 +297,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
   const progress = shiftProgress(shift)
 
   return (
-    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4 transition-colors hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+    <Link href={`/admin/shifts/${shift.id}`} className="block rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4 transition-colors hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
           <Avatar name={shift.staffName} tone="dark" />
@@ -311,7 +311,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
         </div>
 
         <div className="md:ml-auto md:max-w-[14rem] md:text-right">
-          <span className="inline-flex rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f766e]">
+          <span className="inline-flex rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]">
             Live now
           </span>
           <p className="mt-2 text-[12px] text-[#68655e]">{shift.clientAddress ?? 'No client address saved'}</p>
@@ -347,7 +347,7 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
 
 function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
   return (
-    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]">
+    <Link href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-4 rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4 md:flex-row md:items-center transition-colors hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
       <div className="flex items-center gap-3">
         <Avatar name={shift.staffName} tone="accent" />
         <div>
@@ -384,10 +384,10 @@ function StatCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }
@@ -449,7 +449,7 @@ function formatDate(value: string) {
 
 function Avatar({ name, tone }: { name: string; tone: 'dark' | 'accent' }) {
   return (
-    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#0f172a] text-[#0d9488]' : 'bg-[#0d9488] text-[#0f172a]'}`}>
+    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-semibold uppercase tracking-[0.14em] ${tone === 'dark' ? 'bg-[#0f172a] text-[#6B2C91]' : 'bg-[#6B2C91] text-[#0f172a]'}`}>
       {name
         .split(' ')
         .filter(Boolean)
@@ -462,6 +462,6 @@ function Avatar({ name, tone }: { name: string; tone: 'dark' | 'accent' }) {
 
 function pillClass(tone: 'green' | 'amber') {
   return tone === 'green'
-    ? 'rounded-full bg-[#f0fdfa] px-3 py-1.5 text-[#0f766e]'
+    ? 'rounded-full bg-[#F4ECF8] px-3 py-1.5 text-[#54206F]'
     : 'rounded-full bg-[#fef9c3] px-3 py-1.5 text-[#92400e]'
 }

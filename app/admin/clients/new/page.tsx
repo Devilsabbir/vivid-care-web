@@ -105,12 +105,12 @@ export default function NewClientPage() {
                     onClick={() => setField('client_type', type)}
                     className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
                       form.client_type === type
-                        ? 'border-[#0d9488] bg-[#f0fdfa] text-[#0f172a]'
+                        ? 'border-[#6B2C91] bg-[#F4ECF8] text-[#0f172a]'
                         : 'border-[#e6e8ec] bg-[#fafbfc] text-[#64748b] hover:bg-[#f7f8f9]'
                     }`}
                   >
                     <span className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2 ${
-                      form.client_type === type ? 'border-[#0d9488] bg-[#0d9488]' : 'border-[#cbd5e1]'
+                      form.client_type === type ? 'border-[#6B2C91] bg-[#6B2C91]' : 'border-[#cbd5e1]'
                     }`}>
                       {form.client_type === type && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                     </span>

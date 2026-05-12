@@ -1,21 +1,21 @@
-import { getExpiryStatus, expiryLabel } from '@/lib/utils/expiry'
+﻿import { getExpiryStatus, expiryLabel } from '@/lib/utils/expiry'
 
 type BadgeVariant = 'active' | 'near_expiry' | 'expired' | 'scheduled' | 'completed' | 'cancelled' | 'open' | 'investigating' | 'resolved' | 'emergency' | 'high' | 'medium' | 'low'
 
 const styles: Record<string, string> = {
-  active: 'bg-[#f0fdfa] text-[#0f766e]',
+  active: 'bg-[#F4ECF8] text-[#54206F]',
   scheduled: 'bg-[#dbeafe] text-[#1d4ed8]',
   near_expiry: 'bg-[#fef9c3] text-[#92400e]',
   expired: 'bg-[#fee2e2] text-[#991b1b]',
-  completed: 'bg-[#f0fdfa] text-[#0f766e]',
+  completed: 'bg-[#F4ECF8] text-[#54206F]',
   cancelled: 'bg-[#f3f4f6] text-[#6b7280]',
   open: 'bg-[#fee2e2] text-[#991b1b]',
   investigating: 'bg-[#fef9c3] text-[#92400e]',
-  resolved: 'bg-[#f0fdfa] text-[#0f766e]',
+  resolved: 'bg-[#F4ECF8] text-[#54206F]',
   emergency: 'bg-[#fee2e2] text-[#991b1b]',
   high: 'bg-[#fee2e2] text-[#991b1b]',
   medium: 'bg-[#fef9c3] text-[#92400e]',
-  low: 'bg-[#f0fdfa] text-[#0f766e]',
+  low: 'bg-[#F4ECF8] text-[#54206F]',
 }
 
 export function Badge({ variant, label }: { variant: BadgeVariant; label?: string }) {

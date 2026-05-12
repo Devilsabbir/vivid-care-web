@@ -39,7 +39,7 @@ export default async function IncidentsPage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Incidents</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">warning</span>
               response board
             </span>
@@ -128,8 +128,8 @@ function SummaryCard({
   danger?: 'red' | 'amber'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#0f766e]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
       <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#0f172a]'}`}>{value}</p>
     </div>
   )
@@ -145,7 +145,7 @@ function formatIncidentDate(value: string) {
 function severityBar(severity: IncidentRow['severity']) {
   if (severity === 'emergency' || severity === 'high') return 'bg-[#dc2626]'
   if (severity === 'medium') return 'bg-[#ca8a04]'
-  return 'bg-[#0d9488]'
+  return 'bg-[#6B2C91]'
 }
 
 function severityLabel(severity: IncidentRow['severity']) {
@@ -163,6 +163,6 @@ function statusLabel(status: IncidentRow['status']) {
 
 function statusClass(status: IncidentRow['status']) {
   if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
+  if (status === 'resolved') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
 }

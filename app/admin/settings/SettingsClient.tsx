@@ -226,7 +226,7 @@ export default function SettingsClient({
       ) : null}
 
       {message ? (
-        <section className="rounded-[24px] border border-[#ccfbf1] bg-[#f0fdfa] p-4 text-sm text-[#0f766e]">
+        <section className="rounded-[24px] border border-[#E6D4F0] bg-[#F4ECF8] p-4 text-sm text-[#54206F]">
           {message}
         </section>
       ) : null}
@@ -374,7 +374,7 @@ export default function SettingsClient({
               type="button"
               onClick={handleAddSupportType}
               disabled={saving === 'support-type'}
-              className="rounded-2xl bg-[#0d9488] px-4 py-3 text-sm font-semibold text-[#0f172a] disabled:opacity-60"
+              className="rounded-2xl bg-[#6B2C91] px-4 py-3 text-sm font-semibold text-[#0f172a] disabled:opacity-60"
             >
               {saving === 'support-type' ? 'Adding...' : 'Add support type'}
             </button>
@@ -469,10 +469,10 @@ function MetricCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }

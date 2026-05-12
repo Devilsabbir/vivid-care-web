@@ -58,7 +58,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       {/* Back link */}
       <Link
         href="/staff/home"
-        className="inline-flex items-center gap-1 text-xs font-medium text-[#94a3b8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] rounded"
+        className="inline-flex items-center gap-1 text-xs font-medium text-[#94a3b8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] rounded"
       >
         <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
         Back to home
@@ -69,7 +69,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
         <div className="flex items-center justify-between">
           <StatusBadge status={state.status as any} label={state.label} />
           {geoReady ? (
-            <span className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium text-[#0d9488]">
+            <span className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium text-[#6B2C91]">
               <span className="material-symbols-outlined text-[14px]" aria-hidden="true">location_on</span>
               Geofence active
             </span>
@@ -134,7 +134,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
           <div className="mt-3 space-y-2">
             {clockEvents.map((event: any) => (
               <div key={event.id} className="flex items-center gap-3 rounded-[16px] bg-[#fafbfc] px-3 py-2">
-                <span className={`material-symbols-outlined text-[16px] ${event.type === 'clock_in' ? 'text-[#166534]' : 'text-[#0f766e]'}`} aria-hidden="true">
+                <span className={`material-symbols-outlined text-[16px] ${event.type === 'clock_in' ? 'text-[#166534]' : 'text-[#54206F]'}`} aria-hidden="true">
                   {event.type === 'clock_in' ? 'login' : 'logout'}
                 </span>
                 <span className="text-sm text-[#0f172a]">
@@ -150,7 +150,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       {state.canClockIn && (
         <Link
           href="/staff/clock"
-          className="block w-full rounded-2xl bg-[#0d9488] py-4 text-center text-sm font-bold text-[#0f172a] shadow-[0_14px_32px_rgba(13,148,136,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
+          className="block w-full rounded-2xl bg-[#6B2C91] py-4 text-center text-sm font-bold text-[#0f172a] shadow-[0_14px_32px_rgba(107,44,145,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
         >
           <span className="material-symbols-outlined mr-2 text-[18px] align-middle" aria-hidden="true">timer</span>
           Go to clock
@@ -160,7 +160,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       {state.status === 'in_progress' && (
         <Link
           href="/staff/clock"
-          className="block w-full rounded-2xl bg-[#0f172a] py-4 text-center text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:ring-offset-2"
+          className="block w-full rounded-2xl bg-[#0f172a] py-4 text-center text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
         >
           <span className="material-symbols-outlined mr-2 text-[18px] align-middle" aria-hidden="true">timer</span>
           Clock out

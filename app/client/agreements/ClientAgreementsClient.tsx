@@ -70,12 +70,12 @@ export default function ClientAgreementsClient({
               <button
                 type="button"
                 onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
-                className="flex w-full items-start gap-4 p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0d9488]"
+                className="flex w-full items-start gap-4 p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#6B2C91]"
                 aria-expanded={isExpanded}
               >
                 <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
-                  agreement.status === 'signed' ? 'bg-[#f0fdfa] text-[#0f766e]' :
-                  agreement.status === 'pending_signature' ? 'bg-[#0d9488] text-[#0f172a]' :
+                  agreement.status === 'signed' ? 'bg-[#F4ECF8] text-[#54206F]' :
+                  agreement.status === 'pending_signature' ? 'bg-[#6B2C91] text-[#0f172a]' :
                   'bg-[#f7f8f9] text-[#5c5850]'
                 }`}>
                   <span className="material-symbols-outlined text-[20px]">
@@ -111,7 +111,7 @@ export default function ClientAgreementsClient({
                 <div className="border-t border-[#f0f1f3] px-4 pb-4 pt-3">
                   <Link
                     href={`/sign/${agreement.signing_token}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0d9488] px-4 py-3 text-sm font-semibold text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a]"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#6B2C91] px-4 py-3 text-sm font-semibold text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a]"
                   >
                     <span className="material-symbols-outlined text-[18px]">draw</span>
                     Sign this agreement
@@ -127,7 +127,7 @@ export default function ClientAgreementsClient({
                     {agreement.status === 'pending_signature' && agreement.signing_token && (
                       <Link
                         href={`/sign/${agreement.signing_token}`}
-                        className="inline-flex items-center gap-2 rounded-2xl bg-[#0d9488] px-4 py-2.5 text-sm font-semibold text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a]"
+                        className="inline-flex items-center gap-2 rounded-2xl bg-[#6B2C91] px-4 py-2.5 text-sm font-semibold text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a]"
                       >
                         <span className="material-symbols-outlined text-[16px]">draw</span>
                         Sign this agreement
@@ -138,7 +138,7 @@ export default function ClientAgreementsClient({
                         href={agreement.pdf_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 text-sm font-semibold text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 text-sm font-semibold text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                       >
                         <span className="material-symbols-outlined text-[16px]">download</span>
                         Download PDF
@@ -174,7 +174,7 @@ export default function ClientAgreementsClient({
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    signed: 'bg-[#f0fdfa] text-[#0f766e]',
+    signed: 'bg-[#F4ECF8] text-[#54206F]',
     pending_signature: 'bg-[#fef9c3] text-[#92400e]',
     draft: 'bg-[#f7f8f9] text-[#5c5850]',
     expired: 'bg-[#fee2e2] text-[#991b1b]',

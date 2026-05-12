@@ -66,7 +66,7 @@ export default function StaffHeader({
           >
             <span className="material-symbols-outlined text-[20px]">notifications</span>
             {unreadCount > 0 ? (
-              <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#0d9488] px-1 text-[10px] font-bold text-[#0f172a]">
+              <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#6B2C91] px-1 text-[10px] font-bold text-[#0f172a]">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             ) : null}

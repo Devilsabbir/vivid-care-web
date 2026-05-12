@@ -52,7 +52,7 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
               className="rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-5 transition-colors hover:bg-[#f7f8f9]"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#0d9488]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#6B2C91]">
                   {initials(member.full_name)}
                 </div>
                 <div className="min-w-0">
@@ -67,7 +67,7 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-semibold text-[#3b5bdb]">Rostered</span>
+                <span className="rounded-full bg-[#E6F5FC] px-2.5 py-1 text-[10px] font-semibold text-[#1380AB]">Rostered</span>
                 <span className={statusClass(member.docState)}>{statusLabel(member.docState)}</span>
               </div>
             </Link>
@@ -116,6 +116,6 @@ function statusLabel(state: StaffCard['docState']) {
 function statusClass(state: StaffCard['docState']) {
   if (state === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (state === 'near_expiry') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (state === 'active') return 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]'
+  if (state === 'active') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   return 'rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]'
 }

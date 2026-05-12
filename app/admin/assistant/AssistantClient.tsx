@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState } from 'react'
 
@@ -104,7 +104,7 @@ export default function AssistantClient({ adminName }: { adminName: string }) {
         {/* Chat header */}
         <div className="flex items-center justify-between border-b border-[#f0f1f3] px-5 py-3.5">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#0d9488] text-white">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#6B2C91] text-white">
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">auto_awesome</span>
             </div>
             <div>
@@ -128,7 +128,7 @@ export default function AssistantClient({ adminName }: { adminName: string }) {
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-5">
           {messages.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f0fdfa] text-[#0d9488]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F4ECF8] text-[#6B2C91]">
                 <span className="material-symbols-outlined text-[28px]">auto_awesome</span>
               </div>
               <h3 className="mt-4 font-headline text-xl font-semibold text-[#0f172a]">Hi {adminName.split(' ')[0]}, how can I help?</h3>
@@ -142,7 +142,7 @@ export default function AssistantClient({ adminName }: { adminName: string }) {
                     key={prompt}
                     type="button"
                     onClick={() => send(prompt)}
-                    className="rounded-2xl border border-[#e6e8ec] bg-white px-4 py-3 text-left text-sm text-[#0f172a] transition-colors hover:bg-[#f7f8f9] hover:border-[#0d9488]"
+                    className="rounded-2xl border border-[#e6e8ec] bg-white px-4 py-3 text-left text-sm text-[#0f172a] transition-colors hover:bg-[#f7f8f9] hover:border-[#6B2C91]"
                   >
                     {prompt}
                   </button>
@@ -167,7 +167,7 @@ export default function AssistantClient({ adminName }: { adminName: string }) {
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="border-t border-[#f0f1f3] bg-[#fafbfc] px-4 py-3">
-          <div className="flex items-end gap-2 rounded-2xl border border-[#e6e8ec] bg-white px-4 py-2.5 focus-within:border-[#0d9488] focus-within:ring-2 focus-within:ring-[#ccfbf1]">
+          <div className="flex items-end gap-2 rounded-2xl border border-[#e6e8ec] bg-white px-4 py-2.5 focus-within:border-[#6B2C91] focus-within:ring-2 focus-within:ring-[#E6D4F0]">
             <textarea
               ref={inputRef}
               value={input}
@@ -182,7 +182,7 @@ export default function AssistantClient({ adminName }: { adminName: string }) {
             <button
               type="submit"
               disabled={!input.trim() || sending}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0d9488] text-white transition-opacity disabled:opacity-40"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#6B2C91] text-white transition-opacity disabled:opacity-40"
               aria-label="Send"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_upward</span>
@@ -222,13 +222,13 @@ function ChatBubble({ message, typing }: { message: Message; typing?: boolean })
   return (
     <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
       {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-[#f0fdfa] text-[#0d9488]">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-[#F4ECF8] text-[#6B2C91]">
           <span className="material-symbols-outlined text-[16px]">auto_awesome</span>
         </div>
       )}
       <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-6 ${
         isUser
-          ? 'bg-[#0d9488] text-white'
+          ? 'bg-[#6B2C91] text-white'
           : 'border border-[#e6e8ec] bg-white text-[#0f172a]'
       }`}>
         {typing ? <TypingDots /> : <p className="whitespace-pre-wrap">{message.content}</p>}

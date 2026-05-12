@@ -73,7 +73,7 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
               onClick={handleOpen}
               disabled={opening}
               aria-label={opening ? 'Opening documentâ€¦' : 'Open document file'}
-              className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b] transition hover:bg-[#e6e8ec] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:opacity-60"
+              className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b] transition hover:bg-[#e6e8ec] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:opacity-60"
             >
               {opening ? 'Openingâ€¦' : 'Open file'}
             </button>

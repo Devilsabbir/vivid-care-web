@@ -99,7 +99,7 @@ export default async function StaffPage() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Staff</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">badge</span>
               operations
             </span>
@@ -153,10 +153,10 @@ function SummaryCard({
   danger?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#0d9488]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#0f766e]' : danger ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : danger ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
       <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#ca8a04]' : 'text-[#0f172a]'}`}>{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#0f766e]' : 'text-[#64748b]'}`}>{sub}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }

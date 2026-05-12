@@ -129,7 +129,7 @@ export default function SupportClient() {
                 <button
                   onClick={() => sendMessage()}
                   disabled={!input.trim() || loading}
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0d9488] text-[#0f172a] disabled:opacity-40"
+                  className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6B2C91] text-[#0f172a] disabled:opacity-40"
                 >
                   <span className="material-symbols-outlined text-[20px]">send</span>
                 </button>
@@ -146,7 +146,7 @@ export default function SupportClient() {
           ].map(item => (
             <article key={item.label} className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
               <div className="flex items-center gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#0d9488]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#6B2C91]">
                   <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                 </div>
 

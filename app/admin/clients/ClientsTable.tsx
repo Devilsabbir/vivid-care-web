@@ -73,11 +73,11 @@ export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {client.client_type === 'ndis' ? (
-                  <span className="rounded-full bg-[#eef2ff] px-2.5 py-1 text-[10px] font-semibold text-[#3b5bdb]">NDIS Client</span>
+                  <span className="rounded-full bg-[#E6F5FC] px-2.5 py-1 text-[10px] font-semibold text-[#1380AB]">NDIS Client</span>
                 ) : (
                   <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">Client</span>
                 )}
-                <span className={client.hasGeofence ? 'rounded-full bg-[#f0fdfa] px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
+                <span className={client.hasGeofence ? 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
                   {client.hasGeofence ? 'Geofence ready' : 'Address review'}
                 </span>
               </div>

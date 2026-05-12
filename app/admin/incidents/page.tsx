@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 type IncidentRow = {
@@ -37,31 +37,24 @@ export default async function IncidentsPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Incidents</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">warning</span>
               response board
             </span>
           </div>
-          <p className="text-sm text-[#6c6b66]">Track open issues, review escalations, and keep incident handling visible for the whole operations team</p>
+          <p className="text-sm text-[#64748b]">Track open issues, review escalations, and keep incident handling visible for the whole operations team</p>
         </div>
 
-        <Link
-          href="/staff/incidents"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"
-        >
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          New report
-        </Link>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
-        <span className="rounded-full bg-[#1a1a18] px-4 py-2 text-white">All</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Open</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Under review</span>
-        <span className="rounded-full px-4 py-2 text-[#6d6b64]">Resolved</span>
-        <span className="rounded-full bg-[#f4f2ed] px-4 py-2 text-[#5f5c55]">This week</span>
+      <nav className="flex flex-wrap gap-2 rounded-full bg-[#f0f1f3] p-1.5 text-xs font-medium">
+        <span className="rounded-full bg-[#0f172a] px-4 py-2 text-white">All</span>
+        <span className="rounded-full px-4 py-2 text-[#64748b]">Open</span>
+        <span className="rounded-full px-4 py-2 text-[#64748b]">Under review</span>
+        <span className="rounded-full px-4 py-2 text-[#64748b]">Resolved</span>
+        <span className="rounded-full bg-[#f7f8f9] px-4 py-2 text-[#64748b]">This week</span>
       </nav>
 
       <section className="grid gap-4 md:grid-cols-4">
@@ -76,35 +69,35 @@ export default async function IncidentsPage() {
           <Link
             key={item.id}
             href={`/admin/incidents/${item.id}`}
-            className="flex gap-4 rounded-[22px] border border-[#e8e4dc] bg-white p-5 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#faf9f6]"
+            className="flex gap-4 rounded-[22px] border border-[#e6e8ec] bg-white p-5 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#fafbfc]"
           >
             <div className={`w-1 rounded-full ${severityBar(item.severity)}`} />
             <div className="min-w-0 flex-1">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-[#1a1a18]">{item.title}</h3>
-                  <p className="mt-1 text-[11px] text-[#8a877f]">
-                    {formatIncidentDate(item.reported_at)} · {item.staffName}
+                  <h3 className="text-sm font-semibold text-[#0f172a]">{item.title}</h3>
+                  <p className="mt-1 text-[11px] text-[#64748b]">
+                    {formatIncidentDate(item.reported_at)} Â· {item.staffName}
                   </p>
                 </div>
                 <span className={statusClass(item.status)}>{statusLabel(item.status)}</span>
               </div>
 
-              <p className="mt-3 text-sm leading-6 text-[#5c5953]">
+              <p className="mt-3 text-sm leading-6 text-[#64748b]">
                 {item.description ?? 'No additional narrative was supplied for this incident.'}
               </p>
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6a665f]">
+                <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">
                   {item.clientName}
                 </span>
-                <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6a665f]">
+                <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">
                   {severityLabel(item.severity)}
                 </span>
-                <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold text-[#6a665f]">
+                <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">
                   Shift-linked
                 </span>
-                <span className="ml-auto inline-flex items-center gap-1 rounded-xl bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white">
+                <span className="ml-auto inline-flex items-center gap-1 rounded-xl bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white">
                   Review
                   <span className="material-symbols-outlined text-[14px]">chevron_right</span>
                 </span>
@@ -112,10 +105,10 @@ export default async function IncidentsPage() {
             </div>
           </Link>
         )) : (
-          <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
-            <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">warning</span>
-            <p className="mt-3 text-sm font-medium text-[#1a1a18]">No incidents reported</p>
-            <p className="mt-1 text-xs text-[#8a877f]">New reports will appear here as staff log them against active shifts.</p>
+          <div className="rounded-[24px] border border-dashed border-[#e6e8ec] bg-white px-6 py-16 text-center">
+            <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">warning</span>
+            <p className="mt-3 text-sm font-medium text-[#0f172a]">No incidents reported</p>
+            <p className="mt-1 text-xs text-[#64748b]">New reports will appear here as staff log them against active shifts.</p>
           </div>
         )}
       </section>
@@ -135,9 +128,9 @@ function SummaryCard({
   danger?: 'red' | 'amber'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#1a1a18]'}`}>{value}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger === 'red' ? 'text-[#dc2626]' : danger === 'amber' ? 'text-[#ca8a04]' : 'text-[#0f172a]'}`}>{value}</p>
     </div>
   )
 }
@@ -145,14 +138,14 @@ function SummaryCard({
 function formatIncidentDate(value: string) {
   const date = new Date(value)
   return date.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) +
-    ' · ' +
+    ' Â· ' +
     date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function severityBar(severity: IncidentRow['severity']) {
   if (severity === 'emergency' || severity === 'high') return 'bg-[#dc2626]'
   if (severity === 'medium') return 'bg-[#ca8a04]'
-  return 'bg-[#9333ea]'
+  return 'bg-[#6B2C91]'
 }
 
 function severityLabel(severity: IncidentRow['severity']) {
@@ -170,6 +163,6 @@ function statusLabel(status: IncidentRow['status']) {
 
 function statusClass(status: IncidentRow['status']) {
   if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
+  if (status === 'resolved') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
 }

@@ -1,10 +1,11 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import ClientsTable from './ClientsTable'
 
 type Client = {
   id: string
   full_name: string | null
+  client_type: 'ndis' | 'standard' | null
   ndis_number: string | null
   address: string | null
   phone: string | null
@@ -27,7 +28,7 @@ export default async function ClientsPage() {
   const [{ data: clients, error: clientsError }, { data: shifts, error: shiftsError }] = await Promise.all([
     supabase
       .from('clients')
-      .select('id, full_name, ndis_number, address, phone, lat, lng')
+      .select('id, full_name, client_type, ndis_number, address, phone, lat, lng')
       .order('full_name', { ascending: true }),
     supabase
       .from('shifts')
@@ -44,6 +45,7 @@ export default async function ClientsPage() {
     return {
       id: client.id,
       full_name: client.full_name ?? 'Unnamed client',
+      client_type: (client.client_type ?? 'ndis') as 'ndis' | 'standard',
       ndis_number: client.ndis_number,
       address: client.address,
       phone: client.phone,
@@ -55,7 +57,7 @@ export default async function ClientsPage() {
 
   const summary = {
     total: cards.length,
-    ndis: cards.filter(card => card.ndis_number).length,
+    ndis: cards.filter(card => card.client_type === 'ndis').length,
     activeThisWeek: cards.filter(card => card.shiftsThisWeek > 0).length,
   }
 
@@ -63,23 +65,23 @@ export default async function ClientsPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Clients</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">group</span>
               service hub
             </span>
           </div>
-          <p className="text-sm text-[#6c6b66]">Client records, NDIS visibility, and weekly allocation load in one place</p>
+          <p className="text-sm text-[#64748b]">Client records, NDIS visibility, and weekly allocation load in one place</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-[#f4f2ed] px-3 py-2 text-xs font-medium text-[#59564f]">
+          <span className="rounded-full bg-[#f7f8f9] px-3 py-2 text-xs font-medium text-[#64748b]">
             {summary.activeThisWeek} receiving support this week
           </span>
           <Link
             href="/admin/clients/new"
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"
           >
             <span className="material-symbols-outlined text-[18px]">person_add</span>
             Add client
@@ -89,7 +91,7 @@ export default async function ClientsPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <SummaryCard label="Client records" value={summary.total} sub="Active profiles in the system" tone="white" />
-        <SummaryCard label="NDIS-linked" value={summary.ndis} sub="Profiles with NDIS numbers" tone="accent" />
+        <SummaryCard label="NDIS clients" value={summary.ndis} sub="NDIS participants — require service agreements" tone="accent" />
         <SummaryCard label="Scheduled care" value={summary.activeThisWeek} sub="Clients with shifts this week" tone="white" />
       </section>
 
@@ -110,10 +112,10 @@ function SummaryCard({
   tone: 'white' | 'accent'
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }

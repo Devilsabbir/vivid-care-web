@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -147,7 +147,7 @@ export default function NotificationsClient({
             type="button"
             onClick={markAllRead}
             disabled={!unreadCount}
-            className="ml-auto rounded-full bg-[#7BC143] px-4 py-2 text-xs font-semibold text-[#171716] disabled:opacity-50"
+            className="ml-auto rounded-full bg-[#6B2C91] px-4 py-2 text-xs font-semibold text-[#0f172a] disabled:opacity-50"
           >
             Mark all read
           </button>
@@ -161,12 +161,12 @@ export default function NotificationsClient({
                 className={`rounded-[24px] border p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] ${
                   notification.read
                     ? 'border-[#e8e2d8] bg-white'
-                    : 'border-[#dfe9c1] bg-[#fcfff2]'
+                    : 'border-[#E6D4F0] bg-[#F4ECF8]'
                 }`}
               >
                 <div className="flex gap-3">
                   <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${
-                    notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#171717] text-[#7BC143]'
+                    notification.read ? 'bg-[#f3f1eb] text-[#64748b]' : 'bg-[#0f172a] text-[#6B2C91]'
                   }`}>
                     <span className="material-symbols-outlined text-[20px]">
                       {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
@@ -177,25 +177,25 @@ export default function NotificationsClient({
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-sm font-semibold text-[#171716]">{notification.title}</p>
-                          <span className="rounded-full bg-[#f4f1ea] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6a665f]">
+                          <p className="text-sm font-semibold text-[#0f172a]">{notification.title}</p>
+                          <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
                             {TYPE_LABELS[notification.type] ?? 'General'}
                           </span>
                           {!notification.read ? (
-                            <span className="rounded-full bg-[#7BC143] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#171716]">
+                            <span className="rounded-full bg-[#6B2C91] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f172a]">
                               New
                             </span>
                           ) : null}
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-[#5c5953]">{notification.message}</p>
-                        <p className="mt-2 text-[11px] text-[#8a877f]">{formatNotificationDate(notification.created_at)}</p>
+                        <p className="mt-2 text-sm leading-6 text-[#64748b]">{notification.message}</p>
+                        <p className="mt-2 text-[11px] text-[#64748b]">{formatNotificationDate(notification.created_at)}</p>
                       </div>
 
                       {!notification.read ? (
                         <button
                           type="button"
                           onClick={() => markRead(notification.id)}
-                          className="rounded-full bg-[#171717] px-3 py-1.5 text-[11px] font-medium text-white"
+                          className="rounded-full bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white"
                         >
                           Mark read
                         </button>
@@ -207,10 +207,10 @@ export default function NotificationsClient({
             ))}
           </div>
         ) : (
-          <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
-            <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">notifications_none</span>
-            <p className="mt-3 text-sm font-medium text-[#171716]">No notifications in this view</p>
-            <p className="mt-1 text-xs text-[#8a877f]">Switch filters or wait for new roster and compliance activity.</p>
+          <div className="rounded-[24px] border border-dashed border-[#e6e8ec] bg-white px-6 py-16 text-center">
+            <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">notifications_none</span>
+            <p className="mt-3 text-sm font-medium text-[#0f172a]">No notifications in this view</p>
+            <p className="mt-1 text-xs text-[#64748b]">Switch filters or wait for new roster and compliance activity.</p>
           </div>
         )}
       </div>
@@ -231,10 +231,10 @@ export default function NotificationsClient({
       {activeTab === 'history' && (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
           <section className="space-y-4">
-            <div className="flex flex-col gap-4 rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:flex-row md:items-center md:justify-between md:p-6">
+            <div className="flex flex-col gap-4 rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:flex-row md:items-center md:justify-between md:p-6">
               <div>
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Live notification feed</h3>
-                <p className="text-xs text-[#8a877f]">Realtime inserts are shown here as rostering, attendance, and compliance activity happens.</p>
+                <h3 className="text-sm font-semibold text-[#0f172a]">Live notification feed</h3>
+                <p className="text-xs text-[#64748b]">Realtime inserts are shown here as rostering, attendance, and compliance activity happens.</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <FilterPill active={filter === 'all'} label="All" onClick={() => setFilter('all')} />
@@ -243,7 +243,7 @@ export default function NotificationsClient({
                   type="button"
                   onClick={markAllRead}
                   disabled={!unreadCount}
-                  className="rounded-full bg-[#7BC143] px-4 py-2 text-xs font-semibold text-[#1a1a18] disabled:opacity-50"
+                  className="rounded-full bg-[#6B2C91] px-4 py-2 text-xs font-semibold text-[#0f172a] disabled:opacity-50"
                 >
                   Mark all read
                 </button>
@@ -257,12 +257,12 @@ export default function NotificationsClient({
                     key={notification.id}
                     className={`rounded-[22px] border p-5 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors ${
                       notification.read
-                        ? 'border-[#e8e4dc] bg-white'
-                        : 'border-[#dfe8bf] bg-[#fcfff2]'
+                        ? 'border-[#e6e8ec] bg-white'
+                        : 'border-[#E6D4F0] bg-[#F4ECF8]'
                     }`}
                   >
                     <div className="flex gap-4">
-                      <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${notification.read ? 'bg-[#f3f1eb] text-[#66625c]' : 'bg-[#1a1a18] text-[#7BC143]'}`}>
+                      <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${notification.read ? 'bg-[#f3f1eb] text-[#64748b]' : 'bg-[#0f172a] text-[#6B2C91]'}`}>
                         <span className="material-symbols-outlined text-[20px]">
                           {TYPE_ICONS[notification.type] ?? TYPE_ICONS.default}
                         </span>
@@ -272,31 +272,31 @@ export default function NotificationsClient({
                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="text-sm font-semibold text-[#1a1a18]">{notification.title}</h4>
-                              <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6a665f]">
+                              <h4 className="text-sm font-semibold text-[#0f172a]">{notification.title}</h4>
+                              <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
                                 {TYPE_LABELS[notification.type] ?? 'General'}
                               </span>
                               {!notification.read ? (
-                                <span className="rounded-full bg-[#7BC143] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1a1a18]">
+                                <span className="rounded-full bg-[#6B2C91] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0f172a]">
                                   New
                                 </span>
                               ) : null}
                             </div>
-                            <p className="mt-2 text-sm leading-6 text-[#5c5953]">{notification.message}</p>
+                            <p className="mt-2 text-sm leading-6 text-[#64748b]">{notification.message}</p>
                           </div>
 
-                          <div className="text-right text-[11px] text-[#8a877f]">
+                          <div className="text-right text-[11px] text-[#64748b]">
                             <p>{formatNotificationDate(notification.created_at)}</p>
                             {!notification.read ? (
                               <button
                                 type="button"
                                 onClick={() => markRead(notification.id)}
-                                className="mt-3 rounded-full bg-[#1a1a18] px-3 py-1.5 text-[11px] font-medium text-white"
+                                className="mt-3 rounded-full bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white"
                               >
                                 Mark read
                               </button>
                             ) : (
-                              <span className="mt-3 inline-flex rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#6a665f]">
+                              <span className="mt-3 inline-flex rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b]">
                                 Read
                               </span>
                             )}
@@ -308,10 +308,10 @@ export default function NotificationsClient({
                 ))}
               </div>
             ) : (
-              <div className="rounded-[24px] border border-dashed border-[#d8d3ca] bg-white px-6 py-16 text-center">
-                <span className="material-symbols-outlined text-[44px] text-[#bbb6ad]">notifications_none</span>
-                <p className="mt-3 text-sm font-medium text-[#1a1a18]">No notifications in this view</p>
-                <p className="mt-1 text-xs text-[#8a877f]">Switch filters or wait for new roster and compliance activity.</p>
+              <div className="rounded-[24px] border border-dashed border-[#e6e8ec] bg-white px-6 py-16 text-center">
+                <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">notifications_none</span>
+                <p className="mt-3 text-sm font-medium text-[#0f172a]">No notifications in this view</p>
+                <p className="mt-1 text-xs text-[#64748b]">Switch filters or wait for new roster and compliance activity.</p>
               </div>
             )}
           </section>
@@ -321,11 +321,11 @@ export default function NotificationsClient({
             <SummaryPanel label="Incident alerts" value={incidentCount} sub="Watch for open investigations" />
             <SummaryPanel label="Compliance alerts" value={complianceCount} sub="Expiry and document reminders" />
 
-            <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-              <div className="border-b border-[#f0ece5] px-4 py-3">
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Feed notes</h3>
+            <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+              <div className="border-b border-[#f0f1f3] px-4 py-3">
+                <h3 className="text-sm font-semibold text-[#0f172a]">Feed notes</h3>
               </div>
-              <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#66635b]">
+              <div className="space-y-3 px-4 py-4 text-[12px] leading-6 text-[#64748b]">
                 <p>Roster assignment notifications are generated as soon as a shift is published to a worker.</p>
                 <p>Incident and compliance alerts are the highest-value signals to keep unread.</p>
                 <p>Realtime delivery is powered by Supabase channel subscriptions for the signed-in admin.</p>
@@ -337,15 +337,15 @@ export default function NotificationsClient({
 
       {activeTab === 'compose' && (
         <div className="mx-auto max-w-2xl">
-          <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+          <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-[#9b988f]">Broadcast</p>
-              <h3 className="mt-2 text-lg font-semibold text-[#1a1a18]">Compose notification</h3>
-              <p className="mt-1 text-xs text-[#8a877f]">Send a notification to staff members. Delivered via realtime feed.</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Broadcast</p>
+              <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">Compose notification</h3>
+              <p className="mt-1 text-xs text-[#64748b]">Send a notification to staff members. Delivered via realtime feed.</p>
             </div>
 
             {composeMessage && (
-              <div className="mt-4 rounded-2xl border border-[#e4c1f5] bg-[#f9f0ff] px-4 py-3 text-sm text-[#4a006f]">
+              <div className="mt-4 rounded-2xl border border-[#E6D4F0] bg-[#F4ECF8] px-4 py-3 text-sm text-[#54206F]">
                 {composeMessage}
               </div>
             )}
@@ -353,11 +353,11 @@ export default function NotificationsClient({
             <div className="mt-5 grid gap-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Audience</label>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Audience</label>
                   <select
                     value={composeForm.audience}
                     onChange={e => setComposeForm(c => ({ ...c, audience: e.target.value }))}
-                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                    className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
                   >
                     <option value="all_staff">All staff</option>
                     <option value="active_staff">Active staff only</option>
@@ -365,11 +365,11 @@ export default function NotificationsClient({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Type</label>
+                  <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Type</label>
                   <select
                     value={composeForm.type}
                     onChange={e => setComposeForm(c => ({ ...c, type: e.target.value }))}
-                    className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                    className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
                   >
                     <option value="roster">Roster</option>
                     <option value="incident">Incident</option>
@@ -380,39 +380,39 @@ export default function NotificationsClient({
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Title</label>
+                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Title</label>
                 <input
                   type="text"
                   value={composeForm.title}
                   onChange={e => setComposeForm(c => ({ ...c, title: e.target.value }))}
                   placeholder="e.g. Roster update for next week"
-                  className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Message</label>
+                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Message</label>
                 <textarea
                   rows={4}
                   value={composeForm.message}
                   onChange={e => setComposeForm(c => ({ ...c, message: e.target.value }))}
                   placeholder="Write the notification body..."
-                  className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                  className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
                 />
               </div>
 
               {composeForm.title.trim() && composeForm.message.trim() && (
-                <div className="rounded-[20px] border border-[#efebe4] bg-[#faf9f6] p-4">
-                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Preview</p>
+                <div className="rounded-[20px] border border-[#f0f1f3] bg-[#fafbfc] p-4">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Preview</p>
                   <div className="mt-3 flex gap-3">
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-[#1a1a18] text-[#7BC143]">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-[#0f172a] text-[#6B2C91]">
                       <span className="material-symbols-outlined text-[20px]">
                         {TYPE_ICONS[composeForm.type] ?? TYPE_ICONS.default}
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-[#1a1a18]">{composeForm.title}</p>
-                      <p className="mt-1 text-sm text-[#5c5953]">{composeForm.message}</p>
+                      <p className="text-sm font-semibold text-[#0f172a]">{composeForm.title}</p>
+                      <p className="mt-1 text-sm text-[#64748b]">{composeForm.message}</p>
                     </div>
                   </div>
                 </div>
@@ -422,7 +422,7 @@ export default function NotificationsClient({
                 type="button"
                 onClick={handleComposeSend}
                 disabled={composeSending || !composeForm.title.trim() || !composeForm.message.trim()}
-                className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="rounded-2xl bg-[#0f172a] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {composeSending ? 'Sending...' : 'Send notification'}
               </button>
@@ -451,8 +451,8 @@ function FilterPill({
       onClick={onClick}
       className={`rounded-full px-4 py-2 text-xs font-medium ${
         active
-          ? dark ? 'bg-[#171717] text-white' : 'bg-[#1a1a18] text-white'
-          : 'bg-[#f4f2ed] text-[#5f5c55]'
+          ? dark ? 'bg-[#0f172a] text-white' : 'bg-[#0f172a] text-white'
+          : 'bg-[#f7f8f9] text-[#64748b]'
       }`}
     >
       {label}
@@ -474,12 +474,12 @@ function SummaryPanel({
   return (
     <section
       className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${
-        accent ? 'bg-[#7BC143]' : 'border border-[#e8e4dc] bg-white'
+        accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'
       }`}
     >
-      <p className={`text-[12px] ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#627100]' : 'text-[#8a877f]'}`}>{sub}</p>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </section>
   )
 }

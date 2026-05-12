@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import StatusBadge from '@/components/ui/StatusBadge'
 
 interface ShiftCardProps {
@@ -28,20 +28,20 @@ export default function ShiftCard({ shift, href, compact }: ShiftCardProps) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           {shift.client_name && (
-            <h4 className="text-sm font-semibold text-[#1a1a18] truncate">{shift.client_name}</h4>
+            <h4 className="text-sm font-semibold text-[#0f172a] truncate">{shift.client_name}</h4>
           )}
           {shift.support_type && (
-            <span className="hidden shrink-0 rounded-full bg-[#f4f2ed] px-2 py-0.5 text-[10px] font-medium text-[#6d6b64] md:inline-flex">
+            <span className="hidden shrink-0 rounded-full bg-[#f7f8f9] px-2 py-0.5 text-[10px] font-medium text-[#64748b] md:inline-flex">
               {shift.support_type}
             </span>
           )}
         </div>
         <p className="text-[12px] text-[#7d7a73]">
-          {dateStr} · {startStr} – {endStr}
-          {shift.staff_name && ` · ${shift.staff_name}`}
+          {dateStr} Â· {startStr} â€“ {endStr}
+          {shift.staff_name && ` Â· ${shift.staff_name}`}
         </p>
         {!compact && shift.location && (
-          <p className="mt-0.5 text-[11px] text-[#9b988f] truncate">{shift.location}</p>
+          <p className="mt-0.5 text-[11px] text-[#94a3b8] truncate">{shift.location}</p>
         )}
       </div>
       <div className="shrink-0">
@@ -54,7 +54,7 @@ export default function ShiftCard({ shift, href, compact }: ShiftCardProps) {
     return (
       <Link
         href={href}
-        className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+        className="block rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
       >
         {content}
       </Link>
@@ -62,7 +62,7 @@ export default function ShiftCard({ shift, href, compact }: ShiftCardProps) {
   }
 
   return (
-    <article className="rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
+    <article className="rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)]">
       {content}
     </article>
   )

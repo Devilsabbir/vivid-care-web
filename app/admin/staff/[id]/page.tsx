@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import StaffDetailClient from './StaffDetailClient'
@@ -25,12 +25,12 @@ export default async function StaffDetailPage({ params }: { params: { id: string
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-3">
-          <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55]">
+          <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b]">
             <span className="material-symbols-outlined text-[16px]">arrow_back</span>
             Back to staff
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1a1a18] text-xl font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0f172a] text-xl font-semibold uppercase tracking-[0.14em] text-[#6B2C91]">
               {(member.full_name ?? 'S')
                 .split(' ')
                 .filter(Boolean)
@@ -39,19 +39,19 @@ export default async function StaffDetailPage({ params }: { params: { id: string
                 .join('')}
             </div>
             <div>
-              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+              <h1 className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
                 <span className="font-headline">{member.full_name ?? 'Staff profile'}</span>
               </h1>
-              <p className="text-sm text-[#6c6b66]">Compliance records, recent shifts, and workforce detail for this support worker</p>
+              <p className="text-sm text-[#64748b]">Compliance records, recent shifts, and workforce detail for this support worker</p>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" aria-label="Go to scheduler" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+          <Link href="/admin/roster" aria-label="Go to scheduler" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
             <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
           </Link>
-          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white">
+          <Link href="/admin/compliance" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white">
             <span className="material-symbols-outlined text-[18px]">description</span>
             Compliance hub
           </Link>

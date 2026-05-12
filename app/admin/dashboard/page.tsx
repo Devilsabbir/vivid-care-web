@@ -1,7 +1,14 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
+import AlertBanner from '@/components/admin/dashboard/AlertBanner'
+import KpiCard from '@/components/admin/dashboard/KpiCard'
+import DashboardLiveMap from '@/components/admin/dashboard/DashboardLiveMap'
+import RosterTimeline, { type ShiftBlock, type StaffRow } from '@/components/admin/dashboard/RosterTimeline'
+import ClientMixDonut from '@/components/admin/dashboard/ClientMixDonut'
+import ComplianceWidget, { type ExpiringDoc } from '@/components/admin/dashboard/ComplianceWidget'
+import ActivityFeed, { type ActivityRow } from '@/components/admin/dashboard/ActivityFeed'
+import TeamStatusPanel, { type TeamMember } from '@/components/admin/dashboard/TeamStatusPanel'
 
 type Shift = {
   id: string
@@ -21,14 +28,6 @@ type BoardShiftRow = Shift & {
   clients: { full_name: string | null; address: string | null } | { full_name: string | null; address: string | null }[] | null
 }
 
-type Doc = {
-  id: string
-  owner_id: string
-  owner_type: 'staff' | 'client'
-  doc_type: string
-  expiry_date: string | null
-}
-
 export default async function AdminDashboard() {
   const supabase = await createClient()
   const today = dayStart(new Date())
@@ -38,32 +37,31 @@ export default async function AdminDashboard() {
   const weekEnd = dayEnd(addDays(weekStart, 6))
 
   const [
-    { count: staffCount, error: staffCountError },
-    { count: clientCount, error: clientCountError },
     { data: weekShifts, error: weekShiftsError },
     { data: chartShifts, error: chartShiftsError },
     { data: boardShifts, error: boardShiftsError },
-    { data: docs, error: docsError },
-    { data: incidents, error: incidentsError },
-    { data: unreadNotifications, error: notificationsError },
+    { data: criticalIncidents, error: criticalIncidentsError },
+    { data: adminProfile },
   ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'staff'),
-    supabase.from('clients').select('*', { count: 'exact', head: true }),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', weekStart.toISOString()).lte('start_time', weekEnd.toISOString()),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', chartStart.toISOString()).lte('start_time', chartEnd.toISOString()),
-    supabase.from('shifts').select('id, staff_id, status, start_time, end_time, staff:profiles!staff_id(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(6),
-    supabase.from('documents').select('id, owner_id, owner_type, doc_type, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true }).limit(8),
-    supabase.from('incidents').select('id').neq('status', 'resolved'),
-    supabase.from('notifications').select('id').eq('read', false),
+    supabase.from('shifts').select('id, staff_id, status, start_time, end_time, staff:profiles!staff_id(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(40),
+    supabase.from('incidents')
+      .select('id, severity, reported_at, clients(full_name)')
+      .eq('status', 'open')
+      .in('severity', ['high', 'emergency'])
+      .order('reported_at', { ascending: false })
+      .limit(1),
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return { data: null }
+      return supabase.from('profiles').select('full_name').eq('id', user.id).single()
+    })(),
   ])
-  if (staffCountError) console.error('[dashboard page] profiles count fetch failed:', staffCountError)
-  if (clientCountError) console.error('[dashboard page] clients count fetch failed:', clientCountError)
+  if (criticalIncidentsError) console.error('[dashboard page] critical incidents fetch failed:', criticalIncidentsError)
   if (weekShiftsError) console.error('[dashboard page] week shifts fetch failed:', weekShiftsError)
   if (chartShiftsError) console.error('[dashboard page] chart shifts fetch failed:', chartShiftsError)
   if (boardShiftsError) console.error('[dashboard page] board shifts fetch failed:', boardShiftsError)
-  if (docsError) console.error('[dashboard page] documents fetch failed:', docsError)
-  if (incidentsError) console.error('[dashboard page] incidents fetch failed:', incidentsError)
-  if (notificationsError) console.error('[dashboard page] notifications fetch failed:', notificationsError)
 
   const shifts = (weekShifts ?? []) as Shift[]
   const chart = (chartShifts ?? []) as Shift[]
@@ -72,290 +70,374 @@ export default async function AdminDashboard() {
     staff: Array.isArray(shift.staff) ? (shift.staff[0] ?? null) : (shift.staff ?? null),
     clients: Array.isArray(shift.clients) ? (shift.clients[0] ?? null) : (shift.clients ?? null),
   })) as BoardShift[]
-  const urgentDocs = ((docs ?? []) as Doc[]).filter(doc => {
-    const status = getExpiryStatus(doc.expiry_date)
-    return status === 'near_expiry' || status === 'expired'
-  })
 
   const completed = shifts.filter(shift => shift.status === 'completed' || shift.status === 'active').length
   const planned = shifts.filter(shift => shift.status !== 'cancelled').length
-  const activeBoard = board.filter(shift => shift.status === 'active')
-  const scheduledBoard = board.filter(shift => shift.status === 'scheduled')
-  const liveStaff = new Set(activeBoard.map(shift => shift.staff_id)).size
-  const liveBoard = activeBoard.length > 0 ? [...activeBoard, ...scheduledBoard].slice(0, 6) : scheduledBoard.slice(0, 6)
 
-  const days = Array.from({ length: 7 }, (_, i) => addDays(today, i - 3)).map(date => {
-    const key = stamp(date)
-    const dayShifts = chart.filter(shift => stamp(new Date(shift.start_time)) === key)
-    return {
-      label: date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
-      isToday: stamp(today) === key,
-      complete: dayShifts.filter(shift => shift.status === 'completed' || shift.status === 'active').length,
-      upcoming: dayShifts.filter(shift => shift.status === 'scheduled').length,
-      future: date > today,
+  // Header & alert banner data
+  const firstName = (adminProfile?.full_name ?? '').split(' ')[0] || 'there'
+  const shiftsToday = (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).length
+  const staffWorkingToday = new Set(
+    (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).map(s => s.staff_id).filter(Boolean),
+  ).size
+  const topCriticalIncident = (criticalIncidents ?? [])[0] as
+    | { id: string; severity: string; reported_at: string; clients: { full_name: string | null } | { full_name: string | null }[] | null }
+    | undefined
+  const topIncidentClientName = topCriticalIncident
+    ? Array.isArray(topCriticalIncident.clients)
+      ? topCriticalIncident.clients[0]?.full_name ?? 'Client'
+      : topCriticalIncident.clients?.full_name ?? 'Client'
+    : ''
+
+  // NDIS reporting window — show next Thursday as a reasonable default
+  const nextThursday = (() => {
+    const d = new Date(today)
+    const day = d.getDay() // 0 Sun
+    const delta = (4 - day + 7) % 7 || 7 // distance to Thursday (4)
+    d.setDate(d.getDate() + delta)
+    return d.toLocaleDateString('en-AU', { weekday: 'long' })
+  })()
+
+  // KPI sparkline data — last 8 days of shift activity
+  const eightDaysAgo = addDays(today, -7)
+  const [
+    { data: sparkShifts },
+    { data: sparkIncidents },
+    { data: mapShifts },
+    { data: initialStaffLocations },
+  ] = await Promise.all([
+    supabase
+      .from('shifts')
+      .select('start_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(hourly_rate), clients(client_type)')
+      .gte('start_time', eightDaysAgo.toISOString()),
+    supabase
+      .from('incidents')
+      .select('reported_at, status')
+      .gte('reported_at', eightDaysAgo.toISOString()),
+    supabase
+      .from('shifts')
+      .select('id, staff_id, client_id, status, staff:profiles!staff_id(full_name), clients(full_name, address, lat, lng)')
+      .in('status', ['active', 'scheduled'])
+      .gte('start_time', new Date(Date.now() - 86_400_000).toISOString())
+      .order('start_time', { ascending: true }),
+    supabase
+      .from('staff_locations')
+      .select('staff_id, lat, lng, updated_at, shift_id'),
+  ])
+
+  const shiftsSpark: number[] = []
+  const hoursSpark: number[] = []
+  const revenueSpark: number[] = []
+  const incidentsSpark: number[] = []
+
+  for (let d = 7; d >= 0; d--) {
+    const dayDate = addDays(today, -d)
+    const dStart = dayStart(dayDate).getTime()
+    const dEnd = dayEnd(dayDate).getTime()
+    const onDay = ((sparkShifts ?? []) as any[]).filter(s => {
+      const t = new Date(s.start_time).getTime()
+      return t >= dStart && t <= dEnd
+    })
+    shiftsSpark.push(onDay.length)
+    let hSum = 0
+    let rSum = 0
+    onDay.forEach(s => {
+      if (s.clock_in_time && s.clock_out_time) {
+        const h = (new Date(s.clock_out_time).getTime() - new Date(s.clock_in_time).getTime()) / 3600000
+        if (h > 0) {
+          hSum += h
+          const staffRow = Array.isArray(s.staff) ? s.staff[0] : s.staff
+          const clientRow = Array.isArray(s.clients) ? s.clients[0] : s.clients
+          if (clientRow?.client_type === 'ndis') {
+            rSum += h * Number(staffRow?.hourly_rate ?? 0)
+          }
+        }
+      }
+    })
+    hoursSpark.push(Math.round(hSum))
+    revenueSpark.push(Math.round(rSum))
+    incidentsSpark.push(((sparkIncidents ?? []) as any[]).filter(i => {
+      const t = new Date(i.reported_at).getTime()
+      return t >= dStart && t <= dEnd
+    }).length)
+  }
+
+  const hoursThisWeek = hoursSpark.slice(-7).reduce((a, b) => a + b, 0)
+  const ndisRevenueThisWeek = revenueSpark.slice(-7).reduce((a, b) => a + b, 0)
+  const openIncidentsCount = ((sparkIncidents ?? []) as any[]).filter(i => i.status === 'open').length
+  const shiftsScheduledToday = (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).length
+
+  // Live roster timeline data — today's shifts grouped by staff
+  const todayStartMs = dayStart(today).getTime()
+  const todayEndMs = dayEnd(today).getTime()
+  const { data: timelineRows } = await supabase
+    .from('shifts')
+    .select('id, staff_id, start_time, end_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(full_name), clients(full_name, client_type)')
+    .gte('start_time', new Date(todayStartMs).toISOString())
+    .lte('start_time', new Date(todayEndMs).toISOString())
+    .order('start_time', { ascending: true })
+
+  const staffToneOptions: StaffRow['tone'][] = ['warm', 'blue', 'peach', 'green', 'amber', 'purple']
+  const staffMap = new Map<string, StaffRow>()
+  const timelineBlocks: ShiftBlock[] = []
+
+  ;(timelineRows ?? []).forEach((s: any) => {
+    if (!s.staff_id) return
+    const staffRel = Array.isArray(s.staff) ? s.staff[0] : s.staff
+    if (!staffMap.has(s.staff_id)) {
+      staffMap.set(s.staff_id, {
+        id: s.staff_id,
+        name: staffRel?.full_name ?? 'Staff',
+        role: 'Support worker',
+        tone: staffToneOptions[staffMap.size % staffToneOptions.length],
+      })
     }
+
+    const start = new Date(s.start_time)
+    const end = new Date(s.end_time)
+    const startHour = start.getHours() + start.getMinutes() / 60
+    const endHour = end.getHours() + end.getMinutes() / 60
+    const clientRel = Array.isArray(s.clients) ? s.clients[0] : s.clients
+    const clientName = clientRel?.full_name ?? 'Client'
+    const isLive = s.status === 'active' || (s.clock_in_time && !s.clock_out_time)
+    const isMissed = s.status === 'missed' || (s.status === 'scheduled' && end.getTime() < Date.now())
+    const isNdis = clientRel?.client_type === 'ndis'
+    const color: ShiftBlock['color'] = isMissed
+      ? 'red'
+      : isLive
+        ? 'green'
+        : isNdis
+          ? 'blue'
+          : 'purple'
+
+    const fmt = (d: Date) => `${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, '0')}${d.getHours() < 12 ? 'a' : 'p'}`
+
+    timelineBlocks.push({
+      id: s.id,
+      staffId: s.staff_id,
+      clientName,
+      startHour,
+      endHour,
+      color,
+      sub: `${fmt(start)}–${fmt(end)}${isMissed ? ' · missed' : ''}`,
+      live: isLive,
+    })
   })
-  const maxBar = Math.max(...days.map(day => Math.max(day.complete, day.upcoming)), 1)
+
+  const timelineStaff = Array.from(staffMap.values()).slice(0, 8)
+
+  // Side widgets data
+  const [
+    { data: allClients },
+    { data: expiringDocs },
+    { data: recentNotifs },
+    { data: allStaff },
+  ] = await Promise.all([
+    supabase.from('clients').select('client_type'),
+    (async () => {
+      const thirtyDaysOut = addDays(today, 30)
+      return supabase
+        .from('documents')
+        .select('id, doc_type, expiry_date, owner_id, owner_type')
+        .not('expiry_date', 'is', null)
+        .lte('expiry_date', thirtyDaysOut.toISOString().split('T')[0])
+        .gte('expiry_date', today.toISOString().split('T')[0])
+        .order('expiry_date', { ascending: true })
+        .limit(20)
+    })(),
+    supabase
+      .from('notifications')
+      .select('id, type, title, created_at')
+      .order('created_at', { ascending: false })
+      .limit(8),
+    supabase.from('profiles').select('id, full_name').eq('role', 'staff').order('full_name'),
+  ])
+
+  // Client mix
+  const ndisClientCount = ((allClients ?? []) as { client_type: string }[]).filter(c => c.client_type === 'ndis').length
+  const standardClientCount = ((allClients ?? []) as { client_type: string }[]).filter(c => c.client_type === 'standard').length
+
+  // Resolve owner names for the compliance widget
+  const expiringStaffIds = ((expiringDocs ?? []) as any[]).filter(d => d.owner_type === 'staff').map(d => d.owner_id)
+  const expiringClientIds = ((expiringDocs ?? []) as any[]).filter(d => d.owner_type === 'client').map(d => d.owner_id)
+  const [{ data: staffNamesRes }, { data: clientNamesRes }] = await Promise.all([
+    expiringStaffIds.length
+      ? supabase.from('profiles').select('id, full_name').in('id', expiringStaffIds)
+      : Promise.resolve({ data: [] as { id: string; full_name: string | null }[] }),
+    expiringClientIds.length
+      ? supabase.from('clients').select('id, full_name').in('id', expiringClientIds)
+      : Promise.resolve({ data: [] as { id: string; full_name: string | null }[] }),
+  ])
+  const nameMap = new Map<string, string>()
+  ;((staffNamesRes ?? []) as { id: string; full_name: string | null }[]).forEach(r => nameMap.set(r.id, r.full_name ?? 'Staff'))
+  ;((clientNamesRes ?? []) as { id: string; full_name: string | null }[]).forEach(r => nameMap.set(r.id, r.full_name ?? 'Client'))
+
+  const expiringDocsList: ExpiringDoc[] = ((expiringDocs ?? []) as any[])
+    .map(d => {
+      const daysLeft = Math.round((new Date(d.expiry_date).getTime() - Date.now()) / 86_400_000)
+      return {
+        id: d.id,
+        docType: d.doc_type,
+        ownerName: nameMap.get(d.owner_id) ?? 'Unknown',
+        ownerType: d.owner_type as 'staff' | 'client',
+        ownerId: d.owner_id,
+        daysLeft,
+      }
+    })
+    .slice(0, 5)
+
+  // Activity feed icons
+  const ICON_MAP: Record<string, { icon: string; bg: string; color: string }> = {
+    clock_in:    { icon: 'login',          bg: '#F1F9E1', color: '#5E8D1F' },
+    clock_out:   { icon: 'logout',         bg: '#F0F1F3', color: '#475569' },
+    incident:    { icon: 'warning',        bg: '#FEF3D6', color: '#78350F' },
+    doc_expiry:  { icon: 'description',    bg: '#FEE2E2', color: '#991B1B' },
+    roster:      { icon: 'calendar_month', bg: '#F4ECF8', color: '#54206F' },
+    default:     { icon: 'notifications',  bg: '#F0F1F3', color: '#475569' },
+  }
+  const activityItems: ActivityRow[] = ((recentNotifs ?? []) as any[]).map(n => {
+    const meta = ICON_MAP[n.type as string] ?? ICON_MAP.default
+    const date = new Date(n.created_at)
+    const diff = Date.now() - date.getTime()
+    const mins = Math.floor(diff / 60_000)
+    const hrs = Math.floor(mins / 60)
+    const ds = Math.floor(hrs / 24)
+    const time = ds > 0 ? `${ds}d ago` : hrs > 0 ? `${hrs}h ago` : mins > 0 ? `${mins}m ago` : 'just now'
+    return { id: n.id, icon: meta.icon, iconBg: meta.bg, iconColor: meta.color, title: n.title, time }
+  })
+
+  // Team status — derive each staff member's current state from active/scheduled shifts
+  const teamMembers: TeamMember[] = ((allStaff ?? []) as { id: string; full_name: string | null }[]).map(p => {
+    const current = (board ?? []).find(s => s.staff_id === p.id && s.status === 'active')
+    const next = (board ?? []).find(s => s.staff_id === p.id && s.status === 'scheduled' && new Date(s.start_time).getTime() > Date.now())
+    let status: TeamMember['status'] = 'off'
+    let detail = 'Off today'
+    if (current) {
+      status = 'on_shift'
+      const c = current.clients
+      detail = `Support · ${c?.full_name ?? 'client'}`
+    } else if (next) {
+      status = 'available'
+      const t = new Date(next.start_time)
+      detail = `Available · next ${t.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: false })}`
+    }
+    return { id: p.id, name: p.full_name ?? 'Staff', detail, status }
+  }).slice(0, 8)
 
   return (
     <div className="flex flex-col gap-6">
       <DashboardRealtimeRefresh />
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
-            <span className="font-headline">Managing</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
-              <span className="material-symbols-outlined text-[18px]">group</span>
-              your team
-            </span>
-            <span className="font-headline">and</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.45rem]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
-              <span className="material-symbols-outlined text-[18px]">neurology</span>
-              workflows
-            </span>
-            <span className="font-headline">at a glance</span>
-          </div>
-          <p className="text-sm text-[#6c6b66]">
-            Scheduler snapshot for {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-[28px] font-semibold tracking-[-0.02em] text-[#0f172a] md:text-[32px]">
+            Good morning, {firstName}
+          </h1>
+          <p className="mt-1 text-[13px] text-[#64748b]">
+            {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            {' · '}
+            {shiftsToday} shifts scheduled across {staffWorkingToday} support workers
           </p>
         </div>
-
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
-            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
-          </Link>
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#ddd9d1] bg-white text-[#5e5b54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
-            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span>
-          </Link>
-          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2">
-            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
+          <div className="flex rounded-full bg-[#f0f1f3] p-1 text-[12px] font-medium">
+            <button type="button" className="rounded-full px-3 py-1.5 text-[#64748b] hover:text-[#0f172a]">Day</button>
+            <button type="button" className="rounded-full bg-[#0f172a] px-3 py-1.5 text-white">Week</button>
+            <button type="button" className="rounded-full px-3 py-1.5 text-[#64748b] hover:text-[#0f172a]">Month</button>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-4 py-1.5 text-[12px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">download</span>
+            Export
+          </button>
+          <Link
+            href="/admin/roster"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#6B2C91] px-4 py-1.5 text-[12px] font-semibold text-white shadow-[0_4px_14px_rgba(107,44,145,0.25)] hover:bg-[#54206F]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
             New shift
           </Link>
         </div>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#dfddd7] p-1.5 text-xs font-medium">
-        <Link href="/admin/dashboard" className="rounded-full bg-[#1a1a18] px-4 py-2 text-white">Scheduler</Link>
-        <Link href="/admin/staff" className="rounded-full px-4 py-2 text-[#6d6b64]">Staff</Link>
-        <Link href="/admin/clients" className="rounded-full px-4 py-2 text-[#6d6b64]">Clients</Link>
-        <Link href="/admin/compliance" className="rounded-full px-4 py-2 text-[#6d6b64]">Documents</Link>
-        <Link href="/admin/incidents" className="rounded-full px-4 py-2 text-[#6d6b64]">Incidents</Link>
-        <Link href="/admin/payments" className="rounded-full px-4 py-2 text-[#6d6b64]">Payroll</Link>
-        <Link href="/admin/settings" className="rounded-full px-4 py-2 text-[#6d6b64]">Settings</Link>
-      </nav>
+      {topCriticalIncident && (
+        <AlertBanner
+          clientName={topIncidentClientName}
+          reportedAt={topCriticalIncident.reported_at}
+          severity={topCriticalIncident.severity}
+          deadline={nextThursday}
+          href={`/admin/incidents/${topCriticalIncident.id}`}
+        />
+      )}
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
-        <div className="rounded-[24px] border border-[#e8e4dc] bg-white p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-          <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f1eb]">
-              <span className="material-symbols-outlined text-[20px]">calendar_month</span>
-            </span>
-            <span className="rounded-full bg-[#f4f2ed] px-2.5 py-1 text-[11px] font-semibold text-[#4f4c45]">{percent(completed, planned)}%</span>
-          </div>
-          <p className="mt-5 text-[12px] text-[#9a978f]">Shifts this week</p>
-          <div className="mt-2 flex items-end gap-2">
-            <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{planned}</span>
-            <span className="pb-1 text-xs text-[#9a978f]">{completed} fulfilled</span>
-          </div>
-          <p className="mt-3 text-xs text-[#9a978f]">Across {clientCount ?? 0} active clients</p>
-        </div>
-
-        <div className="rounded-[24px] bg-[#8B45A6] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-          <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10">
-              <span className="material-symbols-outlined text-[20px]">badge</span>
-            </span>
-            <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-[#1a1a18]">{percent(liveStaff, staffCount ?? 0)}%</span>
-          </div>
-          <p className="mt-5 text-[12px] text-[#5e0087]">Staff on shift</p>
-          <div className="mt-2 flex items-end gap-2">
-            <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{liveStaff}</span>
-            <span className="pb-1 text-xs text-[#5e0087]">/ {staffCount ?? 0}</span>
-          </div>
-          <p className="mt-3 text-xs text-[#5e0087]">Live clock-in coverage right now</p>
-        </div>
-
-        <div className="relative overflow-hidden rounded-[24px] bg-[#1a1a18] p-6 text-white">
-          <div className="absolute right-[-24px] top-[-24px] h-36 w-36 rounded-full bg-white/5" />
-          <div className="relative flex h-full flex-col justify-between gap-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-white/45">Rostering intelligence</p>
-              <h2 className="mt-4 max-w-[18rem] text-[1.5rem] leading-tight tracking-[-0.04em]">
-                Keep your roster ready for AI suggestions and conflict review.
-              </h2>
-            </div>
-            <Link href="/admin/roster" className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-[#1a1a18]">
-              Open roster planner
-              <span className="material-symbols-outlined text-[18px]">north_east</span>
-            </Link>
-          </div>
-        </div>
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          icon="calendar_month"
+          label="Shifts today"
+          value={shiftsToday}
+          sub={`of ${shiftsScheduledToday || shiftsToday} scheduled`}
+          delta={`+${shiftsSpark[7] - (shiftsSpark[0] ?? 0)} vs 7 days ago`}
+          direction={shiftsSpark[7] >= (shiftsSpark[0] ?? 0) ? 'up' : 'down'}
+          target={percent(completed, planned || 1)}
+          context={percent(completed, planned || 1) >= 80 ? 'On target' : 'Below target'}
+          color="#6B2C91"
+          bg="#F4ECF8"
+          spark={shiftsSpark}
+        />
+        <KpiCard
+          icon="schedule"
+          label="Hours this week"
+          value={`${hoursThisWeek}h`}
+          sub="team total"
+          delta={hoursThisWeek > 0 ? 'tracked from clock-in/out' : 'no clocked hours yet'}
+          direction="up"
+          target={Math.min(100, Math.round((hoursThisWeek / 200) * 100))}
+          context={hoursThisWeek >= 150 ? 'Above average' : 'Normal'}
+          color="#1380AB"
+          bg="#E6F5FC"
+          spark={hoursSpark}
+        />
+        <KpiCard
+          icon="payments"
+          label="NDIS revenue"
+          value={`$${(ndisRevenueThisWeek / 1000).toFixed(ndisRevenueThisWeek >= 10000 ? 0 : 1)}k`}
+          sub="unbilled this week"
+          delta="From clocked NDIS shifts"
+          direction="flat"
+          target={Math.min(100, Math.round((ndisRevenueThisWeek / 30000) * 100))}
+          context="Tracking"
+          color="#5E8D1F"
+          bg="#F1F9E1"
+          spark={revenueSpark}
+        />
+        <KpiCard
+          icon="warning"
+          label="Open incidents"
+          value={openIncidentsCount}
+          sub={openIncidentsCount > 0 ? 'awaiting review' : 'all clear'}
+          delta={openIncidentsCount > 0 ? 'review by deadline' : 'no open items'}
+          direction={openIncidentsCount === 0 ? 'up' : 'flat'}
+          target={Math.max(0, 100 - Math.min(100, openIncidentsCount * 20))}
+          context={openIncidentsCount === 0 ? 'All clear' : openIncidentsCount > 5 ? 'Above threshold' : 'Below threshold'}
+          color="#D97706"
+          bg="#FEF3D6"
+          spark={incidentsSpark}
+        />
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
-        <div className="space-y-6">
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
-            <div className="mb-5 flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px]">bar_chart</span>
-                <h3 className="text-sm font-semibold">Shift statistics</h3>
-              </div>
-              <div className="flex items-center gap-3 text-[11px] text-[#87847d]">
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#1a1a18]" />
-                  Completed
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full border border-[#a8a49b] bg-[#8B45A6]" />
-                  Upcoming
-                </span>
-              </div>
-              <span className="ml-auto rounded-xl bg-[#f4f2ed] px-3 py-1.5 text-[11px] text-[#78756e]">
-                {today.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
-              </span>
-            </div>
+      <DashboardLiveMap
+        initialShifts={(mapShifts ?? []) as any}
+        initialStaffLocations={(initialStaffLocations ?? []) as any}
+      />
 
-            <div className="overflow-x-auto">
-              <div className="grid min-w-[320px] grid-cols-7 gap-3">
-                {days.map(day => {
-                  const completeHeight = day.complete > 0 ? Math.max(28, (day.complete / maxBar) * 116) : 22
-                  const upcomingHeight = day.upcoming > 0 ? Math.max(18, (day.upcoming / maxBar) * 66) : 16
-                  const empty = day.complete === 0 && day.upcoming === 0
-                  return (
-                    <div key={day.label} className="flex flex-col items-center gap-3">
-                      <div className="flex h-[160px] w-full items-end justify-center gap-1.5">
-                        <div className={`w-full max-w-[22px] rounded-full ${empty && day.future ? 'border border-dashed border-[#cfcac1] bg-[#efebe4]' : 'bg-[#1a1a18]'}`} style={{ height: `${completeHeight}px` }} />
-                        <div className={`w-full max-w-[22px] rounded-full ${empty ? 'border border-dashed border-[#ddd8cf] bg-[#f4f2ed]' : 'border border-[#bdb8ad] bg-[#8B45A6]'}`} style={{ height: `${upcomingHeight}px` }} />
-                      </div>
-                      <span className={`text-[10px] ${day.isToday ? 'font-semibold text-[#1a1a18]' : 'text-[#97938a]'}`}>{day.label}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
+      <RosterTimeline staff={timelineStaff} blocks={timelineBlocks} />
 
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Live roster board</h3>
-                <p className="text-xs text-[#8a877f]">
-                  {activeBoard.length > 0 ? `${activeBoard.length} active shifts right now` : 'Next scheduled shifts ready to review'}
-                </p>
-              </div>
-              <Link href="/admin/active-shifts" className="rounded-full bg-[#f4f2ed] px-3 py-1.5 text-[11px] font-medium text-[#4f4c45]">View live board</Link>
-            </div>
-
-            {liveBoard.length > 0 ? (
-              <div className="space-y-3">
-                {liveBoard.map(shift => (
-                  <Link key={shift.id} href={`/admin/shifts/${shift.id}`} className="flex flex-col gap-3 rounded-[22px] border border-[#efebe4] bg-[#faf9f6] p-4 md:flex-row md:items-center hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1a1a18] text-sm font-semibold uppercase tracking-[0.14em] text-[#8B45A6]">
-                        {initials(shift.staff?.full_name)}
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.staff?.full_name ?? 'Unassigned staff'}</h4>
-                        <p className="text-xs text-[#8a877f]">
-                          {shift.clients?.full_name ?? 'Client pending'}
-                          {shift.clients?.address ? ` · ${shift.clients.address}` : ''}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="md:ml-auto md:text-right">
-                      <span className={shift.status === 'active' ? 'inline-flex rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]' : 'inline-flex rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'}>
-                        {shift.status === 'active' ? 'Active now' : 'Scheduled'}
-                      </span>
-                      <p className="mt-2 text-xs text-[#68655e]">{clock(shift.start_time)} - {clock(shift.end_time)}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-[22px] border border-dashed border-[#d8d3ca] bg-[#faf9f6] px-6 py-12 text-center">
-                <span className="material-symbols-outlined text-[36px] text-[#b2aea4]">calendar_month</span>
-                <p className="mt-3 text-sm font-medium text-[#1a1a18]">No active or scheduled shifts in this window</p>
-                <p className="mt-1 text-xs text-[#8a877f]">Use the scheduler to publish the next wave of care visits.</p>
-              </div>
-            )}
-          </section>
-        </div>
-
-        <aside className="space-y-4">
-          <section className="rounded-[24px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Quick links</h3>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[
-                ['Roster', '/admin/roster', 'calendar_month'],
-                ['Doc hub', '/admin/compliance', 'description'],
-                ['Staff', '/admin/staff', 'badge'],
-                ['Clients', '/admin/clients', 'group'],
-              ].map(([label, href, icon]) => (
-                <Link key={href} href={href} className="flex flex-col gap-3 rounded-[18px] border border-[#ece8e1] bg-[#faf9f6] p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f0ede7] text-[#69665e]">
-                      <span className="material-symbols-outlined text-[18px]">{icon}</span>
-                    </div>
-                    <span className="material-symbols-outlined text-[16px] text-[#8a877f]">north_east</span>
-                  </div>
-                  <span className="text-[12px] font-medium text-[#1a1a18]">{label}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="rounded-[24px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Compliance watch</h3>
-                <p className="text-xs text-[#8a877f]">Expiring within 45 days</p>
-              </div>
-              <Link href="/admin/compliance" className="text-[11px] font-medium text-[#4f4c45]">Open</Link>
-            </div>
-            <div className="mt-4 space-y-3">
-              {urgentDocs.length > 0 ? urgentDocs.map(doc => {
-                const left = daysUntilExpiry(doc.expiry_date)
-                const docHref = doc.owner_type === 'staff'
-                  ? `/admin/staff/${doc.owner_id}?tab=documents`
-                  : `/admin/clients/${doc.owner_id}?tab=documents`
-                return (
-                  <Link key={doc.id} href={docHref} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-3 py-3 hover:bg-[#f4f2ed] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] text-white ${doc.owner_type === 'staff' ? 'bg-[#2f5fda]' : 'bg-[#7e22ce]'}`}>
-                      {doc.owner_type === 'staff' ? 'ST' : 'CL'}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[12px] font-medium text-[#1a1a18]">{doc.doc_type}</p>
-                      <p className="text-[10px] text-[#98958c]">{doc.owner_type === 'staff' ? 'Staff document' : 'Client document'}</p>
-                    </div>
-                    <span className={getExpiryStatus(doc.expiry_date) === 'expired' ? 'inline-flex rounded-full bg-[#fee2e2] px-2 py-1 text-[10px] font-semibold text-[#991b1b]' : 'inline-flex rounded-full bg-[#fef9c3] px-2 py-1 text-[10px] font-semibold text-[#92400e]'}>
-                      {left !== null && left < 0 ? `${Math.abs(left)}d overdue` : `${left ?? 0}d left`}
-                    </span>
-                  </Link>
-                )
-              }) : (
-                <div className="rounded-[18px] bg-[#faf9f6] px-4 py-6 text-center text-xs text-[#7c7a72]">No urgent document renewals in the current queue.</div>
-              )}
-            </div>
-          </section>
-
-          <section className="rounded-[24px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <h3 className="text-sm font-semibold text-[#1a1a18]">Operational pulse</h3>
-            <div className="mt-4 space-y-3">
-              {[
-                { label: 'Open incidents', href: '/admin/incidents', value: incidents?.length ?? 0 },
-                { label: 'Unread notifications', href: '/admin/notifications', value: unreadNotifications?.length ?? 0 },
-                { label: 'Active clients', href: '/admin/clients', value: clientCount ?? 0 },
-              ].map(item => (
-                <Link key={item.href} href={item.href} className="flex items-center justify-between rounded-[18px] bg-[#faf9f6] px-3 py-3">
-                  <span className="text-[12px] text-[#58554f]">{item.label}</span>
-                  <span className="font-headline text-xl tracking-[-0.05em] text-[#1a1a18]">{item.value}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        </aside>
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+        <ClientMixDonut ndis={ndisClientCount} standard={standardClientCount} />
+        <ComplianceWidget docs={expiringDocsList} totalCount={(expiringDocs ?? []).length} />
+        <ActivityFeed items={activityItems} />
+        <TeamStatusPanel members={teamMembers} />
       </div>
     </div>
   )
@@ -363,14 +445,6 @@ export default async function AdminDashboard() {
 
 function percent(value: number, total: number) {
   return total ? Math.round((value / total) * 100) : 0
-}
-
-function initials(name?: string | null) {
-  return name ? name.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]?.toUpperCase()).join('') : 'VC'
-}
-
-function clock(value: string) {
-  return new Date(value).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 
 function dayStart(date: Date) {

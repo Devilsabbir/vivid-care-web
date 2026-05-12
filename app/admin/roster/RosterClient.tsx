@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { Fragment, useMemo, useState } from 'react'
@@ -8,7 +8,7 @@ import Modal from '@/components/ui/Modal'
 import RosterValidationPanel from '@/components/roster/RosterValidationPanel'
 import { useRosterValidation } from './useRosterValidation'
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type ShiftStatus = 'scheduled' | 'active' | 'completed' | 'cancelled'
 type RosterView = 'week' | 'day' | 'staff'
@@ -57,7 +57,7 @@ type NormalizedShift = {
   documentationStatus: string | null
   startHour: number   // e.g. 9.5 = 9:30 am
   endHour: number
-  weekDayIdx: number  // 0=Mon … 6=Sun
+  weekDayIdx: number  // 0=Mon â€¦ 6=Sun
 }
 
 type CreateShiftForm = {
@@ -76,12 +76,12 @@ const EMPTY_FORM: CreateShiftForm = {
   start_time: '', end_time: '', notes: '',
 }
 
-// ─── Roster hour range ───────────────────────────────────────────────────────
+// â”€â”€â”€ Roster hour range â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const HOUR_START = 6   // 6 am
 const HOUR_END   = 22  // 10 pm
 const HOURS      = Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => HOUR_START + i)
 
-// ─── Utility ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Utility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function getWeekStart(d: Date): Date {
   const s = new Date(d)
@@ -123,7 +123,7 @@ function fmtWeekRange(start: Date): string {
   const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
   const s = start.toLocaleDateString('en-AU', opts)
   const e = end.toLocaleDateString('en-AU', { ...opts, year: 'numeric' })
-  return `${s} – ${e}`
+  return `${s} â€“ ${e}`
 }
 
 function fmtDate(d: Date): string {
@@ -138,7 +138,7 @@ function statusStyle(status: ShiftStatus, unassigned: boolean): {
   if (unassigned && status !== 'cancelled')
     return { bg: '#fffbeb', borderLeft: '#f59e0b', text: '#78350f', muted: '#92400e' }
   if (status === 'active')
-    return { bg: '#faf0ff', borderLeft: '#8B45A6', text: '#6b21a8', muted: '#7e22ce' }
+    return { bg: '#faf0ff', borderLeft: '#6B2C91', text: '#54206F', muted: '#54206F' }
   if (status === 'completed')
     return { bg: '#f3f0ec', borderLeft: '#b9b3a8', text: '#59554f', muted: '#78746b' }
   if (status === 'cancelled')
@@ -192,13 +192,13 @@ function statusLabel(s: ShiftStatus): string {
 }
 
 function statusBadgeCls(s: ShiftStatus): string {
-  if (s === 'active')    return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]'
+  if (s === 'active')    return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
   if (s === 'completed') return 'rounded-full bg-[#ebe7df] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#59554f]'
   if (s === 'cancelled') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
   return 'rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1d4ed8]'
 }
 
-// ─── Shift Pill ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Shift Pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function ShiftPill({
   shift, onClick, compact = false,
@@ -212,7 +212,7 @@ function ShiftPill({
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-lg text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+      className="w-full rounded-lg text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
       style={{
         background: s.bg,
         borderLeft: `3px solid ${s.borderLeft}`,
@@ -224,11 +224,11 @@ function ShiftPill({
       {/* Time + live badge */}
       <div className="flex items-center gap-1" style={{ color: s.text, fontWeight: 600 }}>
         <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: 10.5 }}>
-          {fmtHour(shift.startHour)}–{fmtHour(shift.endHour)}
+          {fmtHour(shift.startHour)}â€“{fmtHour(shift.endHour)}
         </span>
         {isActive && (
-          <span className="ml-auto flex items-center gap-1 text-[9px] font-bold" style={{ color: '#8B45A6' }}>
-            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#8B45A6]" />
+          <span className="ml-auto flex items-center gap-1 text-[9px] font-bold" style={{ color: '#6B2C91' }}>
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#6B2C91]" />
             LIVE
           </span>
         )}
@@ -272,7 +272,7 @@ function ShiftPill({
   )
 }
 
-// ─── Week View ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Week View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function WeekView({
   weekShifts, staff, todayIdx, weekStart: ws,
@@ -295,7 +295,7 @@ function WeekView({
     <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 260px)' }}>
       {/*
         Single CSS grid spanning all rows.
-        All cells are direct grid children so column tracks are shared —
+        All cells are direct grid children so column tracks are shared â€”
         this guarantees pixel-perfect alignment regardless of scroll position.
         Header corner: sticky top-0 + left-0  (always visible)
         Header day cells: sticky top-0         (visible when scrolling down)
@@ -305,8 +305,8 @@ function WeekView({
         className="grid"
         style={{ minWidth: 900, gridTemplateColumns: '180px repeat(7, 1fr)' }}
       >
-        {/* ── Header row ── */}
-        <div className="sticky top-0 left-0 z-30 border-b border-[#e8e4dc] bg-white px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#9b988f]">
+        {/* â”€â”€ Header row â”€â”€ */}
+        <div className="sticky top-0 left-0 z-30 border-b border-[#e6e8ec] bg-white px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#94a3b8]">
           Staff
         </div>
         {days.map((d, i) => {
@@ -314,18 +314,18 @@ function WeekView({
           return (
             <div
               key={i}
-              className="sticky top-0 z-20 border-b border-l border-[#e8e4dc] px-3 py-2"
+              className="sticky top-0 z-20 border-b border-l border-[#e6e8ec] px-3 py-2"
               style={{ background: isToday ? '#faf0ff' : 'white' }}
             >
               <div
                 className="text-[10px] font-semibold uppercase tracking-[0.08em]"
-                style={{ color: isToday ? '#8B45A6' : '#9b988f' }}
+                style={{ color: isToday ? '#6B2C91' : '#94a3b8' }}
               >
                 {DAY_LABELS[i]}
               </div>
               <div
                 className="text-[13px] font-semibold"
-                style={{ color: isToday ? '#8B45A6' : '#1a1a18' }}
+                style={{ color: isToday ? '#6B2C91' : '#0f172a' }}
               >
                 {d.getDate()}
                 {isToday && (
@@ -336,10 +336,10 @@ function WeekView({
           )
         })}
 
-        {/* ── Unassigned row ── */}
+        {/* â”€â”€ Unassigned row â”€â”€ */}
         {unassigned.length > 0 && (
           <>
-            <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e8e4dc] bg-[#fffdf5] px-4 py-3">
+            <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e6e8ec] bg-[#fffdf5] px-4 py-3">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#fef3c7]">
                 <span className="material-symbols-outlined text-[14px] text-[#d97706]">warning</span>
               </div>
@@ -354,7 +354,7 @@ function WeekView({
               return (
                 <div
                   key={day}
-                  className="flex min-h-[56px] flex-col gap-1 border-b border-l border-[#e8e4dc] p-1.5"
+                  className="flex min-h-[56px] flex-col gap-1 border-b border-l border-[#e6e8ec] p-1.5"
                   style={{ background: isToday ? 'rgba(248,216,255,0.08)' : '#fffdf5' }}
                 >
                   {items.map(s => (
@@ -366,18 +366,18 @@ function WeekView({
           </>
         )}
 
-        {/* ── Staff rows ── */}
+        {/* â”€â”€ Staff rows â”€â”€ */}
         {staff.map(person => (
           <Fragment key={person.id}>
-            <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e8e4dc] bg-white px-4 py-2.5">
+            <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e6e8ec] bg-white px-4 py-2.5">
               <div
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                style={{ background: '#1a1a18' }}
+                style={{ background: '#0f172a' }}
               >
                 {initials(person.full_name)}
               </div>
               <div className="min-w-0">
-                <div className="truncate text-[12px] font-semibold text-[#1a1a18]">
+                <div className="truncate text-[12px] font-semibold text-[#0f172a]">
                   {person.full_name ?? 'Staff'}
                 </div>
               </div>
@@ -388,8 +388,8 @@ function WeekView({
               return (
                 <div
                   key={day}
-                  className="flex min-h-[72px] flex-col gap-1 border-b border-l border-[#e8e4dc] p-1.5"
-                  style={{ background: isToday ? 'rgba(139,69,166,0.025)' : undefined }}
+                  className="flex min-h-[72px] flex-col gap-1 border-b border-l border-[#e6e8ec] p-1.5"
+                  style={{ background: isToday ? 'rgba(107,44,145,0.04)' : undefined }}
                 >
                   {items.map(s => (
                     <ShiftPill key={s.id} shift={s} onClick={() => onShiftClick(s.id)} />
@@ -404,7 +404,7 @@ function WeekView({
   )
 }
 
-// ─── Day View ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Day View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DayView({
   dayShifts, staff, nowHour,
@@ -423,24 +423,24 @@ function DayView({
       <div style={{ minWidth: Math.max(700, 60 + staff.length * 140) }}>
         {/* Staff column headers */}
         <div
-          className="sticky top-0 z-10 grid border-b border-[#e8e4dc] bg-white"
+          className="sticky top-0 z-10 grid border-b border-[#e6e8ec] bg-white"
           style={{ gridTemplateColumns: `60px repeat(${staff.length}, 1fr)` }}
         >
-          <div className="px-2 py-2.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#9b988f]">
+          <div className="px-2 py-2.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#94a3b8]">
             Time
           </div>
           {staff.map(p => (
             <div
               key={p.id}
-              className="flex items-center gap-2 border-l border-[#e8e4dc] px-3 py-2"
+              className="flex items-center gap-2 border-l border-[#e6e8ec] px-3 py-2"
             >
               <div
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white"
-                style={{ background: '#1a1a18' }}
+                style={{ background: '#0f172a' }}
               >
                 {initials(p.full_name)}
               </div>
-              <span className="truncate text-[11px] font-semibold text-[#1a1a18]">
+              <span className="truncate text-[11px] font-semibold text-[#0f172a]">
                 {p.full_name?.split(' ')[0] ?? 'Staff'}
               </span>
             </div>
@@ -453,12 +453,12 @@ function DayView({
           style={{ gridTemplateColumns: `60px repeat(${staff.length}, 1fr)` }}
         >
           {/* Hour gutter */}
-          <div className="relative border-r border-[#e8e4dc]">
+          <div className="relative border-r border-[#e6e8ec]">
             {HOURS.map(h => (
               <div
                 key={h}
                 style={{ height: ROW_H }}
-                className="border-t border-[#e8e4dc] px-2 pt-1 font-mono text-[10px] text-[#9b988f]"
+                className="border-t border-[#e6e8ec] px-2 pt-1 font-mono text-[10px] text-[#94a3b8]"
               >
                 {fmtHour(h)}
               </div>
@@ -471,14 +471,14 @@ function DayView({
             return (
               <div
                 key={p.id}
-                className="relative border-l border-[#e8e4dc]"
+                className="relative border-l border-[#e6e8ec]"
                 style={{ height: HOURS.length * ROW_H }}
               >
                 {HOURS.map(h => (
                   <div
                     key={h}
                     style={{ height: ROW_H }}
-                    className="border-t border-[#e8e4dc]"
+                    className="border-t border-[#e6e8ec]"
                   />
                 ))}
                 {pShifts.map(s => {
@@ -505,15 +505,15 @@ function DayView({
                 left: 60, right: 0,
                 top: (nowHour - HOUR_START) * ROW_H,
                 height: 0,
-                borderTop: '2px solid #8B45A6',
+                borderTop: '2px solid #6B2C91',
               }}
             >
               <div
-                className="absolute -left-1 -top-[5px] h-2.5 w-2.5 rounded-full bg-[#8B45A6]"
+                className="absolute -left-1 -top-[5px] h-2.5 w-2.5 rounded-full bg-[#6B2C91]"
               />
               <div
-                className="absolute left-3 -top-[14px] rounded px-1.5 py-0.5 text-[9px] font-bold text-[#8B45A6]"
-                style={{ background: 'white', border: '1px solid #f3e8ff' }}
+                className="absolute left-3 -top-[14px] rounded px-1.5 py-0.5 text-[9px] font-bold text-[#6B2C91]"
+                style={{ background: 'white', border: '1px solid #F4ECF8' }}
               >
                 {fmtHour(nowHour)}
               </div>
@@ -523,7 +523,7 @@ function DayView({
 
         {/* Unassigned tray */}
         {unassigned.length > 0 && (
-          <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-[#e8e4dc] bg-[#fffdf5] px-4 py-2.5">
+          <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-[#e6e8ec] bg-[#fffdf5] px-4 py-2.5">
             <span className="text-[11px] font-semibold text-[#92400e]">
               {unassigned.length} unassigned today:
             </span>
@@ -539,7 +539,7 @@ function DayView({
   )
 }
 
-// ─── Staff View ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Staff View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function StaffView({
   dayShifts, staff, nowHour,
@@ -558,16 +558,16 @@ function StaffView({
       <div style={{ minWidth: 220 + totalW + 24 }}>
         {/* Hour ruler */}
         <div
-          className="sticky top-0 z-10 flex border-b border-[#e8e4dc] bg-white"
+          className="sticky top-0 z-10 flex border-b border-[#e6e8ec] bg-white"
         >
-          <div className="w-[200px] shrink-0 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#9b988f]">
+          <div className="w-[200px] shrink-0 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#94a3b8]">
             Staff
           </div>
           <div className="relative" style={{ width: totalW, height: 36 }}>
             {Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => (
               <div
                 key={i}
-                className="absolute top-2 font-mono text-[10px] text-[#9b988f]"
+                className="absolute top-2 font-mono text-[10px] text-[#94a3b8]"
                 style={{ left: i * HOUR_PX, transform: 'translateX(-50%)' }}
               >
                 {fmtHour(HOUR_START + i)}
@@ -582,17 +582,17 @@ function StaffView({
           return (
             <div
               key={p.id}
-              className="flex border-b border-[#e8e4dc] bg-white"
+              className="flex border-b border-[#e6e8ec] bg-white"
             >
               <div className="flex w-[200px] shrink-0 items-center gap-2.5 px-4 py-3">
                 <div
                   className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                  style={{ background: '#1a1a18' }}
+                  style={{ background: '#0f172a' }}
                 >
                   {initials(p.full_name)}
                 </div>
                 <div className="min-w-0">
-                  <div className="truncate text-[12px] font-semibold text-[#1a1a18]">
+                  <div className="truncate text-[12px] font-semibold text-[#0f172a]">
                     {p.full_name ?? 'Staff'}
                   </div>
                 </div>
@@ -603,7 +603,7 @@ function StaffView({
                 {Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => (
                   <div
                     key={i}
-                    className="absolute top-0 bottom-0 w-px bg-[#e8e4dc]"
+                    className="absolute top-0 bottom-0 w-px bg-[#e6e8ec]"
                     style={{ left: i * HOUR_PX }}
                   />
                 ))}
@@ -611,7 +611,7 @@ function StaffView({
                 {/* Now line */}
                 {nowHour >= HOUR_START && nowHour <= HOUR_END && (
                   <div
-                    className="pointer-events-none absolute top-0 bottom-0 z-10 w-px bg-[#8B45A6]"
+                    className="pointer-events-none absolute top-0 bottom-0 z-10 w-px bg-[#6B2C91]"
                     style={{ left: (nowHour - HOUR_START) * HOUR_PX }}
                   />
                 )}
@@ -638,7 +638,7 @@ function StaffView({
   )
 }
 
-// ─── Filter Bar ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Filter Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function FilterBar({
   view, setView, weekStart: ws, weekOffset, setWeekOffset,
@@ -655,25 +655,25 @@ function FilterBar({
   setSelectedDay: (d: Date) => void
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-[#e8e4dc] bg-white px-4 py-2.5">
+    <div className="flex flex-wrap items-center gap-2 border-b border-[#e6e8ec] bg-white px-4 py-2.5">
       {/* Week nav */}
       <button
         type="button"
         onClick={() => setWeekOffset(weekOffset - 1)}
-        className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#e8e4dc] bg-white text-[#5e5b54] hover:bg-[#f4f2ed]"
+        className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#e6e8ec] bg-white text-[#64748b] hover:bg-[#f7f8f9]"
         title="Previous week"
       >
         <span className="material-symbols-outlined text-[16px]">chevron_left</span>
       </button>
 
-      <div className="min-w-[180px] text-[13px] font-semibold text-[#1a1a18]">
+      <div className="min-w-[180px] text-[13px] font-semibold text-[#0f172a]">
         {fmtWeekRange(ws)}
       </div>
 
       <button
         type="button"
         onClick={() => setWeekOffset(weekOffset + 1)}
-        className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#e8e4dc] bg-white text-[#5e5b54] hover:bg-[#f4f2ed]"
+        className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#e6e8ec] bg-white text-[#64748b] hover:bg-[#f7f8f9]"
         title="Next week"
       >
         <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -682,15 +682,15 @@ function FilterBar({
       <button
         type="button"
         onClick={() => setWeekOffset(0)}
-        className="h-8 rounded-xl border border-[#e8e4dc] bg-white px-3 text-[12px] font-medium text-[#5e5b54] hover:bg-[#f4f2ed]"
+        className="h-8 rounded-xl border border-[#e6e8ec] bg-white px-3 text-[12px] font-medium text-[#64748b] hover:bg-[#f7f8f9]"
       >
         Today
       </button>
 
-      <div className="mx-1 h-5 w-px bg-[#e8e4dc]" />
+      <div className="mx-1 h-5 w-px bg-[#e6e8ec]" />
 
       {/* View switcher */}
-      <div className="flex rounded-xl border border-[#e8e4dc] bg-[#f4f2ed] p-0.5">
+      <div className="flex rounded-xl border border-[#e6e8ec] bg-[#f7f8f9] p-0.5">
         {(['week', 'day', 'staff'] as RosterView[]).map(v => (
           <button
             key={v}
@@ -698,8 +698,8 @@ function FilterBar({
             onClick={() => setView(v)}
             className={`h-7 rounded-[9px] px-3 text-[12px] font-medium transition-all ${
               view === v
-                ? 'bg-white text-[#1a1a18] shadow-sm'
-                : 'text-[#6c6b66] hover:text-[#1a1a18]'
+                ? 'bg-white text-[#0f172a] shadow-sm'
+                : 'text-[#64748b] hover:text-[#0f172a]'
             }`}
           >
             {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -709,7 +709,7 @@ function FilterBar({
 
       {/* Day selector (shown for day + staff views) */}
       {(view === 'day' || view === 'staff') && (
-        <div className="flex rounded-xl border border-[#e8e4dc] bg-[#f4f2ed] p-0.5">
+        <div className="flex rounded-xl border border-[#e6e8ec] bg-[#f7f8f9] p-0.5">
           {Array.from({ length: 7 }, (_, i) => {
             const d = addDays(ws, i)
             const isSelected = d.toDateString() === selectedDay.toDateString()
@@ -720,8 +720,8 @@ function FilterBar({
                 onClick={() => setSelectedDay(d)}
                 className={`h-7 rounded-[9px] px-2.5 text-[11px] font-medium transition-all ${
                   isSelected
-                    ? 'bg-[#1a1a18] text-[#7BC143] shadow-sm'
-                    : 'text-[#6c6b66] hover:text-[#1a1a18]'
+                    ? 'bg-[#0f172a] text-[#6B2C91] shadow-sm'
+                    : 'text-[#64748b] hover:text-[#0f172a]'
                 }`}
               >
                 {DAY_LABELS[i]}
@@ -741,7 +741,7 @@ function FilterBar({
         <button
           type="button"
           onClick={onCreateShift}
-          className="inline-flex h-8 items-center gap-1.5 rounded-xl bg-[#1a1a18] px-4 text-[12px] font-semibold text-white hover:bg-[#2a2a26]"
+          className="inline-flex h-8 items-center gap-1.5 rounded-xl bg-[#0f172a] px-4 text-[12px] font-semibold text-white hover:bg-[#2a2a26]"
         >
           <span className="material-symbols-outlined text-[15px]">add</span>
           New shift
@@ -751,7 +751,7 @@ function FilterBar({
   )
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function RosterClient({
   shifts, staff, clients, supportTypes,
@@ -889,13 +889,14 @@ export default function RosterClient({
 
     if (form.staff_id) {
       const shiftDate = new Date(form.start_time)
-      await supabase.from('notifications').insert({
+      const { error: notifError } = await supabase.from('notifications').insert({
         user_id: form.staff_id,
         type: 'shift_assigned',
         title: 'New shift assigned',
         message: `You've been assigned a shift on ${shiftDate.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} at ${shiftDate.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}.`,
         related_id: createdShift?.id ?? null,
       })
+      if (notifError) console.error('[RosterClient] notification insert failed:', notifError)
     }
 
     setSaving(false); setOpen(false); setForm(EMPTY_FORM)
@@ -903,28 +904,28 @@ export default function RosterClient({
     router.refresh()
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   return (
     <div className="flex flex-col gap-4">
       {/* Page header */}
       <header className="flex items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.35rem]">
+          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
             <span className="font-headline">Roster</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#8B45A6] px-4 py-1 text-sm font-semibold tracking-normal text-[#1a1a18]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
               <span className="material-symbols-outlined text-[18px]">calendar_month</span>
               planner
             </span>
           </div>
-          <p className="text-sm text-[#6c6b66]">
+          <p className="text-sm text-[#64748b]">
             Weekly scheduling, shift assignment, and compliance readiness
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/admin/active-shifts"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#ddd9d1] bg-white text-[#5e5b54] hover:bg-[#f4f2ed]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e6e8ec] bg-white text-[#64748b] hover:bg-[#f7f8f9]"
             title="Live shifts"
           >
             <span className="material-symbols-outlined text-[18px]">location_on</span>
@@ -962,28 +963,28 @@ export default function RosterClient({
             key={card.label}
             className={`rounded-[20px] p-4 shadow-[0_8px_24px_rgba(26,26,24,0.04)] ${
               card.accent
-                ? 'bg-[#8B45A6]'
+                ? 'bg-[#6B2C91]'
                 : card.warn
                 ? 'border border-[#fde8c8] bg-[#fff8f0]'
-                : 'border border-[#e8e4dc] bg-white'
+                : 'border border-[#e6e8ec] bg-white'
             }`}
           >
             <div
               className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ${
-                card.accent ? 'bg-black/10 text-[#1a1a18]'
+                card.accent ? 'bg-black/10 text-[#0f172a]'
                 : card.warn ? 'bg-[#fef3c7] text-[#d97706]'
                 : 'bg-[#f3f1eb] text-[#6c6962]'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">{card.icon}</span>
             </div>
-            <p className={`mt-3 text-[11px] font-medium ${card.accent ? 'text-[#5e0087]' : card.warn ? 'text-[#92400e]' : 'text-[#8a877f]'}`}>
+            <p className={`mt-3 text-[11px] font-medium ${card.accent ? 'text-[#54206F]' : card.warn ? 'text-[#92400e]' : 'text-[#64748b]'}`}>
               {card.label}
             </p>
-            <p className="font-headline text-[1.75rem] leading-none tracking-[-0.06em] text-[#1a1a18]">
+            <p className="font-headline text-[1.75rem] leading-none tracking-[-0.06em] text-[#0f172a]">
               {card.value}
             </p>
-            <p className={`mt-1 text-[11px] ${card.accent ? 'text-[#5e0087]' : card.warn ? 'text-[#92400e]' : 'text-[#8a877f]'}`}>
+            <p className={`mt-1 text-[11px] ${card.accent ? 'text-[#54206F]' : card.warn ? 'text-[#92400e]' : 'text-[#64748b]'}`}>
               {card.sub}
             </p>
           </div>
@@ -993,7 +994,7 @@ export default function RosterClient({
       {/* Roster grid + detail panel */}
       <div className="grid gap-4 xl:grid-cols-[1fr_300px]">
         {/* Roster card */}
-        <div className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+        <div className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
           <FilterBar
             view={rosterView}
             setView={setRosterView}
@@ -1037,15 +1038,15 @@ export default function RosterClient({
             <div className="flex flex-col items-center gap-3 py-16 text-center text-sm text-[#7d7a73]">
               <span className="material-symbols-outlined text-[40px] text-[#ccc8c0]">calendar_month</span>
               <div>
-                <p className="font-medium text-[#1a1a18]">No shifts this week</p>
-                <p className="mt-1 text-xs text-[#8a877f]">
-                  {fmtWeekRange(weekStart)} · use the controls above to navigate
+                <p className="font-medium text-[#0f172a]">No shifts this week</p>
+                <p className="mt-1 text-xs text-[#64748b]">
+                  {fmtWeekRange(weekStart)} Â· use the controls above to navigate
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="mt-1 inline-flex items-center gap-2 rounded-xl bg-[#1a1a18] px-4 py-2 text-sm font-semibold text-white"
+                className="mt-1 inline-flex items-center gap-2 rounded-xl bg-[#0f172a] px-4 py-2 text-sm font-semibold text-white"
               >
                 <span className="material-symbols-outlined text-[16px]">add</span>
                 Create first shift
@@ -1057,22 +1058,22 @@ export default function RosterClient({
         {/* Right panel */}
         <div className="space-y-3">
           {/* Shift detail */}
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="border-b border-[#f0ece5] px-4 py-3">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Shift detail</h3>
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <div className="border-b border-[#f0f1f3] px-4 py-3">
+              <h3 className="text-sm font-semibold text-[#0f172a]">Shift detail</h3>
             </div>
             {selectedShift ? (
               <div className="space-y-4 px-4 py-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#9b988f]">
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#94a3b8]">
                       {fmtDate(new Date(selectedShift.start))}
                     </p>
-                    <h4 className="mt-1 text-[15px] font-semibold tracking-[-0.02em] text-[#1a1a18]">
+                    <h4 className="mt-1 text-[15px] font-semibold tracking-[-0.02em] text-[#0f172a]">
                       {selectedShift.clientName}
                     </h4>
                     <p className="text-[12px] text-[#7d7a73]">
-                      {formatTime(selectedShift.start)} – {formatTime(selectedShift.end)}
+                      {formatTime(selectedShift.start)} â€“ {formatTime(selectedShift.end)}
                     </p>
                   </div>
                   <span className={statusBadgeCls(selectedShift.status)}>
@@ -1080,14 +1081,14 @@ export default function RosterClient({
                   </span>
                 </div>
 
-                <div className="rounded-[16px] bg-[#faf9f6] p-3">
-                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Staff</p>
-                  <p className="mt-1 text-[13px] font-medium text-[#1a1a18]">
+                <div className="rounded-[16px] bg-[#fafbfc] p-3">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Staff</p>
+                  <p className="mt-1 text-[13px] font-medium text-[#0f172a]">
                     {selectedShift.staffName}
                   </p>
                   <p className="text-[11px] text-[#7d7a73]">
                     {labelSupportType(selectedShift.supportTypeKey)}
-                    {' · '}
+                    {' Â· '}
                     {copyDocStatus(selectedShift.documentationStatus)}
                   </p>
                 </div>
@@ -1105,7 +1106,7 @@ export default function RosterClient({
                     {
                       label: 'Staff assigned',
                       done: Boolean(selectedShift.staffId),
-                      doneClass: 'bg-[#f3e8ff] text-[#6b21a8]',
+                      doneClass: 'bg-[#F4ECF8] text-[#54206F]',
                     },
                     {
                       label: 'Location set',
@@ -1115,12 +1116,12 @@ export default function RosterClient({
                     {
                       label: 'Notes ready',
                       done: Boolean(selectedShift.notes),
-                      doneClass: 'bg-[#ede9fe] text-[#6d28d9]',
+                      doneClass: 'bg-[#F4ECF8] text-[#6d28d9]',
                     },
                     {
                       label: 'Clock-in done',
                       done: selectedShift.status === 'active' || selectedShift.status === 'completed',
-                      doneClass: 'bg-[#f3e8ff] text-[#6b21a8]',
+                      doneClass: 'bg-[#F4ECF8] text-[#54206F]',
                     },
                     {
                       label: 'Completed',
@@ -1130,7 +1131,7 @@ export default function RosterClient({
                   ].map(item => (
                     <div
                       key={item.label}
-                      className="flex items-center gap-2.5 rounded-[14px] bg-[#faf9f6] px-3 py-2"
+                      className="flex items-center gap-2.5 rounded-[14px] bg-[#fafbfc] px-3 py-2"
                     >
                       <span
                         className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[13px] ${
@@ -1141,14 +1142,14 @@ export default function RosterClient({
                           {item.done ? 'check' : 'schedule'}
                         </span>
                       </span>
-                      <p className="text-[12px] font-medium text-[#1a1a18]">{item.label}</p>
+                      <p className="text-[12px] font-medium text-[#0f172a]">{item.label}</p>
                     </div>
                   ))}
                 </div>
 
                 <Link
                   href={`/admin/shifts/${selectedShift.id}`}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f4f2ed] px-4 py-2.5 text-[12px] font-semibold text-[#4f4c45] hover:bg-[#eae6df]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f7f8f9] px-4 py-2.5 text-[12px] font-semibold text-[#64748b] hover:bg-[#eae6df]"
                 >
                   View full detail
                   <span className="material-symbols-outlined text-[14px]">north_east</span>
@@ -1163,9 +1164,9 @@ export default function RosterClient({
 
           {/* Coverage suggestions */}
           {selectedShift && (
-            <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-              <div className="border-b border-[#f0ece5] px-4 py-3">
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Coverage suggestions</h3>
+            <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+              <div className="border-b border-[#f0f1f3] px-4 py-3">
+                <h3 className="text-sm font-semibold text-[#0f172a]">Coverage suggestions</h3>
               </div>
               <div className="space-y-2 px-4 py-3">
                 {coverageSuggestions.length > 0 ? (
@@ -1178,20 +1179,20 @@ export default function RosterClient({
                         {initials(member.full_name)}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[12px] font-medium text-[#1a1a18]">
+                        <p className="truncate text-[12px] font-medium text-[#0f172a]">
                           {member.full_name ?? 'Staff'}
                         </p>
                         <p className="text-[10px] text-[#7f7a9f]">
                           {i === 0 ? 'Best match' : 'Available'}
                         </p>
                       </div>
-                      <span className="rounded-full bg-[#ede9fe] px-2 py-0.5 text-[10px] font-semibold text-[#6d28d9]">
+                      <span className="rounded-full bg-[#F4ECF8] px-2 py-0.5 text-[10px] font-semibold text-[#6d28d9]">
                         {98 - i * 6}%
                       </span>
                     </div>
                   ))
                 ) : (
-                  <p className="py-3 text-[12px] text-[#8a877f]">
+                  <p className="py-3 text-[12px] text-[#64748b]">
                     No free staff for this exact time block.
                   </p>
                 )}
@@ -1200,9 +1201,9 @@ export default function RosterClient({
           )}
 
           {/* Quick summary */}
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
-            <div className="border-b border-[#f0ece5] px-4 py-3">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Week summary</h3>
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+            <div className="border-b border-[#f0f1f3] px-4 py-3">
+              <h3 className="text-sm font-semibold text-[#0f172a]">Week summary</h3>
             </div>
             <div className="space-y-1.5 px-4 py-3 text-[12px] text-[#56524c]">
               {[
@@ -1214,10 +1215,10 @@ export default function RosterClient({
               ].map(row => (
                 <div
                   key={row.label}
-                  className="flex items-center justify-between rounded-[12px] bg-[#faf9f6] px-3 py-2"
+                  className="flex items-center justify-between rounded-[12px] bg-[#fafbfc] px-3 py-2"
                 >
                   <span>{row.label}</span>
-                  <strong className="font-semibold text-[#1a1a18]">{row.value}</strong>
+                  <strong className="font-semibold text-[#0f172a]">{row.value}</strong>
                 </div>
               ))}
             </div>
@@ -1230,13 +1231,13 @@ export default function RosterClient({
         <form onSubmit={handleCreate} className="space-y-5">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
                 Staff member
               </label>
               <select
                 value={form.staff_id}
                 onChange={e => setField(setForm, 'staff_id', e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
               >
                 <option value="">Leave unassigned</option>
                 {staff.map(m => (
@@ -1245,19 +1246,19 @@ export default function RosterClient({
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
                 Client
               </label>
               <select
                 required
                 value={form.client_id}
                 onChange={e => setField(setForm, 'client_id', e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
               >
                 <option value="">Select client</option>
                 {clients.map(c => (
                   <option key={c.id} value={c.id}>
-                    {c.full_name ?? 'Unnamed client'}{c.address ? ` – ${c.address}` : ''}
+                    {c.full_name ?? 'Unnamed client'}{c.address ? ` â€“ ${c.address}` : ''}
                   </option>
                 ))}
               </select>
@@ -1265,25 +1266,25 @@ export default function RosterClient({
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
               Shift label
             </label>
             <input
               value={form.title}
               onChange={e => setField(setForm, 'title', e.target.value)}
-              placeholder="Morning support, community access…"
-              className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+              placeholder="Morning support, community accessâ€¦"
+              className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
               Support type
             </label>
             <select
               value={form.support_type_key}
               onChange={e => setField(setForm, 'support_type_key', e.target.value)}
-              className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+              className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
             >
               {supportTypes.map(t => (
                 <option key={t.key} value={t.key}>{t.title ?? t.key}</option>
@@ -1293,7 +1294,7 @@ export default function RosterClient({
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
                 Start time
               </label>
               <input
@@ -1301,11 +1302,11 @@ export default function RosterClient({
                 required
                 value={form.start_time}
                 onChange={e => setField(setForm, 'start_time', e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
               />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+              <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
                 End time
               </label>
               <input
@@ -1313,21 +1314,21 @@ export default function RosterClient({
                 required
                 value={form.end_time}
                 onChange={e => setField(setForm, 'end_time', e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
               Notes
             </label>
             <textarea
               rows={3}
               value={form.notes}
               onChange={e => setField(setForm, 'notes', e.target.value)}
-              placeholder="Travel notes, medication handover, contact instructions…"
-              className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none"
+              placeholder="Travel notes, medication handover, contact instructionsâ€¦"
+              className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
             />
           </div>
 
@@ -1345,16 +1346,16 @@ export default function RosterClient({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex-1 rounded-2xl bg-[#f4f2ed] px-4 py-3 text-sm font-semibold text-[#4f4c45]"
+              className="flex-1 rounded-2xl bg-[#f7f8f9] px-4 py-3 text-sm font-semibold text-[#64748b]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || hasValidationErrors}
-              className="flex-1 rounded-2xl bg-[#1a1a18] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+              className="flex-1 rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
             >
-              {saving ? 'Saving shift…' : 'Create shift'}
+              {saving ? 'Saving shiftâ€¦' : 'Create shift'}
             </button>
           </div>
         </form>

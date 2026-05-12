@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -56,8 +56,8 @@ function fmtShiftDate(iso: string): string {
 
 // ─── Shared form field style ──────────────────────────────────────────────────
 
-const inputCls = 'w-full rounded-xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-2.5 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]'
-const labelCls = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8a877f]'
+const inputCls = 'w-full rounded-xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]'
+const labelCls = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]'
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -340,7 +340,7 @@ export default function ShiftDetailClient({
             <Card>
               <div className="p-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-[#1a1a18]">Shift information</h3>
+                  <h3 className="text-sm font-semibold text-[#0f172a]">Shift information</h3>
                   <StatusBadge status={shift.status} />
                 </div>
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -350,9 +350,9 @@ export default function ShiftDetailClient({
                   <Field label="Location" value={client?.address ?? 'No address recorded'} />
                 </div>
                 {shift.notes && (
-                  <div className="mt-4 rounded-[18px] bg-[#faf9f6] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Notes</p>
-                    <p className="mt-2 text-sm leading-6 text-[#4f4c45]">{shift.notes}</p>
+                  <div className="mt-4 rounded-[18px] bg-[#fafbfc] p-4">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Notes</p>
+                    <p className="mt-2 text-sm leading-6 text-[#64748b]">{shift.notes}</p>
                   </div>
                 )}
               </div>
@@ -414,11 +414,11 @@ export default function ShiftDetailClient({
               return (
                 <Card>
                   <div className="p-6">
-                    <h3 className="text-sm font-semibold text-[#1a1a18]">Location</h3>
-                    <div className="mt-4 flex flex-wrap gap-3 text-[11px] text-[#8a877f]">
+                    <h3 className="text-sm font-semibold text-[#0f172a]">Location</h3>
+                    <div className="mt-4 flex flex-wrap gap-3 text-[11px] text-[#94a3b8]">
                       {client?.lat && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#00AAEF]" />Client</span>}
                       {(shift.clock_in_lat || shift.clock_out_lat) && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#22c55e]" />Clock in / out</span>}
-                      {liveLocation && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#8B45A6]" />Live</span>}
+                      {liveLocation && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#6B2C91]" />Live</span>}
                     </div>
                     <div className="mt-3 overflow-hidden rounded-[16px]">
                       <LiveMap markers={locationMarkers} height="220px" showGeofences />
@@ -431,21 +431,21 @@ export default function ShiftDetailClient({
             {/* Clock events timeline */}
             <Card>
               <div className="p-6">
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Clock events</h3>
+                <h3 className="text-sm font-semibold text-[#0f172a]">Clock events</h3>
                 {clockEvents.length > 0 ? (
                   <div className="mt-4 space-y-3">
                     {clockEvents.map((event: any) => (
-                      <div key={event.id} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-4 py-3">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${event.type === 'clock_in' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#f3e8ff] text-[#6b21a8]'}`}>
+                      <div key={event.id} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-4 py-3">
+                        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${event.type === 'clock_in' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#F4ECF8] text-[#54206F]'}`}>
                           <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
                             {event.type === 'clock_in' ? 'login' : 'logout'}
                           </span>
                         </span>
                         <div>
-                          <p className="text-sm font-medium text-[#1a1a18]">
+                          <p className="text-sm font-medium text-[#0f172a]">
                             {event.type === 'clock_in' ? 'Clock in' : 'Clock out'}
                           </p>
-                          <p className="text-[11px] text-[#8a877f]">
+                          <p className="text-[11px] text-[#94a3b8]">
                             {new Date(event.created_at).toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
                             {event.lat && event.lng ? ` · ${event.lat.toFixed(4)}, ${event.lng.toFixed(4)}` : ''}
                           </p>
@@ -454,7 +454,7 @@ export default function ShiftDetailClient({
                     ))}
                   </div>
                 ) : (
-                  <p className="mt-4 text-sm text-[#8a877f]">No clock events recorded for this shift.</p>
+                  <p className="mt-4 text-sm text-[#94a3b8]">No clock events recorded for this shift.</p>
                 )}
               </div>
             </Card>
@@ -463,15 +463,15 @@ export default function ShiftDetailClient({
             {incidents.length > 0 && (
               <Card>
                 <div className="p-6">
-                  <h3 className="text-sm font-semibold text-[#1a1a18]">Linked incidents</h3>
+                  <h3 className="text-sm font-semibold text-[#0f172a]">Linked incidents</h3>
                   <div className="mt-4 space-y-2">
                     {incidents.map((incident: any) => (
                       <Link
                         key={incident.id}
                         href={`/admin/incidents/${incident.id}`}
-                        className="flex items-center justify-between rounded-[18px] bg-[#faf9f6] px-4 py-3 hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+                        className="flex items-center justify-between rounded-[18px] bg-[#fafbfc] px-4 py-3 hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                       >
-                        <span className="text-sm font-medium text-[#1a1a18]">{incident.title}</span>
+                        <span className="text-sm font-medium text-[#0f172a]">{incident.title}</span>
                         <div className="flex gap-2">
                           <StatusBadge status={incident.severity} />
                           <StatusBadge status={incident.status} />
@@ -490,19 +490,19 @@ export default function ShiftDetailClient({
             <RailCard title="Staff member">
               {staff ? (
                 <div className="space-y-3">
-                  <p className="text-sm font-semibold text-[#1a1a18]">{staff.full_name}</p>
-                  {staff.phone && <p className="text-xs text-[#66635b]">{staff.phone}</p>}
-                  {staff.email && <p className="text-xs text-[#66635b]">{staff.email}</p>}
+                  <p className="text-sm font-semibold text-[#0f172a]">{staff.full_name}</p>
+                  {staff.phone && <p className="text-xs text-[#64748b]">{staff.phone}</p>}
+                  {staff.email && <p className="text-xs text-[#64748b]">{staff.email}</p>}
                   <Link
                     href={`/admin/staff/${staff.id}`}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-[#8B45A6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-[#6B2C91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                   >
                     View profile
                     <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>
                   </Link>
                 </div>
               ) : (
-                <p className="text-xs italic text-[#8a877f]">No staff assigned to this shift.</p>
+                <p className="text-xs italic text-[#94a3b8]">No staff assigned to this shift.</p>
               )}
             </RailCard>
 
@@ -510,24 +510,24 @@ export default function ShiftDetailClient({
             <RailCard title="Client">
               {client ? (
                 <div className="space-y-3">
-                  <p className="text-sm font-semibold text-[#1a1a18]">{client.full_name}</p>
-                  {client.address && <p className="text-xs text-[#66635b]">{client.address}</p>}
+                  <p className="text-sm font-semibold text-[#0f172a]">{client.full_name}</p>
+                  {client.address && <p className="text-xs text-[#64748b]">{client.address}</p>}
                   <Link
                     href={`/admin/clients/${client.id}`}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-[#8B45A6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-[#6B2C91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                   >
                     View profile
                     <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>
                   </Link>
                 </div>
               ) : (
-                <p className="text-xs italic text-[#8a877f]">No client linked.</p>
+                <p className="text-xs italic text-[#94a3b8]">No client linked.</p>
               )}
             </RailCard>
 
             {/* Geofence status */}
             <RailCard title="Geofence">
-              <div className="space-y-2 text-xs text-[#66635b]">
+              <div className="space-y-2 text-xs text-[#64748b]">
                 {geoReady ? (
                   <>
                     <p className="flex items-center gap-2">
@@ -553,7 +553,7 @@ export default function ShiftDetailClient({
                   type="button"
                   onClick={() => { setActionError(''); setEditOpen(true) }}
                   disabled={!isEditable}
-                  className="w-full rounded-2xl border border-[#dfd9cf] px-4 py-2.5 text-left text-sm font-medium text-[#1a1a18] transition hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="w-full rounded-2xl border border-[#e6e8ec] px-4 py-2.5 text-left text-sm font-medium text-[#0f172a] transition hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="Edit shift"
                 >
                   <span className="material-symbols-outlined mr-2 align-middle text-[16px]" aria-hidden="true">edit</span>
@@ -564,7 +564,7 @@ export default function ShiftDetailClient({
                   type="button"
                   onClick={() => { setActionError(''); setReassignOpen(true); setNewStaffId('') }}
                   disabled={!isEditable}
-                  className="w-full rounded-2xl border border-[#dfd9cf] px-4 py-2.5 text-left text-sm font-medium text-[#1a1a18] transition hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="w-full rounded-2xl border border-[#e6e8ec] px-4 py-2.5 text-left text-sm font-medium text-[#0f172a] transition hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="Reassign staff"
                 >
                   <span className="material-symbols-outlined mr-2 align-middle text-[16px]" aria-hidden="true">swap_horiz</span>
@@ -583,7 +583,7 @@ export default function ShiftDetailClient({
                 </button>
 
                 {!isEditable && (
-                  <p className="pt-1 text-[11px] text-[#8a877f]">
+                  <p className="pt-1 text-[11px] text-[#94a3b8]">
                     {shift.status === 'completed'
                       ? 'Completed shifts cannot be edited.'
                       : 'Cancelled shifts cannot be modified.'}
@@ -688,14 +688,14 @@ export default function ShiftDetailClient({
             <button
               type="button"
               onClick={() => setEditOpen(false)}
-              className="flex-1 rounded-xl border border-[#dfd9cf] py-2.5 text-sm font-medium text-[#5e5b54] transition hover:bg-[#f4f2ed]"
+              className="flex-1 rounded-xl border border-[#e6e8ec] py-2.5 text-sm font-medium text-[#64748b] transition hover:bg-[#f7f8f9]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#1a1a18] py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#0f172a] py-2.5 text-sm font-semibold text-white disabled:opacity-60"
             >
               {saving && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
               {saving ? 'Saving…' : 'Save changes'}
@@ -707,7 +707,7 @@ export default function ShiftDetailClient({
       {/* ── Cancel confirmation Modal ───────────────────────────────────── */}
       <Modal open={cancelOpen} onClose={() => setCancelOpen(false)} title="Cancel shift">
         <div className="space-y-4">
-          <p className="text-sm leading-6 text-[#4f4c45]">
+          <p className="text-sm leading-6 text-[#64748b]">
             Are you sure you want to cancel this shift?
             {staff ? ` ${staff.full_name} will be notified.` : ''}
             {' '}This action sets the shift status to cancelled and cannot be undone here.
@@ -721,7 +721,7 @@ export default function ShiftDetailClient({
             <button
               type="button"
               onClick={() => setCancelOpen(false)}
-              className="flex-1 rounded-xl border border-[#dfd9cf] py-2.5 text-sm font-medium text-[#5e5b54] transition hover:bg-[#f4f2ed]"
+              className="flex-1 rounded-xl border border-[#e6e8ec] py-2.5 text-sm font-medium text-[#64748b] transition hover:bg-[#f7f8f9]"
             >
               Keep shift
             </button>
@@ -742,7 +742,7 @@ export default function ShiftDetailClient({
       <Modal open={reassignOpen} onClose={() => setReassignOpen(false)} title="Reassign staff">
         <form onSubmit={handleReassign} className="space-y-4">
           {staff && (
-            <div className="rounded-xl bg-[#faf9f6] px-4 py-3 text-sm text-[#4f4c45]">
+            <div className="rounded-xl bg-[#fafbfc] px-4 py-3 text-sm text-[#64748b]">
               <span className="font-medium">Currently assigned:</span> {staff.full_name}
             </div>
           )}
@@ -769,7 +769,7 @@ export default function ShiftDetailClient({
             <p className="rounded-xl bg-[#fef2f2] px-4 py-2.5 text-sm text-[#991b1b]">{actionError}</p>
           )}
 
-          <p className="text-[11px] text-[#8a877f]">
+          <p className="text-[11px] text-[#94a3b8]">
             The new staff member will receive a notification. The previous staff member will be notified they have been removed.
           </p>
 
@@ -777,14 +777,14 @@ export default function ShiftDetailClient({
             <button
               type="button"
               onClick={() => setReassignOpen(false)}
-              className="flex-1 rounded-xl border border-[#dfd9cf] py-2.5 text-sm font-medium text-[#5e5b54] transition hover:bg-[#f4f2ed]"
+              className="flex-1 rounded-xl border border-[#e6e8ec] py-2.5 text-sm font-medium text-[#64748b] transition hover:bg-[#f7f8f9]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || !newStaffId}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#8B45A6] py-2.5 text-sm font-semibold text-[#1a1a18] disabled:opacity-60"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#6B2C91] py-2.5 text-sm font-semibold text-[#0f172a] disabled:opacity-60"
             >
               {saving && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
               {saving ? 'Saving…' : 'Reassign'}

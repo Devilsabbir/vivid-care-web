@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import IncidentReportClient from './IncidentReportClient'
 
@@ -35,7 +35,7 @@ export default async function StaffIncidentsPage() {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[28px] bg-[#171717] px-5 py-5 text-white shadow-[0_24px_44px_rgba(23,23,22,0.18)]">
+      <section className="rounded-[28px] bg-[#0f172a] px-5 py-5 text-white shadow-[0_24px_44px_rgba(15,23,42,0.10)]">
         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Incidents</p>
         <h1 className="mt-3 font-headline text-[1.85rem] font-semibold leading-none tracking-[-0.05em]">Report issues quickly</h1>
         <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
@@ -61,8 +61,8 @@ export default async function StaffIncidentsPage() {
 
 function MiniStat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#8B45A6] text-[#171716]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>{label}</p>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#6B2C91] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#54206F]' : 'text-[#8f8a80]'}`}>{label}</p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>
     </div>
   )

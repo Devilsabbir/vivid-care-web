@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -69,14 +69,14 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
   return (
     <div className="space-y-4">
       {errorMessage && <ErrorToast message={errorMessage} onDismiss={dismiss} />}
-      <section className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+      <section className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#8B45A6]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#6B2C91]">
             <span className="material-symbols-outlined text-[20px]">shield</span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#171716]">Safety first</p>
-            <p className="mt-1 text-sm leading-6 text-[#666258]">
+            <p className="text-sm font-semibold text-[#0f172a]">Safety first</p>
+            <p className="mt-1 text-sm leading-6 text-[#64748b]">
               Use emergency procedures first for immediate danger. This report is for documentation and coordinator follow-up.
             </p>
           </div>
@@ -86,32 +86,32 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
-          className="flex w-full items-center justify-center gap-3 rounded-[24px] bg-[#171717] px-4 py-4 font-headline text-base font-semibold text-white shadow-[0_16px_28px_rgba(23,23,22,0.14)]"
+          className="flex w-full items-center justify-center gap-3 rounded-[24px] bg-[#0f172a] px-4 py-4 font-headline text-base font-semibold text-white shadow-[0_16px_28px_rgba(23,23,22,0.14)]"
         >
           <span className="material-symbols-outlined text-[22px]">report_problem</span>
           Report an incident
         </button>
       ) : (
-        <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
+        <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
           <div className="mb-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">New report</p>
-            <h2 className="mt-2 font-headline text-xl font-semibold text-[#171716]">Capture the details</h2>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">New report</p>
+            <h2 className="mt-2 font-headline text-xl font-semibold text-[#0f172a]">Capture the details</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Title *</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#64748b]">Title *</label>
               <input
                 required
                 value={form.title}
                 onChange={e => set('title', e.target.value)}
                 placeholder="Brief summary of what happened"
-                className="w-full rounded-xl border border-[#e7e1d7] bg-[#fbfaf7] px-4 py-3 text-sm focus:outline-none"
+                className="w-full rounded-xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Severity *</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#64748b]">Severity *</label>
               <div className="grid grid-cols-4 gap-2">
                 {['low', 'medium', 'high', 'emergency'].map(value => (
                   <button
@@ -122,8 +122,8 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
                       form.severity === value
                         ? value === 'emergency'
                           ? 'bg-[#a33131] text-white'
-                          : 'bg-[#171717] text-white'
-                        : 'bg-[#f4f1ea] text-[#171716]'
+                          : 'bg-[#0f172a] text-white'
+                        : 'bg-[#f7f8f9] text-[#0f172a]'
                     }`}
                   >
                     {value}
@@ -134,7 +134,7 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
 
             {shifts.length > 0 ? (
               <div>
-                <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Related shift</label>
+                <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#64748b]">Related shift</label>
                 <select
                   value={form.shift_id}
                   onChange={e => {
@@ -145,7 +145,7 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
                       client_id: shift?.clients?.id ?? '',
                     }))
                   }}
-                  className="w-full rounded-xl border border-[#e7e1d7] bg-[#fbfaf7] px-4 py-3 text-sm focus:outline-none"
+                  className="w-full rounded-xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm focus:outline-none"
                 >
                   <option value="">Select shift...</option>
                   {shifts.map((shift: any) => <option key={shift.id} value={shift.id}>{shift.clients?.full_name ?? 'Shift'}</option>)}
@@ -154,21 +154,21 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
             ) : null}
 
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#8b867b]">Description</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-[#64748b]">Description</label>
               <textarea
                 value={form.description}
                 onChange={e => set('description', e.target.value)}
                 rows={5}
                 placeholder="Explain what happened, who was involved, and any immediate action taken."
-                className="w-full resize-none rounded-xl border border-[#e7e1d7] bg-[#fbfaf7] px-4 py-3 text-sm focus:outline-none"
+                className="w-full resize-none rounded-xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm focus:outline-none"
               />
             </div>
 
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setShowForm(false)} className="flex-1 rounded-xl bg-[#f4f1ea] py-3 text-sm font-semibold text-[#171716]">
+              <button type="button" onClick={() => setShowForm(false)} className="flex-1 rounded-xl bg-[#f7f8f9] py-3 text-sm font-semibold text-[#0f172a]">
                 Cancel
               </button>
-              <button type="submit" disabled={saving} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#171717] py-3 text-sm font-semibold text-white disabled:opacity-60">
+              <button type="submit" disabled={saving} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#0f172a] py-3 text-sm font-semibold text-white disabled:opacity-60">
                 {saving ? (
                   <>
                     <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
@@ -184,17 +184,17 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
       {myIncidents.length > 0 ? (
         <section className="space-y-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">My reports</p>
-            <h2 className="mt-1 text-lg font-semibold text-[#171716]">Recent incident history</h2>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">My reports</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#0f172a]">Recent incident history</h2>
           </div>
 
           <div className="space-y-3">
             {myIncidents.map(incident => (
-              <article key={incident.id} className="rounded-[24px] border border-[#e6e0d7] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
+              <article key={incident.id} className="rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)]">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-[#171716]">{incident.title}</p>
-                    <p className="mt-1 text-xs text-[#8b867b]">
+                    <p className="text-sm font-semibold text-[#0f172a]">{incident.title}</p>
+                    <p className="mt-1 text-xs text-[#64748b]">
                       {incident.clients?.full_name ?? 'Unlinked client'} - {new Date(incident.reported_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
                     </p>
                   </div>
@@ -208,10 +208,10 @@ export default function IncidentReportClient({ shifts, staffId, adminIds, myInci
           </div>
         </section>
       ) : (
-        <section className="rounded-[28px] border border-dashed border-[#d7d1c6] bg-white px-6 py-12 text-center">
-          <span className="material-symbols-outlined text-[40px] text-[#b5afa5]">assignment</span>
-          <p className="mt-3 text-sm font-semibold text-[#171716]">No incidents reported yet</p>
-          <p className="mt-1 text-xs text-[#8b867b]">If something happens during a shift, create a report here so admins are alerted immediately.</p>
+        <section className="rounded-[28px] border border-dashed border-[#e6e8ec] bg-white px-6 py-12 text-center">
+          <span className="material-symbols-outlined text-[40px] text-[#94a3b8]">assignment</span>
+          <p className="mt-3 text-sm font-semibold text-[#0f172a]">No incidents reported yet</p>
+          <p className="mt-1 text-xs text-[#64748b]">If something happens during a shift, create a report here so admins are alerted immediately.</p>
         </section>
       )}
     </div>

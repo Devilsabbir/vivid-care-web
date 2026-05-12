@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -30,12 +30,13 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
     async function refetchShifts() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('shifts')
         .select('*, clients(full_name, address)')
         .eq('staff_id', user.id)
         .neq('status', 'cancelled')
         .order('start_time', { ascending: true })
+      if (error) console.error('[StaffHomeClient] shifts refetch failed:', error)
       if (data) setShifts(data)
     }
 
@@ -80,13 +81,13 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
     title: shift.clients?.full_name ?? 'Shift',
     start: shift.start_time,
     end: shift.end_time,
-    backgroundColor: shift.status === 'active' ? '#581c87' : shift.status === 'completed' ? '#8a867c' : '#171717',
+    backgroundColor: shift.status === 'active' ? '#581c87' : shift.status === 'completed' ? '#8a867c' : '#0f172a',
     borderColor: 'transparent',
   }))
 
   return (
     <div className="space-y-5">
-      <section className="overflow-hidden rounded-[30px] bg-[#171717] px-5 py-5 text-white shadow-[0_26px_54px_rgba(23,23,22,0.18)]">
+      <section className="overflow-hidden rounded-[30px] bg-[#0f172a] px-5 py-5 text-white shadow-[0_26px_54px_rgba(15,23,42,0.10)]">
         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Today</p>
         <h1 className="mt-3 font-headline text-[2rem] font-semibold leading-none tracking-[-0.05em]">
           {greeting}, {firstName}
@@ -115,12 +116,12 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
       </section>
 
       {activeShift ? (
-        <section className="rounded-[28px] bg-[#8B45A6] p-5 shadow-[0_18px_36px_rgba(139,69,166,0.2)]">
-          <Link href={`/staff/shifts/${activeShift.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171717] rounded-xl">
+        <section className="rounded-[28px] bg-[#6B2C91] p-5 shadow-[0_18px_36px_rgba(107,44,145,0.16)]">
+          <Link href={`/staff/shifts/${activeShift.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a] rounded-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#5e0087]">Live shift</p>
-                <h2 className="mt-2 font-headline text-xl font-semibold text-[#171717]">{activeShift.clients?.full_name ?? 'Current shift'}</h2>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#54206F]">Live shift</p>
+                <h2 className="mt-2 font-headline text-xl font-semibold text-[#0f172a]">{activeShift.clients?.full_name ?? 'Current shift'}</h2>
                 <p className="mt-1 text-sm text-[#3d0061]">
                   {formatTime(activeShift.start_time)} to {formatTime(activeShift.end_time)}
                 </p>
@@ -138,19 +139,19 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
 
           <Link
             href="/staff/clock"
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#171717] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7BC143]"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f172a] px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
           >
             Open clock screen
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
           </Link>
         </section>
       ) : nextShift ? (
-        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+        <Link href={`/staff/shifts/${nextShift.id}`} className="block rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Next up</p>
-              <h2 className="mt-2 font-headline text-xl font-semibold text-[#171716]">{nextShift.clients?.full_name ?? 'Upcoming shift'}</h2>
-              <p className="mt-1 text-sm text-[#666258]">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Next up</p>
+              <h2 className="mt-2 font-headline text-xl font-semibold text-[#0f172a]">{nextShift.clients?.full_name ?? 'Upcoming shift'}</h2>
+              <p className="mt-1 text-sm text-[#64748b]">
                 {formatDay(nextShift.start_time)} at {formatTime(nextShift.start_time)}
               </p>
             </div>
@@ -158,7 +159,7 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
           </div>
 
           {nextShift.clients?.address ? (
-            <p className="mt-4 flex items-center gap-2 text-sm text-[#8b867b]">
+            <p className="mt-4 flex items-center gap-2 text-sm text-[#64748b]">
               <span className="material-symbols-outlined text-[18px]">location_on</span>
               {nextShift.clients.address}
             </p>
@@ -170,10 +171,10 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Today&apos;s visits</p>
-              <h2 className="mt-1 text-lg font-semibold text-[#171716]">Your working day</h2>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Today&apos;s visits</p>
+              <h2 className="mt-1 text-lg font-semibold text-[#0f172a]">Your working day</h2>
             </div>
-            <Link href="/staff/clock" className="text-sm font-semibold text-[#171716]">
+            <Link href="/staff/clock" className="text-sm font-semibold text-[#0f172a]">
               Clock actions
             </Link>
           </div>
@@ -186,10 +187,10 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
         </section>
       ) : null}
 
-      <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
+      <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
         <div className="mb-4">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Roster view</p>
-          <h2 className="mt-1 text-lg font-semibold text-[#171716]">Monthly calendar</h2>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Roster view</p>
+          <h2 className="mt-1 text-lg font-semibold text-[#0f172a]">Monthly calendar</h2>
         </div>
         {FC && plugins.length > 0 ? (
           <FC
@@ -204,7 +205,7 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
             }}
           />
         ) : (
-          <div className="flex h-64 items-center justify-center text-[#8b867b]">
+          <div className="flex h-64 items-center justify-center text-[#64748b]">
             <span className="material-symbols-outlined animate-spin text-3xl">progress_activity</span>
           </div>
         )}
@@ -213,8 +214,8 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
       {upcoming.length > 0 ? (
         <section className="space-y-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8b867b]">Upcoming</p>
-            <h2 className="mt-1 text-lg font-semibold text-[#171716]">Next rostered visits</h2>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Upcoming</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#0f172a]">Next rostered visits</h2>
           </div>
 
           <div className="space-y-3">
@@ -226,10 +227,10 @@ export default function StaffHomeClient({ initialShifts, staffName }: { initialS
       ) : null}
 
       {shifts.length === 0 ? (
-        <section className="rounded-[28px] border border-dashed border-[#d7d1c6] bg-white px-6 py-14 text-center">
-          <span className="material-symbols-outlined text-[44px] text-[#b5afa5]">calendar_today</span>
-          <p className="mt-3 text-sm font-semibold text-[#171716]">No shifts assigned yet</p>
-          <p className="mt-1 text-xs text-[#8b867b]">Your roster will appear here once a coordinator assigns work.</p>
+        <section className="rounded-[28px] border border-dashed border-[#e6e8ec] bg-white px-6 py-14 text-center">
+          <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">calendar_today</span>
+          <p className="mt-3 text-sm font-semibold text-[#0f172a]">No shifts assigned yet</p>
+          <p className="mt-1 text-xs text-[#64748b]">Your roster will appear here once a coordinator assigns work.</p>
         </section>
       ) : null}
     </div>
@@ -243,18 +244,18 @@ function ShiftCard({ shift }: { shift: any }) {
   return (
     <Link
       href={`/staff/shifts/${shift.id}`}
-      className="flex items-center gap-4 rounded-[24px] border border-[#ebe5db] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+      className="flex items-center gap-4 rounded-[24px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition-colors hover:bg-[#faf8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
     >
-      <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-2xl bg-[#f4f1ea] py-3">
-        <p className="font-headline text-xl font-semibold leading-none text-[#171716]">{start.getDate()}</p>
-        <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8b867b]">{start.toLocaleDateString('en-AU', { month: 'short' })}</p>
+      <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-2xl bg-[#f7f8f9] py-3">
+        <p className="font-headline text-xl font-semibold leading-none text-[#0f172a]">{start.getDate()}</p>
+        <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#64748b]">{start.toLocaleDateString('en-AU', { month: 'short' })}</p>
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="font-headline text-sm font-semibold text-[#171716]">{shift.clients?.full_name ?? 'Client'}</p>
-            <p className="mt-1 text-xs text-[#666258]">
+            <p className="font-headline text-sm font-semibold text-[#0f172a]">{shift.clients?.full_name ?? 'Client'}</p>
+            <p className="mt-1 text-xs text-[#64748b]">
               {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()} to {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
             </p>
           </div>
@@ -262,7 +263,7 @@ function ShiftCard({ shift }: { shift: any }) {
         </div>
 
         {shift.clients?.address ? (
-          <p className="mt-2 flex items-center gap-1.5 truncate text-xs text-[#8b867b]">
+          <p className="mt-2 flex items-center gap-1.5 truncate text-xs text-[#64748b]">
             <span className="material-symbols-outlined text-[16px]">location_on</span>
             {shift.clients.address}
           </p>
@@ -276,20 +277,20 @@ function QuickAction({ href, icon, label }: { href: string; icon: string; label:
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e0d7] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5"
+      className="flex flex-col items-center gap-2 rounded-[24px] border border-[#e6e8ec] bg-white px-3 py-4 text-center shadow-[0_12px_26px_rgba(23,23,22,0.04)] transition hover:-translate-y-0.5"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#171717] text-[#8B45A6]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f172a] text-[#6B2C91]">
         <span className="material-symbols-outlined text-[20px]">{icon}</span>
       </span>
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#171716]">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0f172a]">{label}</span>
     </Link>
   )
 }
 
 function MetricCard({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#8B45A6] text-[#171717]' : 'bg-white/8 text-white'}`}>
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#5e0087]' : 'text-[#8f8a80]'}`}>
+    <div className={`rounded-[22px] px-4 py-4 ${accent ? 'bg-[#6B2C91] text-[#0f172a]' : 'bg-white/8 text-white'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${accent ? 'text-[#54206F]' : 'text-[#8f8a80]'}`}>
         {label}
       </p>
       <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{value}</p>

@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { VIVID_CARE } from '@/lib/agreements/constants'
 import ClientAgreementsClient from './ClientAgreementsClient'
@@ -20,8 +20,8 @@ export default async function ClientAgreementsPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center px-4 text-center">
         <div>
-          <p className="text-lg font-semibold text-[#1a1a18]">Account not linked</p>
-          <p className="mt-2 text-sm text-[#8a877f]">
+          <p className="text-lg font-semibold text-[#0f172a]">Account not linked</p>
+          <p className="mt-2 text-sm text-[#64748b]">
             Your portal account is not yet linked to a client record. Please contact Vivid Care.
           </p>
         </div>
@@ -46,7 +46,7 @@ export default async function ClientAgreementsPage() {
       .single(),
     supabase
       .from('clients')
-      .select('full_name')
+      .select('full_name, client_type')
       .eq('id', clientId)
       .single(),
   ])
@@ -65,6 +65,22 @@ export default async function ClientAgreementsPage() {
     abn: VIVID_CARE.abn,
     contactName: VIVID_CARE.contactName,
     website: VIVID_CARE.website,
+  }
+
+  // Standard (non-NDIS) clients do not have service agreements
+  if (clientRecord?.client_type === 'standard') {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center px-4 text-center">
+        <div>
+          <span className="material-symbols-outlined text-[48px] text-[#94a3b8]">draw</span>
+          <p className="mt-3 text-lg font-semibold text-[#0f172a]">Not applicable</p>
+          <p className="mt-2 text-sm text-[#64748b]">
+            Service agreements and digital signatures are only required for NDIS participants.
+            Your account is registered as a standard client.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (

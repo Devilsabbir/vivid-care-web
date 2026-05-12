@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import Drawer from '@/components/ui/Drawer'
@@ -65,9 +65,9 @@ export default function ShiftDetailDrawer({
         </div>
 
         {(shift.clock_in_time || shift.clock_out_time) && (
-          <div className="rounded-[18px] border border-[#e8e4dc] p-4">
-            <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Clock events</p>
-            <div className="mt-2 space-y-1 text-sm text-[#4f4c45]">
+          <div className="rounded-[18px] border border-[#e6e8ec] p-4">
+            <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Clock events</p>
+            <div className="mt-2 space-y-1 text-sm text-[#64748b]">
               {shift.clock_in_time && (
                 <p>Clocked in: {new Date(shift.clock_in_time).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}</p>
               )}
@@ -78,11 +78,11 @@ export default function ShiftDetailDrawer({
           </div>
         )}
 
-        <div className="flex flex-col gap-2 border-t border-[#f0ece5] pt-4">
+        <div className="flex flex-col gap-2 border-t border-[#f0f1f3] pt-4">
           {shift.client_id && (
             <Link
               href={`/admin/clients/${shift.client_id}`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#f4f2ed] px-4 py-2.5 text-sm font-medium text-[#4f4c45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#f7f8f9] px-4 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             >
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">person</span>
               View client
@@ -91,7 +91,7 @@ export default function ShiftDetailDrawer({
           {shift.staff_id && (
             <Link
               href={`/admin/staff/${shift.staff_id}`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#f4f2ed] px-4 py-2.5 text-sm font-medium text-[#4f4c45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#f7f8f9] px-4 py-2.5 text-sm font-medium text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             >
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">badge</span>
               View staff
@@ -99,7 +99,7 @@ export default function ShiftDetailDrawer({
           )}
           <Link
             href={`/admin/shifts/${shift.id}`}
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#1a1a18] px-4 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-4 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
           >
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">open_in_new</span>
             Full shift detail

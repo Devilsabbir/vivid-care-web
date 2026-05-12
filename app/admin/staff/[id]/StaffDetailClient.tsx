@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useMemo, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -48,8 +48,33 @@ export default function StaffDetailClient({
   const [docType, setDocType] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [hourlyRate, setHourlyRate] = useState<string>(String(member.hourly_rate ?? 0))
+  const [savingRate, setSavingRate] = useState(false)
+  const [rateMessage, setRateMessage] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  async function handleSaveRate() {
+    const parsed = parseFloat(hourlyRate)
+    if (Number.isNaN(parsed) || parsed < 0) {
+      setRateMessage('Enter a non-negative hourly rate.')
+      return
+    }
+    setSavingRate(true)
+    setRateMessage(null)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ hourly_rate: parsed })
+      .eq('id', member.id)
+    setSavingRate(false)
+    if (error) {
+      console.error('[StaffDetailClient] hourly_rate update failed:', error)
+      setRateMessage('Save failed: ' + error.message)
+      return
+    }
+    setRateMessage('Hourly rate updated.')
+    router.refresh()
+  }
 
   useEffect(() => {
     const urlTab = searchParams.get('tab') as Tab | null
@@ -73,7 +98,7 @@ export default function StaffDetailClient({
 
     // Store the storage path (not a public URL) — signed URLs are generated
     // on demand so the private bucket restriction is respected.
-    await supabase.from('documents').insert({
+    const { error: insertError } = await supabase.from('documents').insert({
       owner_id: member.id,
       owner_type: 'staff',
       doc_type: docType,
@@ -81,6 +106,12 @@ export default function StaffDetailClient({
       file_name: file.name,
       expiry_date: expiryDate || null,
     })
+    if (insertError) {
+      console.error('[StaffDetailClient] document insert failed:', insertError)
+      setUploading(false)
+      alert('Document record failed: ' + insertError.message)
+      return
+    }
 
     setUploading(false)
     setDocType('')
@@ -117,7 +148,7 @@ export default function StaffDetailClient({
 
       {/* Readiness badge */}
       <div className="flex items-center gap-3">
-        <span className="text-xs text-[#8a877f]">Roster readiness:</span>
+        <span className="text-xs text-[#94a3b8]">Roster readiness:</span>
         <ReadinessBadge documents={documents} />
       </div>
 
@@ -128,36 +159,74 @@ export default function StaffDetailClient({
       {tab === 'overview' && (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
           <div className="space-y-6">
-            <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Staff profile</h3>
+            <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <h3 className="text-sm font-semibold text-[#0f172a]">Staff profile</h3>
               <div className="mt-5 grid gap-4 md:grid-cols-2">
                 <Field label="Full name" value={member.full_name ?? 'Unnamed staff'} />
                 <Field label="Phone" value={member.phone ?? 'No phone recorded'} />
                 <Field label="Email" value={member.email ?? 'Email not stored in profile'} />
                 <Field label="Role" value="Support worker" />
               </div>
+
+              {/* Hourly rate editor */}
+              <div className="mt-6 rounded-[18px] bg-[#fafbfc] p-4">
+                <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                  <div className="flex-1">
+                    <label htmlFor="hourly-rate" className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+                      Hourly rate (AUD)
+                    </label>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-sm font-medium text-[#64748b]">$</span>
+                      <input
+                        id="hourly-rate"
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={hourlyRate}
+                        onChange={e => setHourlyRate(e.target.value)}
+                        className="w-32 rounded-xl border border-[#e6e8ec] bg-white px-3 py-2 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+                      />
+                      <span className="text-sm text-[#94a3b8]">/ hr</span>
+                    </div>
+                    <p className="mt-1 text-[11px] text-[#94a3b8]">Used by the payments page to calculate amounts owed from clocked hours.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSaveRate}
+                    disabled={savingRate}
+                    className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
+                  >
+                    {savingRate ? 'Saving…' : 'Save rate'}
+                  </button>
+                </div>
+                {rateMessage && (
+                  <p className={`mt-3 text-xs ${rateMessage.startsWith('Save failed') || rateMessage.startsWith('Enter') ? 'text-[#991b1b]' : 'text-[#54206F]'}`}>
+                    {rateMessage}
+                  </p>
+                )}
+              </div>
             </section>
 
             {/* Compliance summary */}
             <section className="space-y-3">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Compliance overview</h3>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Compliance overview</h3>
               <ComplianceSummary documents={documents} />
             </section>
 
             {/* Upcoming shifts */}
             {shifts.filter((s: any) => s.status === 'scheduled').length > 0 && (
               <section className="space-y-3">
-                <h3 className="text-sm font-semibold text-[#1a1a18]">Upcoming shifts</h3>
+                <h3 className="text-sm font-semibold text-[#0f172a]">Upcoming shifts</h3>
                 <div className="space-y-2">
                   {shifts.filter((s: any) => s.status === 'scheduled').slice(0, 3).map((shift: any) => (
                     <Link
                       key={shift.id}
                       href={`/admin/shifts/${shift.id}`}
-                      className="flex items-center justify-between rounded-[18px] border border-[#e8e4dc] bg-white px-4 py-3 hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+                      className="flex items-center justify-between rounded-[18px] border border-[#e6e8ec] bg-white px-4 py-3 hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                     >
                       <div>
-                        <p className="text-sm font-medium text-[#1a1a18]">{shift.clients?.full_name ?? 'Client'}</p>
-                        <p className="text-[11px] text-[#8a877f]">
+                        <p className="text-sm font-medium text-[#0f172a]">{shift.clients?.full_name ?? 'Client'}</p>
+                        <p className="text-[11px] text-[#94a3b8]">
                           {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
                         </p>
                       </div>
@@ -174,22 +243,22 @@ export default function StaffDetailClient({
               {documents.length > 0 ? (
                 <div className="space-y-2">
                   {documents.slice(0, 4).map(doc => (
-                    <div key={doc.id} className="flex items-center justify-between gap-3 rounded-[16px] bg-[#faf9f6] px-3 py-3">
+                    <div key={doc.id} className="flex items-center justify-between gap-3 rounded-[16px] bg-[#fafbfc] px-3 py-3">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-[#1a1a18]">{doc.doc_type}</p>
-                        <p className="truncate text-[11px] text-[#8a877f]">{doc.file_name ?? 'Document file'}</p>
+                        <p className="truncate text-sm font-medium text-[#0f172a]">{doc.doc_type}</p>
+                        <p className="truncate text-[11px] text-[#94a3b8]">{doc.file_name ?? 'Document file'}</p>
                       </div>
                       <ExpiryBadge expiryDate={doc.expiry_date} />
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-[12px] leading-6 text-[#66635b]">No compliance documents have been uploaded for this staff member yet.</p>
+                <p className="text-[12px] leading-6 text-[#64748b]">No compliance documents have been uploaded for this staff member yet.</p>
               )}
             </RailCard>
 
             <RailCard title="Recent work">
-              <div className="space-y-2 text-[12px] text-[#66635b]">
+              <div className="space-y-2 text-[12px] text-[#64748b]">
                 <p>{completedShifts.length} completed shifts are available for auditing.</p>
                 <p>{Number(totalHours.toFixed(1))} total hours have been logged across finished work.</p>
               </div>
@@ -202,27 +271,27 @@ export default function StaffDetailClient({
       {tab === 'documents' && (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
           <section className="space-y-4">
-            <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Upload compliance document</h3>
-              <p className="mt-1 text-xs text-[#8a877f]">Add identification, screening, and certification records</p>
+            <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <h3 className="text-sm font-semibold text-[#0f172a]">Upload compliance document</h3>
+              <p className="mt-1 text-xs text-[#94a3b8]">Add identification, screening, and certification records</p>
               <form onSubmit={handleUpload} className="mt-5 grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="doc-type" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Document type</label>
-                  <select id="doc-type" value={docType} onChange={e => setDocType(e.target.value)} required className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]">
+                  <label htmlFor="doc-type" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Document type</label>
+                  <select id="doc-type" value={docType} onChange={e => setDocType(e.target.value)} required className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
                     <option value="">Select document</option>
                     {DOC_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="expiry" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">Expiry date</label>
-                  <input id="expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-[#faf9f6] px-4 py-3 text-sm text-[#1a1a18] outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]" />
+                  <label htmlFor="expiry" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Expiry date</label>
+                  <input id="expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]" />
                 </div>
                 <div className="md:col-span-2">
-                  <label htmlFor="file-upload" className="block text-[10px] uppercase tracking-[0.14em] text-[#8a877f]">File</label>
-                  <input id="file-upload" type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="mt-2 w-full rounded-2xl border border-dashed border-[#d6d2c9] bg-[#faf9f6] px-4 py-3 text-sm text-[#66635b] outline-none" />
+                  <label htmlFor="file-upload" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">File</label>
+                  <input id="file-upload" type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="mt-2 w-full rounded-2xl border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#64748b] outline-none" />
                 </div>
                 <div className="md:col-span-2 flex justify-end">
-                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#1a1a18] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] focus-visible:ring-offset-2">
+                  <button type="submit" disabled={uploading} className="rounded-2xl bg-[#0f172a] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2">
                     {uploading ? 'Uploading...' : 'Upload document'}
                   </button>
                 </div>
@@ -239,7 +308,7 @@ export default function StaffDetailClient({
           </section>
 
           <RailCard title="Document guidance">
-            <div className="space-y-2 text-[12px] leading-6 text-[#66635b]">
+            <div className="space-y-2 text-[12px] leading-6 text-[#64748b]">
               <p>Use expiry dates for screening and certification documents so the compliance hub can monitor renewals.</p>
               <p>Uploads from this page immediately appear in the staff compliance and roster readiness views.</p>
             </div>
@@ -259,11 +328,11 @@ export default function StaffDetailClient({
                 <Link
                   key={shift.id}
                   href={`/admin/shifts/${shift.id}`}
-                  className="block rounded-[22px] border border-[#e8e4dc] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#faf9f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+                  className="block rounded-[22px] border border-[#e6e8ec] bg-white p-4 shadow-[0_12px_28px_rgba(26,26,24,0.04)] hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
                 >
                   <div className="flex flex-col gap-3 md:flex-row md:items-center">
                     <div>
-                      <h4 className="text-sm font-semibold text-[#1a1a18]">{shift.clients?.full_name ?? 'Client record'}</h4>
+                      <h4 className="text-sm font-semibold text-[#0f172a]">{shift.clients?.full_name ?? 'Client record'}</h4>
                       <p className="text-[12px] text-[#7d7a73]">
                         {new Date(shift.start_time).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
                         {' / '}
@@ -306,21 +375,21 @@ export default function StaffDetailClient({
       {tab === 'activity' && (
         <div className="space-y-4">
           {shifts.length > 0 ? (
-            <div className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Recent activity</h3>
+            <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+              <h3 className="text-sm font-semibold text-[#0f172a]">Recent activity</h3>
               <div className="mt-4 space-y-3">
                 {shifts.slice(0, 10).map((shift: any) => (
-                  <div key={shift.id} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-4 py-3">
+                  <div key={shift.id} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-4 py-3">
                     <span className={`flex h-8 w-8 items-center justify-center rounded-full ${shift.status === 'completed' ? 'bg-[#dcfce7] text-[#166534]' : shift.status === 'cancelled' ? 'bg-[#f3f4f6] text-[#6b7280]' : 'bg-[#dbeafe] text-[#1d4ed8]'}`}>
                       <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
                         {shift.status === 'completed' ? 'check' : shift.status === 'cancelled' ? 'close' : 'schedule'}
                       </span>
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#1a1a18]">
+                      <p className="text-sm font-medium text-[#0f172a]">
                         {shift.status === 'completed' ? 'Completed shift' : shift.status === 'cancelled' ? 'Cancelled shift' : 'Scheduled shift'} — {shift.clients?.full_name ?? 'Client'}
                       </p>
-                      <p className="text-[11px] text-[#8a877f]">
+                      <p className="text-[11px] text-[#94a3b8]">
                         {new Date(shift.start_time).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </p>
                     </div>

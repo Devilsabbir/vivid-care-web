@@ -58,7 +58,7 @@ export default function AlertPanel({
       </span>
       <div className="min-w-0 flex-1">
         {title && <p className={`text-sm font-semibold ${style.titleColor}`}>{title}</p>}
-        {children && <div className="mt-1 text-xs leading-5 text-[#4f4c45]">{children}</div>}
+        {children && <div className="mt-1 text-xs leading-5 text-[#64748b]">{children}</div>}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Fragment, useEffect, useMemo, useRef } from 'react'
 import L from 'leaflet'
@@ -33,7 +33,7 @@ function FitBounds({ markers }: { markers: MapMarker[] }) {
 }
 
 function markerColor(marker: MapMarker): string {
-  if (marker.type === 'staff') return '#8B45A6'
+  if (marker.type === 'staff') return '#6B2C91'
   if (marker.type === 'client') return '#00AAEF'
   // clock = clock-in (green) or clock-out (orange) based on sublabel
   if (marker.sublabel?.toLowerCase().includes('out')) return '#f59e0b'
@@ -91,8 +91,8 @@ export default function MapInner({
                   center={[marker.lat, marker.lng]}
                   radius={marker.geofenceRadius}
                   pathOptions={{
-                    color: '#8B45A6',
-                    fillColor: '#8B45A6',
+                    color: '#6B2C91',
+                    fillColor: '#6B2C91',
                     fillOpacity: 0.08,
                     weight: 1.5,
                     dashArray: '6 4',
@@ -136,8 +136,8 @@ export default function MapInner({
                         textTransform: 'uppercase',
                         padding: '2px 8px',
                         borderRadius: 12,
-                        backgroundColor: marker.status === 'active' ? '#f3e8ff' : '#f0f0f0',
-                        color: marker.status === 'active' ? '#6b21a8' : '#666',
+                        backgroundColor: marker.status === 'active' ? '#F4ECF8' : '#f0f0f0',
+                        color: marker.status === 'active' ? '#54206F' : '#666',
                       }}>
                         {marker.status}
                       </span>

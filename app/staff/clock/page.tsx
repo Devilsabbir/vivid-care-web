@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ClockClient from './ClockClient'
 
@@ -56,7 +56,7 @@ export default async function ClockPage() {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[28px] bg-[#171717] px-5 py-5 text-white shadow-[0_24px_44px_rgba(23,23,22,0.18)]">
+      <section className="rounded-[28px] bg-[#0f172a] px-5 py-5 text-white shadow-[0_24px_44px_rgba(15,23,42,0.10)]">
         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Attendance</p>
         <h1 className="mt-3 font-headline text-[1.85rem] font-semibold leading-none tracking-[-0.05em]">Clock in and out</h1>
         <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
@@ -68,8 +68,8 @@ export default async function ClockPage() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8f8a80]">Today</p>
             <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{(shifts ?? []).length}</p>
           </div>
-          <div className="rounded-[22px] bg-[#8B45A6] px-4 py-4 text-[#171717]">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5e0087]">Active now</p>
+          <div className="rounded-[22px] bg-[#6B2C91] px-4 py-4 text-[#0f172a]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#54206F]">Active now</p>
             <p className="mt-2 font-headline text-[1.8rem] font-semibold leading-none tracking-[-0.06em]">{activeCount}</p>
           </div>
         </div>

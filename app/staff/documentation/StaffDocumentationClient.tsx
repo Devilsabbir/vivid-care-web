@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -131,7 +131,7 @@ export default function StaffDocumentationClient({
       ) : null}
 
       {message ? (
-        <section className="rounded-[24px] border border-[#e4c1f5] bg-[#f9f0ff] p-4 text-sm text-[#4a006f]">
+        <section className="rounded-[24px] border border-[#E6D4F0] bg-[#F4ECF8] p-4 text-sm text-[#54206F]">
           {message}
         </section>
       ) : null}
@@ -143,9 +143,9 @@ export default function StaffDocumentationClient({
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[#8b867b]">Shifts</p>
-          <h2 className="mt-2 text-lg font-semibold text-[#171716]">Choose a shift</h2>
+        <aside className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-[#64748b]">Shifts</p>
+          <h2 className="mt-2 text-lg font-semibold text-[#0f172a]">Choose a shift</h2>
 
           <div className="mt-5 space-y-3">
             {shifts.map(shift => (
@@ -155,45 +155,45 @@ export default function StaffDocumentationClient({
                 onClick={() => setSelectedShiftId(shift.id)}
                 className={`w-full rounded-[22px] border p-4 text-left ${
                   selectedShiftId === shift.id
-                    ? 'border-[#1a1a18] bg-[#171717] text-white'
-                    : 'border-[#ece6dc] bg-[#faf9f6] text-[#171716]'
+                    ? 'border-[#0f172a] bg-[#0f172a] text-white'
+                    : 'border-[#e6e8ec] bg-[#fafbfc] text-[#0f172a]'
                 }`}
               >
                 <p className="text-sm font-semibold">{relationName(shift.clients)}</p>
-                <p className={`mt-1 text-[12px] ${selectedShiftId === shift.id ? 'text-white/65' : 'text-[#8b867b]'}`}>
+                <p className={`mt-1 text-[12px] ${selectedShiftId === shift.id ? 'text-white/65' : 'text-[#64748b]'}`}>
                   {formatDateTime(shift.start_time)}
                 </p>
-                <p className={`mt-2 text-[11px] uppercase tracking-[0.14em] ${selectedShiftId === shift.id ? 'text-[#8B45A6]' : 'text-[#8b867b]'}`}>
+                <p className={`mt-2 text-[11px] uppercase tracking-[0.14em] ${selectedShiftId === shift.id ? 'text-[#6B2C91]' : 'text-[#64748b]'}`}>
                   {copyDocumentationStatus(shift.documentation_status)}
                 </p>
               </button>
             ))}
-            {shifts.length === 0 ? <p className="text-sm text-[#8b867b]">No recent shifts found.</p> : null}
+            {shifts.length === 0 ? <p className="text-sm text-[#64748b]">No recent shifts found.</p> : null}
           </div>
         </aside>
 
         <div className="space-y-6">
           {selectedShift ? (
             <>
-              <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
+              <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8b867b]">Selected shift</p>
-                    <h2 className="mt-2 font-headline text-xl font-semibold text-[#171716]">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#64748b]">Selected shift</p>
+                    <h2 className="mt-2 font-headline text-xl font-semibold text-[#0f172a]">
                       {relationName(selectedShift.clients)}
                     </h2>
-                    <p className="mt-1 text-sm text-[#666258]">
+                    <p className="mt-1 text-sm text-[#64748b]">
                       {formatDateTime(selectedShift.start_time)} to {formatTime(selectedShift.end_time)}
                     </p>
-                    <p className="mt-2 text-[12px] text-[#8b867b]">Support type: {selectedSupportType.replace(/_/g, ' ')}</p>
+                    <p className="mt-2 text-[12px] text-[#64748b]">Support type: {selectedSupportType.replace(/_/g, ' ')}</p>
                   </div>
                   <span className={documentationStatusClass(selectedShift.documentation_status)}>{copyDocumentationStatus(selectedShift.documentation_status)}</span>
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8b867b]">Required forms</p>
-                <h2 className="mt-2 text-lg font-semibold text-[#171716]">Complete and submit</h2>
+              <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-[#64748b]">Required forms</p>
+                <h2 className="mt-2 text-lg font-semibold text-[#0f172a]">Complete and submit</h2>
 
                 <div className="mt-5 space-y-4">
                   {requiredForms.map(form => {
@@ -201,13 +201,13 @@ export default function StaffDocumentationClient({
                     const fieldsForForm = formFields(selectedSupportType, form.form_key, fields)
 
                     return (
-                      <article key={form.id} className="rounded-[22px] border border-[#ece6dc] bg-[#faf9f6] p-4">
+                      <article key={form.id} className="rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-4">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                           <div>
-                            <p className="text-sm font-semibold text-[#171716]">{form.label}</p>
-                            <p className="mt-1 text-[12px] text-[#8b867b]">{form.form_key.replace(/_/g, ' ')}</p>
+                            <p className="text-sm font-semibold text-[#0f172a]">{form.label}</p>
+                            <p className="mt-1 text-[12px] text-[#64748b]">{form.form_key.replace(/_/g, ' ')}</p>
                           </div>
-                          <span className={alreadySubmitted ? 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
+                          <span className={alreadySubmitted ? 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
                             {alreadySubmitted ? 'Submitted' : 'Pending'}
                           </span>
                         </div>
@@ -228,7 +228,7 @@ export default function StaffDocumentationClient({
                               ))
                             ) : (
                               <div>
-                                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8b867b]">Notes</label>
+                                <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Notes</label>
                                 <textarea
                                   rows={4}
                                   value={(formValues[valueKey(selectedShift.id, form.form_key, 'notes')] as string) ?? ''}
@@ -236,7 +236,7 @@ export default function StaffDocumentationClient({
                                     ...current,
                                     [valueKey(selectedShift.id, form.form_key, 'notes')]: event.target.value,
                                   }))}
-                                  className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-white px-4 py-3 text-sm text-[#171716] outline-none"
+                                  className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-white px-4 py-3 text-sm text-[#0f172a] outline-none"
                                 />
                               </div>
                             )}
@@ -245,7 +245,7 @@ export default function StaffDocumentationClient({
                               type="button"
                               onClick={() => submitForm(form)}
                               disabled={savingFormKey === form.form_key}
-                              className="rounded-2xl bg-[#171716] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                              className="rounded-2xl bg-[#0f172a] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
                             >
                               {savingFormKey === form.form_key ? 'Submitting...' : `Submit ${form.label}`}
                             </button>
@@ -259,22 +259,22 @@ export default function StaffDocumentationClient({
                     )
                   })}
                   {requiredForms.length === 0 ? (
-                    <p className="text-sm text-[#8b867b]">No required forms are configured for this support type yet.</p>
+                    <p className="text-sm text-[#64748b]">No required forms are configured for this support type yet.</p>
                   ) : null}
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-[#e6e0d7] bg-white p-5 shadow-[0_16px_32px_rgba(23,23,22,0.05)]">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8b867b]">History</p>
-                <h2 className="mt-2 text-lg font-semibold text-[#171716]">Submitted records</h2>
+              <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_32px_rgba(26,26,24,0.04)]">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-[#64748b]">History</p>
+                <h2 className="mt-2 text-lg font-semibold text-[#0f172a]">Submitted records</h2>
 
                 <div className="mt-5 space-y-3">
                   {(docMap.get(selectedShift.id) ?? []).map(doc => (
-                    <article key={doc.id} className="rounded-[20px] border border-[#ece6dc] bg-[#faf9f6] p-4">
+                    <article key={doc.id} className="rounded-[20px] border border-[#e6e8ec] bg-[#fafbfc] p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm font-semibold text-[#171716]">{doc.title}</p>
-                          <p className="mt-1 text-[12px] text-[#8b867b]">Submitted {formatDateTime(doc.submitted_at)}</p>
+                          <p className="text-sm font-semibold text-[#0f172a]">{doc.title}</p>
+                          <p className="mt-1 text-[12px] text-[#64748b]">Submitted {formatDateTime(doc.submitted_at)}</p>
                         </div>
                         <span className="rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold text-[#1d4ed8]">
                           {doc.status}
@@ -282,7 +282,7 @@ export default function StaffDocumentationClient({
                       </div>
                     </article>
                   ))}
-                  {(docMap.get(selectedShift.id) ?? []).length === 0 ? <p className="text-sm text-[#8b867b]">No forms submitted for this shift yet.</p> : null}
+                  {(docMap.get(selectedShift.id) ?? []).length === 0 ? <p className="text-sm text-[#64748b]">No forms submitted for this shift yet.</p> : null}
                 </div>
               </section>
             </>
@@ -305,10 +305,10 @@ function MetricCard({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
+      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
     </div>
   )
 }
@@ -325,13 +325,13 @@ function DynamicField({
   if (field.field_type === 'textarea') {
     return (
       <div>
-        <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8b867b]">{field.label}</label>
+        <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{field.label}</label>
         <textarea
           rows={4}
           value={(value as string) ?? ''}
           onChange={event => onChange(event.target.value)}
           placeholder={field.placeholder ?? ''}
-          className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-white px-4 py-3 text-sm text-[#171716] outline-none"
+          className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-white px-4 py-3 text-sm text-[#0f172a] outline-none"
         />
       </div>
     )
@@ -339,7 +339,7 @@ function DynamicField({
 
   if (field.field_type === 'checkbox') {
     return (
-      <label className="flex items-center gap-3 rounded-[18px] border border-[#dfd9cf] bg-white px-4 py-3 text-sm text-[#171716]">
+      <label className="flex items-center gap-3 rounded-[18px] border border-[#e6e8ec] bg-white px-4 py-3 text-sm text-[#0f172a]">
         <input type="checkbox" checked={Boolean(value)} onChange={event => onChange(event.target.checked)} />
         {field.label}
       </label>
@@ -350,11 +350,11 @@ function DynamicField({
     const options = Array.isArray(field.options) ? field.options : []
     return (
       <div>
-        <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8b867b]">{field.label}</label>
+        <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{field.label}</label>
         <select
           value={(value as string) ?? ''}
           onChange={event => onChange(event.target.value)}
-          className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-white px-4 py-3 text-sm text-[#171716] outline-none"
+          className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-white px-4 py-3 text-sm text-[#0f172a] outline-none"
         >
           <option value="">Select</option>
           {options.map(option => (
@@ -369,13 +369,13 @@ function DynamicField({
 
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#8b867b]">{field.label}</label>
+      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{field.label}</label>
       <input
         type={field.field_type === 'number' ? 'number' : field.field_type === 'datetime' ? 'datetime-local' : 'text'}
         value={(value as string) ?? ''}
         onChange={event => onChange(event.target.value)}
         placeholder={field.placeholder ?? ''}
-        className="mt-2 w-full rounded-2xl border border-[#dfd9cf] bg-white px-4 py-3 text-sm text-[#171716] outline-none"
+        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-white px-4 py-3 text-sm text-[#0f172a] outline-none"
       />
     </div>
   )
@@ -416,7 +416,7 @@ function formatTime(value: string) {
 }
 
 function documentationStatusClass(status: string) {
-  if (status === 'documented') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold text-[#6b21a8]'
+  if (status === 'documented') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
   if (status === 'in_progress') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
   if (status === 'overdue') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
   if (status === 'not_required') return 'rounded-full bg-[#e5e7eb] px-2.5 py-1 text-[10px] font-semibold text-[#4b5563]'

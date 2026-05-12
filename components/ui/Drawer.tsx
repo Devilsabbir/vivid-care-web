@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useCallback, type ReactNode } from 'react'
 
@@ -77,7 +77,7 @@ export default function Drawer({ open, onClose, title, wide, children }: DrawerP
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
-        className="absolute inset-0 bg-[#1a1a18]/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-[#0f172a]/20 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -89,12 +89,12 @@ export default function Drawer({ open, onClose, title, wide, children }: DrawerP
         onKeyDown={handleTrapFocus}
         className={`relative flex h-full flex-col bg-white ${wide ? 'w-full max-w-2xl' : 'w-full max-w-md'} shadow-[0_24px_44px_rgba(23,23,22,0.26)] animate-slide-in-right`}
       >
-        <div className="flex items-center justify-between border-b border-[#f0ece5] px-6 py-4">
-          <h2 id="drawer-title" className="text-lg font-bold font-headline text-[#1a1a18]">{title}</h2>
+        <div className="flex items-center justify-between border-b border-[#f0f1f3] px-6 py-4">
+          <h2 id="drawer-title" className="text-lg font-bold font-headline text-[#0f172a]">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-[#8a877f] hover:bg-[#f4f2ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-[#64748b] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
             aria-label="Close drawer"
           >
             <span className="material-symbols-outlined text-xl" aria-hidden="true">close</span>

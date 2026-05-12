@@ -1,25 +1,28 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { href: '/staff/home', icon: 'calendar_month', label: 'Home' },
-  { href: '/staff/clock', icon: 'timer', label: 'Clock' },
+  { href: '/staff/home',          icon: 'home',       label: 'Home' },
+  { href: '/staff/clock',         icon: 'timer',      label: 'Clock' },
   { href: '/staff/documentation', icon: 'assignment', label: 'Service' },
-  { href: '/staff/documents', icon: 'folder', label: 'Docs' },
-  { href: '/staff/payments', icon: 'payments', label: 'Payments' },
-  { href: '/staff/support', icon: 'smart_toy', label: 'Support' },
-  { href: '/staff/profile', icon: 'person', label: 'Profile' },
+  { href: '/staff/documents',     icon: 'folder',     label: 'Docs' },
+  { href: '/staff/payments',      icon: 'payments',   label: 'Payments' },
+  { href: '/staff/support',       icon: 'smart_toy',  label: 'Support' },
+  { href: '/staff/profile',       icon: 'person',     label: 'Profile' },
 ]
 
 export default function StaffBottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav aria-label="Staff navigation" className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-      <div className="pointer-events-auto mx-auto mb-4 max-w-lg px-4">
-        <div className="grid h-[76px] grid-cols-7 items-center rounded-[28px] border border-white/10 bg-[#171717]/95 px-2 shadow-[0_24px_44px_rgba(23,23,22,0.26)] backdrop-blur-xl">
+    <nav
+      aria-label="Staff navigation"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-[#e6e8ec] bg-white/95 backdrop-blur-xl"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
+      <div className="mx-auto grid max-w-lg grid-cols-7 px-1 pt-1 pb-2">
         {navItems.map(({ href, icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
           return (
@@ -28,23 +31,31 @@ export default function StaffBottomNav() {
               href={href}
               aria-current={active ? 'page' : undefined}
               aria-label={label}
-              className={`flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B45A6] ${
-                active ? 'text-[#171717]' : 'text-[#989389] hover:text-white'
-              }`}
+              className={[
+                'flex flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-center transition-all',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]',
+                active ? 'text-[#54206F]' : 'text-[#94a3b8] hover:text-[#475569]',
+              ].join(' ')}
             >
-              <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${active ? 'bg-[#7BC143]' : 'bg-transparent'}`}>
+              <span
+                className={[
+                  'flex h-9 w-9 items-center justify-center rounded-xl transition-all',
+                  active ? 'bg-[#F4ECF8]' : '',
+                ].join(' ')}
+              >
                 <span
                   className="material-symbols-outlined text-[20px]"
-                  style={active ? { fontVariationSettings: "'FILL' 1" } : {}}
+                  style={active
+                    ? { fontVariationSettings: "'FILL' 1, 'wght' 500" }
+                    : { fontVariationSettings: "'FILL' 0, 'wght' 300" }}
                 >
                   {icon}
                 </span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.08em]">{label}</span>
+              <span className={['text-[10px] font-medium', active ? 'font-semibold' : ''].join(' ')}>{label}</span>
             </Link>
           )
         })}
-        </div>
       </div>
     </nav>
   )

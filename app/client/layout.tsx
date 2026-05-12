@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ClientHeader from '@/components/client/ClientHeader'
 import ClientBottomNav from '@/components/client/ClientBottomNav'
@@ -25,29 +25,39 @@ export default async function ClientLayout({ children }: { children: React.React
       .eq('read', false),
   ])
 
-  if (profile?.client_id) {
-    const { data: clientRecord } = await supabase
-      .from('clients')
-      .select('full_name')
-      .eq('id', profile.client_id)
-      .single()
-    clientName = clientRecord?.full_name ?? profile?.full_name ?? ''
-  } else {
-    clientName = profile?.full_name ?? ''
+  // Whitelist gate: only client_type === 'ndis' may access the client portal.
+  // Unlinked accounts and 'standard' clients are signed out and sent to login.
+  if (!profile?.client_id) {
+    await supabase.auth.signOut()
+    redirect('/login?error=client_not_linked')
   }
+
+  const { data: clientRecord } = await supabase
+    .from('clients')
+    .select('full_name, client_type')
+    .eq('id', profile.client_id)
+    .single()
+
+  if (clientRecord?.client_type !== 'ndis') {
+    await supabase.auth.signOut()
+    redirect('/login?error=standard_client_no_access')
+  }
+
+  clientName = clientRecord?.full_name ?? profile?.full_name ?? ''
+  const isNdisClient = true
 
   unreadCount = count ?? 0
 
   return (
-    <div className="min-h-screen bg-[#f6f2ea] text-[#171716]">
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(139,69,166,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
+    <div className="min-h-screen bg-[#f6f2ea] text-[#0f172a]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(107,44,145,0.10),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
       <ClientHeader clientName={clientName} initialUnreadCount={unreadCount} userId={userId} />
 
       <main className="relative mx-auto max-w-lg px-4 pb-28 pt-5">
         {children}
       </main>
 
-      <ClientBottomNav />
+      <ClientBottomNav isNdis={isNdisClient} />
     </div>
   )
 }

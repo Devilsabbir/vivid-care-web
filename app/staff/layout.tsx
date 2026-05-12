@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import StaffBottomNav from '@/components/staff/StaffBottomNav'
 import StaffHeader from '@/components/staff/StaffHeader'
 
@@ -19,8 +19,8 @@ export default async function StaffLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f2ea] text-[#171716]">
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(139,69,166,0.22),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
+    <div className="min-h-screen bg-[#f6f2ea] text-[#0f172a]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,_rgba(107,44,145,0.10),_transparent_58%),linear-gradient(180deg,_rgba(17,17,17,0.08),_transparent)]" />
       <StaffHeader staffName={staffName} initialUnreadCount={unreadCount} userId={userId} />
 
       <main className="relative mx-auto max-w-lg px-4 pb-28 pt-5">

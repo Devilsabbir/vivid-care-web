@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -45,7 +45,7 @@ export default function StaffHeader({
   }, [userId])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#171717]/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0f172a]/95 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-lg items-center justify-between px-4">
         <Link href="/staff/home" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
@@ -66,7 +66,7 @@ export default function StaffHeader({
           >
             <span className="material-symbols-outlined text-[20px]">notifications</span>
             {unreadCount > 0 ? (
-              <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#8B45A6] px-1 text-[10px] font-bold text-[#171717]">
+              <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#6B2C91] px-1 text-[10px] font-bold text-[#0f172a]">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             ) : null}

@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import IncidentStatusUpdate from './IncidentStatusUpdate'
@@ -38,7 +38,7 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
         <div className="space-y-3">
           <Link
             href="/admin/incidents"
-            className="inline-flex items-center gap-2 rounded-full bg-[#f4f2ed] px-4 py-2 text-xs font-medium text-[#5f5c55]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b]"
           >
             <span className="material-symbols-outlined text-[16px]">arrow_back</span>
             Back to incidents
@@ -49,16 +49,16 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
               <span className={severityBadge(incident.severity)}>{severityLabel(incident.severity)}</span>
               <span className={statusBadge(incident.status)}>{statusLabel(incident.status)}</span>
             </div>
-            <h1 className="max-w-3xl text-[2rem] font-medium tracking-[-0.05em] text-[#1a1a18] md:text-[2.5rem]">
+            <h1 className="max-w-3xl text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.5rem]">
               <span className="font-headline">{incident.title}</span>
             </h1>
-            <p className="text-sm text-[#6c6b66]">
+            <p className="text-sm text-[#64748b]">
               Logged on {formatReportedAt(incident.reported_at)} by {reporter}
             </p>
           </div>
         </div>
 
-        <div className="rounded-[24px] bg-[#1a1a18] px-5 py-4 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
+        <div className="rounded-[24px] bg-[#0f172a] px-5 py-4 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
           <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">Linked client</p>
           <p className="mt-2 text-lg font-semibold">{client}</p>
           <p className="mt-1 text-sm text-white/65">
@@ -80,30 +80,30 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
             />
           </div>
 
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+          <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.14em] text-[#9b988f]">Incident narrative</p>
-                <h2 className="mt-2 text-lg font-semibold text-[#1a1a18]">Case summary</h2>
+                <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Incident narrative</p>
+                <h2 className="mt-2 text-lg font-semibold text-[#0f172a]">Case summary</h2>
               </div>
               <span className={severityBadge(incident.severity)}>{severityLabel(incident.severity)}</span>
             </div>
-            <p className="mt-4 text-sm leading-7 text-[#4f4c45]">
+            <p className="mt-4 text-sm leading-7 text-[#64748b]">
               {incident.description ?? 'No additional narrative was provided in this incident report.'}
             </p>
           </section>
 
-          <section className="rounded-[28px] border border-[#e8e4dc] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-            <h2 className="text-lg font-semibold text-[#1a1a18]">Response checklist</h2>
+          <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
+            <h2 className="text-lg font-semibold text-[#0f172a]">Response checklist</h2>
             <div className="mt-4 space-y-3">
               {responseChecklist(incident.status, incident.severity, Boolean(shift)).map(item => (
-                <div key={item.label} className="flex items-center gap-3 rounded-[18px] bg-[#faf9f6] px-4 py-3">
+                <div key={item.label} className="flex items-center gap-3 rounded-[18px] bg-[#fafbfc] px-4 py-3">
                   <span className={`flex h-8 w-8 items-center justify-center rounded-full ${item.done ? item.doneClass : 'bg-[#ebe7df] text-[#8f8b84]'}`}>
                     <span className="material-symbols-outlined text-[16px]">{item.done ? 'check' : 'schedule'}</span>
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#1a1a18]">{item.label}</p>
-                    <p className="text-[11px] text-[#8a877f]">{item.meta}</p>
+                    <p className="text-sm font-medium text-[#0f172a]">{item.label}</p>
+                    <p className="text-[11px] text-[#94a3b8]">{item.meta}</p>
                   </div>
                 </div>
               ))}
@@ -112,18 +112,18 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
         </section>
 
         <aside className="space-y-4">
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
             <div className="border-b border-[#f0ece5] px-4 py-3">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Update workflow</h3>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Update workflow</h3>
             </div>
             <div className="px-4 py-4">
               <IncidentStatusUpdate incidentId={incident.id} currentStatus={incident.status} />
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
             <div className="border-b border-[#f0ece5] px-4 py-3">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Case snapshot</h3>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Case snapshot</h3>
             </div>
             <div className="space-y-3 px-4 py-4 text-sm text-[#56524c]">
               <SnapshotRow label="Severity" value={severityLabel(incident.severity)} />
@@ -133,11 +133,11 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-[24px] border border-[#e8e4dc] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+          <section className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
             <div className="border-b border-[#f0ece5] px-4 py-3">
-              <h3 className="text-sm font-semibold text-[#1a1a18]">Recommended next step</h3>
+              <h3 className="text-sm font-semibold text-[#0f172a]">Recommended next step</h3>
             </div>
-            <div className="px-4 py-4 text-[12px] leading-6 text-[#66635b]">
+            <div className="px-4 py-4 text-[12px] leading-6 text-[#64748b]">
               {incident.status === 'resolved'
                 ? 'This report is marked resolved. Review whether a follow-up note or policy update is still needed.'
                 : incident.status === 'investigating'
@@ -163,19 +163,19 @@ function InfoTile({
   accent?: boolean
 }) {
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#8B45A6]' : 'border border-[#e8e4dc] bg-white'}`}>
-      <p className={`text-[12px] ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{label}</p>
-      <p className="mt-2 text-lg font-semibold text-[#1a1a18]">{value}</p>
-      <p className={`mt-2 text-xs ${accent ? 'text-[#5e0087]' : 'text-[#8a877f]'}`}>{sub}</p>
+    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${accent ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
+      <p className={`text-[12px] ${accent ? 'text-[#54206F]' : 'text-[#94a3b8]'}`}>{label}</p>
+      <p className="mt-2 text-lg font-semibold text-[#0f172a]">{value}</p>
+      <p className={`mt-2 text-xs ${accent ? 'text-[#54206F]' : 'text-[#94a3b8]'}`}>{sub}</p>
     </div>
   )
 }
 
 function SnapshotRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between rounded-[16px] bg-[#faf9f6] px-3 py-3">
+    <div className="flex items-center justify-between rounded-[16px] bg-[#fafbfc] px-3 py-3">
       <span>{label}</span>
-      <strong className="font-semibold text-[#1a1a18]">{value}</strong>
+      <strong className="font-semibold text-[#0f172a]">{value}</strong>
     </div>
   )
 }
@@ -188,12 +188,12 @@ function relationRow<T>(value: T | T[] | null): T | null {
 function severityBadge(severity: IncidentDetail['severity']) {
   if (severity === 'emergency' || severity === 'high') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
   if (severity === 'medium') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]'
+  return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
 }
 
 function statusBadge(status: IncidentDetail['status']) {
   if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#f3e8ff] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6b21a8]'
+  if (status === 'resolved') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
   return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
 }
 
@@ -249,7 +249,7 @@ function responseChecklist(
       label: 'Linked shift confirmed',
       meta: linkedShift ? 'A related shift window is attached to this record.' : 'No shift window was attached to this case.',
       done: linkedShift,
-      doneClass: 'bg-[#f3e8ff] text-[#6b21a8]',
+      doneClass: 'bg-[#F4ECF8] text-[#54206F]',
     },
   ]
 }

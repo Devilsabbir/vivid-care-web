@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
 import AlertBanner from '@/components/admin/dashboard/AlertBanner'
+import KpiCard from '@/components/admin/dashboard/KpiCard'
 
 type Shift = {
   id: string
@@ -123,6 +124,64 @@ export default async function AdminDashboard() {
     return d.toLocaleDateString('en-AU', { weekday: 'long' })
   })()
 
+  // KPI sparkline data — last 8 days of shift activity
+  const eightDaysAgo = addDays(today, -7)
+  const [
+    { data: sparkShifts },
+    { data: sparkIncidents },
+  ] = await Promise.all([
+    supabase
+      .from('shifts')
+      .select('start_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(hourly_rate), clients(client_type)')
+      .gte('start_time', eightDaysAgo.toISOString()),
+    supabase
+      .from('incidents')
+      .select('reported_at, status')
+      .gte('reported_at', eightDaysAgo.toISOString()),
+  ])
+
+  const shiftsSpark: number[] = []
+  const hoursSpark: number[] = []
+  const revenueSpark: number[] = []
+  const incidentsSpark: number[] = []
+
+  for (let d = 7; d >= 0; d--) {
+    const dayDate = addDays(today, -d)
+    const dStart = dayStart(dayDate).getTime()
+    const dEnd = dayEnd(dayDate).getTime()
+    const onDay = ((sparkShifts ?? []) as any[]).filter(s => {
+      const t = new Date(s.start_time).getTime()
+      return t >= dStart && t <= dEnd
+    })
+    shiftsSpark.push(onDay.length)
+    let hSum = 0
+    let rSum = 0
+    onDay.forEach(s => {
+      if (s.clock_in_time && s.clock_out_time) {
+        const h = (new Date(s.clock_out_time).getTime() - new Date(s.clock_in_time).getTime()) / 3600000
+        if (h > 0) {
+          hSum += h
+          const staffRow = Array.isArray(s.staff) ? s.staff[0] : s.staff
+          const clientRow = Array.isArray(s.clients) ? s.clients[0] : s.clients
+          if (clientRow?.client_type === 'ndis') {
+            rSum += h * Number(staffRow?.hourly_rate ?? 0)
+          }
+        }
+      }
+    })
+    hoursSpark.push(Math.round(hSum))
+    revenueSpark.push(Math.round(rSum))
+    incidentsSpark.push(((sparkIncidents ?? []) as any[]).filter(i => {
+      const t = new Date(i.reported_at).getTime()
+      return t >= dStart && t <= dEnd
+    }).length)
+  }
+
+  const hoursThisWeek = hoursSpark.slice(-7).reduce((a, b) => a + b, 0)
+  const ndisRevenueThisWeek = revenueSpark.slice(-7).reduce((a, b) => a + b, 0)
+  const openIncidentsCount = ((sparkIncidents ?? []) as any[]).filter(i => i.status === 'open').length
+  const shiftsScheduledToday = (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).length
+
   const days = Array.from({ length: 7 }, (_, i) => addDays(today, i - 3)).map(date => {
     const key = stamp(date)
     const dayShifts = chart.filter(shift => stamp(new Date(shift.start_time)) === key)
@@ -183,52 +242,59 @@ export default async function AdminDashboard() {
         />
       )}
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
-        <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-          <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f3f1eb]">
-              <span className="material-symbols-outlined text-[20px]">calendar_month</span>
-            </span>
-            <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[11px] font-semibold text-[#64748b]">{percent(completed, planned)}%</span>
-          </div>
-          <p className="mt-5 text-[12px] text-[#9a978f]">Shifts this week</p>
-          <div className="mt-2 flex items-end gap-2">
-            <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{planned}</span>
-            <span className="pb-1 text-xs text-[#9a978f]">{completed} fulfilled</span>
-          </div>
-          <p className="mt-3 text-xs text-[#9a978f]">Across {clientCount ?? 0} active clients</p>
-        </div>
-
-        <div className="rounded-[24px] bg-[#6B2C91] p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
-          <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10">
-              <span className="material-symbols-outlined text-[20px]">badge</span>
-            </span>
-            <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-[#0f172a]">{percent(liveStaff, staffCount ?? 0)}%</span>
-          </div>
-          <p className="mt-5 text-[12px] text-[#54206F]">Staff on shift</p>
-          <div className="mt-2 flex items-end gap-2">
-            <span className="font-headline text-[3rem] leading-none tracking-[-0.08em]">{liveStaff}</span>
-            <span className="pb-1 text-xs text-[#54206F]">/ {staffCount ?? 0}</span>
-          </div>
-          <p className="mt-3 text-xs text-[#54206F]">Live clock-in coverage right now</p>
-        </div>
-
-        <div className="relative overflow-hidden rounded-[24px] bg-[#0f172a] p-6 text-white">
-          <div className="absolute right-[-24px] top-[-24px] h-36 w-36 rounded-full bg-white/5" />
-          <div className="relative flex h-full flex-col justify-between gap-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-white/45">Rostering intelligence</p>
-              <h2 className="mt-4 max-w-[18rem] text-[1.5rem] leading-tight tracking-[-0.04em]">
-                Keep your roster ready for AI suggestions and conflict review.
-              </h2>
-            </div>
-            <Link href="/admin/roster" className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-[#0f172a]">
-              Open roster planner
-              <span className="material-symbols-outlined text-[18px]">north_east</span>
-            </Link>
-          </div>
-        </div>
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          icon="calendar_month"
+          label="Shifts today"
+          value={shiftsToday}
+          sub={`of ${shiftsScheduledToday || shiftsToday} scheduled`}
+          delta={`+${shiftsSpark[7] - (shiftsSpark[0] ?? 0)} vs 7 days ago`}
+          direction={shiftsSpark[7] >= (shiftsSpark[0] ?? 0) ? 'up' : 'down'}
+          target={percent(completed, planned || 1)}
+          context={percent(completed, planned || 1) >= 80 ? 'On target' : 'Below target'}
+          color="#6B2C91"
+          bg="#F4ECF8"
+          spark={shiftsSpark}
+        />
+        <KpiCard
+          icon="schedule"
+          label="Hours this week"
+          value={`${hoursThisWeek}h`}
+          sub="team total"
+          delta={hoursThisWeek > 0 ? 'tracked from clock-in/out' : 'no clocked hours yet'}
+          direction="up"
+          target={Math.min(100, Math.round((hoursThisWeek / 200) * 100))}
+          context={hoursThisWeek >= 150 ? 'Above average' : 'Normal'}
+          color="#1380AB"
+          bg="#E6F5FC"
+          spark={hoursSpark}
+        />
+        <KpiCard
+          icon="payments"
+          label="NDIS revenue"
+          value={`$${(ndisRevenueThisWeek / 1000).toFixed(ndisRevenueThisWeek >= 10000 ? 0 : 1)}k`}
+          sub="unbilled this week"
+          delta="From clocked NDIS shifts"
+          direction="flat"
+          target={Math.min(100, Math.round((ndisRevenueThisWeek / 30000) * 100))}
+          context="Tracking"
+          color="#5E8D1F"
+          bg="#F1F9E1"
+          spark={revenueSpark}
+        />
+        <KpiCard
+          icon="warning"
+          label="Open incidents"
+          value={openIncidentsCount}
+          sub={openIncidentsCount > 0 ? 'awaiting review' : 'all clear'}
+          delta={openIncidentsCount > 0 ? 'review by deadline' : 'no open items'}
+          direction={openIncidentsCount === 0 ? 'up' : 'flat'}
+          target={Math.max(0, 100 - Math.min(100, openIncidentsCount * 20))}
+          context={openIncidentsCount === 0 ? 'All clear' : openIncidentsCount > 5 ? 'Above threshold' : 'Below threshold'}
+          color="#D97706"
+          bg="#FEF3D6"
+          spark={incidentsSpark}
+        />
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">

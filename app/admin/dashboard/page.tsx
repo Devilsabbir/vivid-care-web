@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { daysUntilExpiry, getExpiryStatus } from '@/lib/utils/expiry'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
+import AlertBanner from '@/components/admin/dashboard/AlertBanner'
 
 type Shift = {
   id: string
@@ -46,6 +47,8 @@ export default async function AdminDashboard() {
     { data: docs, error: docsError },
     { data: incidents, error: incidentsError },
     { data: unreadNotifications, error: notificationsError },
+    { data: criticalIncidents, error: criticalIncidentsError },
+    { data: adminProfile },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'staff'),
     supabase.from('clients').select('*', { count: 'exact', head: true }),
@@ -55,7 +58,19 @@ export default async function AdminDashboard() {
     supabase.from('documents').select('id, owner_id, owner_type, doc_type, expiry_date').not('expiry_date', 'is', null).order('expiry_date', { ascending: true }).limit(8),
     supabase.from('incidents').select('id').neq('status', 'resolved'),
     supabase.from('notifications').select('id').eq('read', false),
+    supabase.from('incidents')
+      .select('id, severity, reported_at, clients(full_name)')
+      .eq('status', 'open')
+      .in('severity', ['high', 'emergency'])
+      .order('reported_at', { ascending: false })
+      .limit(1),
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return { data: null }
+      return supabase.from('profiles').select('full_name').eq('id', user.id).single()
+    })(),
   ])
+  if (criticalIncidentsError) console.error('[dashboard page] critical incidents fetch failed:', criticalIncidentsError)
   if (staffCountError) console.error('[dashboard page] profiles count fetch failed:', staffCountError)
   if (clientCountError) console.error('[dashboard page] clients count fetch failed:', clientCountError)
   if (weekShiftsError) console.error('[dashboard page] week shifts fetch failed:', weekShiftsError)
@@ -84,6 +99,30 @@ export default async function AdminDashboard() {
   const liveStaff = new Set(activeBoard.map(shift => shift.staff_id)).size
   const liveBoard = activeBoard.length > 0 ? [...activeBoard, ...scheduledBoard].slice(0, 6) : scheduledBoard.slice(0, 6)
 
+  // Header & alert banner data
+  const firstName = (adminProfile?.full_name ?? '').split(' ')[0] || 'there'
+  const shiftsToday = (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).length
+  const staffWorkingToday = new Set(
+    (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).map(s => s.staff_id).filter(Boolean),
+  ).size
+  const topCriticalIncident = (criticalIncidents ?? [])[0] as
+    | { id: string; severity: string; reported_at: string; clients: { full_name: string | null } | { full_name: string | null }[] | null }
+    | undefined
+  const topIncidentClientName = topCriticalIncident
+    ? Array.isArray(topCriticalIncident.clients)
+      ? topCriticalIncident.clients[0]?.full_name ?? 'Client'
+      : topCriticalIncident.clients?.full_name ?? 'Client'
+    : ''
+
+  // NDIS reporting window — show next Thursday as a reasonable default
+  const nextThursday = (() => {
+    const d = new Date(today)
+    const day = d.getDay() // 0 Sun
+    const delta = (4 - day + 7) % 7 || 7 // distance to Thursday (4)
+    d.setDate(d.getDate() + delta)
+    return d.toLocaleDateString('en-AU', { weekday: 'long' })
+  })()
+
   const days = Array.from({ length: 7 }, (_, i) => addDays(today, i - 3)).map(date => {
     const key = stamp(date)
     const dayShifts = chart.filter(shift => stamp(new Date(shift.start_time)) === key)
@@ -100,51 +139,49 @@ export default async function AdminDashboard() {
   return (
     <div className="flex flex-col gap-6">
       <DashboardRealtimeRefresh />
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.45rem]">
-            <span className="font-headline">Managing</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
-              <span className="material-symbols-outlined text-[18px]">group</span>
-              your team
-            </span>
-            <span className="font-headline">and</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.45rem]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
-              <span className="material-symbols-outlined text-[18px]">neurology</span>
-              workflows
-            </span>
-            <span className="font-headline">at a glance</span>
-          </div>
-          <p className="text-sm text-[#64748b]">
-            Scheduler snapshot for {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-[28px] font-semibold tracking-[-0.02em] text-[#0f172a] md:text-[32px]">
+            Good morning, {firstName}
+          </h1>
+          <p className="mt-1 text-[13px] text-[#64748b]">
+            {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            {' · '}
+            {shiftsToday} shifts scheduled across {staffWorkingToday} support workers
           </p>
         </div>
-
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/admin/compliance" aria-label="Document hub" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
-            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">description</span>
-          </Link>
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
-            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span>
-          </Link>
-          <Link href="/admin/roster" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2">
-            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
+          <div className="flex rounded-full bg-[#f0f1f3] p-1 text-[12px] font-medium">
+            <button type="button" className="rounded-full px-3 py-1.5 text-[#64748b] hover:text-[#0f172a]">Day</button>
+            <button type="button" className="rounded-full bg-[#0f172a] px-3 py-1.5 text-white">Week</button>
+            <button type="button" className="rounded-full px-3 py-1.5 text-[#64748b] hover:text-[#0f172a]">Month</button>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-4 py-1.5 text-[12px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">download</span>
+            Export
+          </button>
+          <Link
+            href="/admin/roster"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#6B2C91] px-4 py-1.5 text-[12px] font-semibold text-white shadow-[0_4px_14px_rgba(107,44,145,0.25)] hover:bg-[#54206F]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
             New shift
           </Link>
         </div>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#f0f1f3] p-1.5 text-xs font-medium">
-        <Link href="/admin/dashboard" className="rounded-full bg-[#0f172a] px-4 py-2 text-white">Scheduler</Link>
-        <Link href="/admin/staff" className="rounded-full px-4 py-2 text-[#64748b]">Staff</Link>
-        <Link href="/admin/clients" className="rounded-full px-4 py-2 text-[#64748b]">Clients</Link>
-        <Link href="/admin/compliance" className="rounded-full px-4 py-2 text-[#64748b]">Documents</Link>
-        <Link href="/admin/incidents" className="rounded-full px-4 py-2 text-[#64748b]">Incidents</Link>
-        <Link href="/admin/payments" className="rounded-full px-4 py-2 text-[#64748b]">Payroll</Link>
-        <Link href="/admin/settings" className="rounded-full px-4 py-2 text-[#64748b]">Settings</Link>
-      </nav>
+      {topCriticalIncident && (
+        <AlertBanner
+          clientName={topIncidentClientName}
+          reportedAt={topCriticalIncident.reported_at}
+          severity={topCriticalIncident.severity}
+          deadline={nextThursday}
+          href={`/admin/incidents/${topCriticalIncident.id}`}
+        />
+      )}
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
         <div className="rounded-[24px] border border-[#e6e8ec] bg-white p-6 shadow-[0_14px_32px_rgba(26,26,24,0.04)]">

@@ -35,28 +35,48 @@ export default async function AdminDashboard() {
   const chartEnd = dayEnd(addDays(today, 3))
   const weekStart = monday(today)
   const weekEnd = dayEnd(addDays(weekStart, 6))
+  const eightDaysAgo = addDays(today, -7)
+  const thirtyDaysOut = addDays(today, 30)
+  const todayStartMs = dayStart(today).getTime()
+  const todayEndMs = dayEnd(today).getTime()
 
+  // ── Single round-trip wave: 14 independent queries in parallel ──
+  // Co-located with Supabase in syd1, this resolves in ~50-100ms instead of
+  // the ~1s the previous 3-wave sequence took with Vercel in US East.
   const [
     { data: weekShifts, error: weekShiftsError },
     { data: chartShifts, error: chartShiftsError },
     { data: boardShifts, error: boardShiftsError },
     { data: criticalIncidents, error: criticalIncidentsError },
     { data: adminProfile },
+    { data: sparkShifts },
+    { data: sparkIncidents },
+    { data: mapShifts },
+    { data: initialStaffLocations },
+    { data: timelineRows },
+    { data: allClients },
+    { data: expiringDocs },
+    { data: recentNotifs },
+    { data: allStaff },
   ] = await Promise.all([
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', weekStart.toISOString()).lte('start_time', weekEnd.toISOString()),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time').gte('start_time', chartStart.toISOString()).lte('start_time', chartEnd.toISOString()),
     supabase.from('shifts').select('id, staff_id, status, start_time, end_time, staff:profiles!staff_id(full_name), clients(full_name, address)').in('status', ['active', 'scheduled']).order('start_time', { ascending: true }).limit(40),
-    supabase.from('incidents')
-      .select('id, severity, reported_at, clients(full_name)')
-      .eq('status', 'open')
-      .in('severity', ['high', 'emergency'])
-      .order('reported_at', { ascending: false })
-      .limit(1),
+    supabase.from('incidents').select('id, severity, reported_at, clients(full_name)').eq('status', 'open').in('severity', ['high', 'emergency']).order('reported_at', { ascending: false }).limit(1),
     (async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return { data: null }
       return supabase.from('profiles').select('full_name').eq('id', user.id).single()
     })(),
+    supabase.from('shifts').select('start_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(hourly_rate), clients(client_type)').gte('start_time', eightDaysAgo.toISOString()),
+    supabase.from('incidents').select('reported_at, status').gte('reported_at', eightDaysAgo.toISOString()),
+    supabase.from('shifts').select('id, staff_id, client_id, status, staff:profiles!staff_id(full_name), clients(full_name, address, lat, lng)').in('status', ['active', 'scheduled']).gte('start_time', new Date(Date.now() - 86_400_000).toISOString()).order('start_time', { ascending: true }),
+    supabase.from('staff_locations').select('staff_id, lat, lng, updated_at, shift_id'),
+    supabase.from('shifts').select('id, staff_id, start_time, end_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(full_name), clients(full_name, client_type)').gte('start_time', new Date(todayStartMs).toISOString()).lte('start_time', new Date(todayEndMs).toISOString()).order('start_time', { ascending: true }),
+    supabase.from('clients').select('client_type'),
+    supabase.from('documents').select('id, doc_type, expiry_date, owner_id, owner_type').not('expiry_date', 'is', null).lte('expiry_date', thirtyDaysOut.toISOString().split('T')[0]).gte('expiry_date', today.toISOString().split('T')[0]).order('expiry_date', { ascending: true }).limit(20),
+    supabase.from('notifications').select('id, type, title, created_at').order('created_at', { ascending: false }).limit(8),
+    supabase.from('profiles').select('id, full_name').eq('role', 'staff').order('full_name'),
   ])
   if (criticalIncidentsError) console.error('[dashboard page] critical incidents fetch failed:', criticalIncidentsError)
   if (weekShiftsError) console.error('[dashboard page] week shifts fetch failed:', weekShiftsError)
@@ -98,33 +118,7 @@ export default async function AdminDashboard() {
     return d.toLocaleDateString('en-AU', { weekday: 'long' })
   })()
 
-  // KPI sparkline data — last 8 days of shift activity
-  const eightDaysAgo = addDays(today, -7)
-  const [
-    { data: sparkShifts },
-    { data: sparkIncidents },
-    { data: mapShifts },
-    { data: initialStaffLocations },
-  ] = await Promise.all([
-    supabase
-      .from('shifts')
-      .select('start_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(hourly_rate), clients(client_type)')
-      .gte('start_time', eightDaysAgo.toISOString()),
-    supabase
-      .from('incidents')
-      .select('reported_at, status')
-      .gte('reported_at', eightDaysAgo.toISOString()),
-    supabase
-      .from('shifts')
-      .select('id, staff_id, client_id, status, staff:profiles!staff_id(full_name), clients(full_name, address, lat, lng)')
-      .in('status', ['active', 'scheduled'])
-      .gte('start_time', new Date(Date.now() - 86_400_000).toISOString())
-      .order('start_time', { ascending: true }),
-    supabase
-      .from('staff_locations')
-      .select('staff_id, lat, lng, updated_at, shift_id'),
-  ])
-
+  // KPI sparkline buckets — derived from sparkShifts/sparkIncidents (already fetched above)
   const shiftsSpark: number[] = []
   const hoursSpark: number[] = []
   const revenueSpark: number[] = []
@@ -167,16 +161,7 @@ export default async function AdminDashboard() {
   const openIncidentsCount = ((sparkIncidents ?? []) as any[]).filter(i => i.status === 'open').length
   const shiftsScheduledToday = (chart ?? []).filter(s => stamp(new Date(s.start_time)) === stamp(today)).length
 
-  // Live roster timeline data — today's shifts grouped by staff
-  const todayStartMs = dayStart(today).getTime()
-  const todayEndMs = dayEnd(today).getTime()
-  const { data: timelineRows } = await supabase
-    .from('shifts')
-    .select('id, staff_id, start_time, end_time, status, clock_in_time, clock_out_time, staff:profiles!staff_id(full_name), clients(full_name, client_type)')
-    .gte('start_time', new Date(todayStartMs).toISOString())
-    .lte('start_time', new Date(todayEndMs).toISOString())
-    .order('start_time', { ascending: true })
-
+  // Live roster timeline data — today's shifts grouped by staff (timelineRows already fetched above)
   const staffToneOptions: StaffRow['tone'][] = ['warm', 'blue', 'peach', 'green', 'amber', 'purple']
   const staffMap = new Map<string, StaffRow>()
   const timelineBlocks: ShiftBlock[] = []
@@ -226,32 +211,7 @@ export default async function AdminDashboard() {
 
   const timelineStaff = Array.from(staffMap.values()).slice(0, 8)
 
-  // Side widgets data
-  const [
-    { data: allClients },
-    { data: expiringDocs },
-    { data: recentNotifs },
-    { data: allStaff },
-  ] = await Promise.all([
-    supabase.from('clients').select('client_type'),
-    (async () => {
-      const thirtyDaysOut = addDays(today, 30)
-      return supabase
-        .from('documents')
-        .select('id, doc_type, expiry_date, owner_id, owner_type')
-        .not('expiry_date', 'is', null)
-        .lte('expiry_date', thirtyDaysOut.toISOString().split('T')[0])
-        .gte('expiry_date', today.toISOString().split('T')[0])
-        .order('expiry_date', { ascending: true })
-        .limit(20)
-    })(),
-    supabase
-      .from('notifications')
-      .select('id, type, title, created_at')
-      .order('created_at', { ascending: false })
-      .limit(8),
-    supabase.from('profiles').select('id, full_name').eq('role', 'staff').order('full_name'),
-  ])
+  // Side widgets data — allClients/expiringDocs/recentNotifs/allStaff already fetched above
 
   // Client mix
   const ndisClientCount = ((allClients ?? []) as { client_type: string }[]).filter(c => c.client_type === 'ndis').length

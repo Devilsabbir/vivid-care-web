@@ -19,9 +19,12 @@ export default async function RosterPage() {
       .select('id, full_name')
       .eq('role', 'staff')
       .order('full_name', { ascending: true }),
+    // Only standard (non-NDIS) clients receive individual shift assignments.
+    // NDIS clients are managed via service agreements, not the shift roster.
     supabase
       .from('clients')
       .select('id, full_name, address, lat, lng')
+      .eq('client_type', 'standard')
       .order('full_name', { ascending: true }),
     supabase
       .from('ndis_support_types')

@@ -15,7 +15,8 @@ export default async function ShiftsPage() {
       .order('start_time', { ascending: false })
       .limit(100),
     supabase.from('profiles').select('id, full_name').eq('role', 'staff').order('full_name'),
-    supabase.from('clients').select('id, full_name').order('full_name'),
+    // Only standard (non-NDIS) clients receive shift assignments
+    supabase.from('clients').select('id, full_name').eq('client_type', 'standard').order('full_name'),
   ])
   if (shiftsError) console.error('[shifts page] shifts fetch failed:', shiftsError)
   if (staffError) console.error('[shifts page] profiles fetch failed:', staffError)

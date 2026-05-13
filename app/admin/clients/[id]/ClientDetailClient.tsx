@@ -13,6 +13,19 @@ import Tabs from '@/components/ui/Tabs'
 import DocumentCard from '@/components/compliance/DocumentCard'
 import StatusBadge from '@/components/ui/StatusBadge'
 
+/** Years between a DOB and today; null if DOB missing or invalid. */
+function calculateAge(dob: string | null | undefined): number | null {
+  if (!dob) return null
+  const birth = new Date(dob)
+  if (Number.isNaN(birth.getTime())) return null
+  const today = new Date()
+  let age = today.getFullYear() - birth.getFullYear()
+  const m = today.getMonth() - birth.getMonth()
+  // Subtract a year if the birthday hasn't happened yet this year
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age -= 1
+  return age >= 0 ? age : null
+}
+
 type Tab = 'overview' | 'shifts' | 'documents' | 'incidents' | 'agreements' | 'notes'
 
 const BASE_TAB_ITEMS = [
@@ -159,11 +172,13 @@ export default function ClientDetailClient({
                 <Field label="Full name" value={client.full_name ?? 'Unnamed client'} />
                 {isNdis && <Field label="NDIS number" value={client.ndis_number ?? 'Not recorded'} />}
                 <Field label="Date of birth" value={client.date_of_birth ? new Date(client.date_of_birth).toLocaleDateString('en-AU') : 'Not recorded'} />
-                <Field label="Age" value={client.age ? String(client.age) : 'Not recorded'} />
+                <Field label="Age" value={(() => {
+                  const computed = calculateAge(client.date_of_birth)
+                  return computed !== null ? `${computed} years` : 'Add date of birth'
+                })()} />
                 <Field label="Phone" value={client.phone ?? 'Not recorded'} />
                 <Field label="Email" value={client.email ?? 'Not recorded'} />
                 <Field label="Emergency contact" value={client.emergency_contact ?? 'Not recorded'} />
-                <Field label="Map coordinates" value={summary.addressMapped ? `${client.lat}, ${client.lng}` : 'Coordinates not configured'} />
               </div>
               {client.address && (
                 <div className="mt-4 rounded-[18px] bg-[#fafbfc] p-4">

@@ -7,11 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 type ClientForm = {
   full_name: string
   client_type: 'ndis' | 'standard'
-  age: string
   date_of_birth: string
   address: string
-  lat: string
-  lng: string
   ndis_number: string
   phone: string
   email: string
@@ -22,11 +19,8 @@ type ClientForm = {
 const INITIAL_FORM: ClientForm = {
   full_name: '',
   client_type: 'ndis',
-  age: '',
   date_of_birth: '',
   address: '',
-  lat: '',
-  lng: '',
   ndis_number: '',
   phone: '',
   email: '',
@@ -50,14 +44,14 @@ export default function NewClientPage() {
     setSaving(true)
     setError('')
 
+    // Age is derived from date_of_birth on display; lat/lng are managed
+    // elsewhere (geocoding job / direct DB edit) so they aren't part of the
+    // admin-facing create form.
     const { error: insertError } = await supabase.from('clients').insert({
       full_name: form.full_name,
       client_type: form.client_type,
-      age: form.age ? parseInt(form.age, 10) : null,
       date_of_birth: form.date_of_birth || null,
       address: form.address || null,
-      lat: form.lat ? parseFloat(form.lat) : null,
-      lng: form.lng ? parseFloat(form.lng) : null,
       ndis_number: form.client_type === 'ndis' ? (form.ndis_number || null) : null,
       phone: form.phone || null,
       email: form.email || null,
@@ -131,11 +125,8 @@ export default function NewClientPage() {
                 <Field label="NDIS number" value={form.ndis_number} onChange={value => setField('ndis_number', value)} placeholder="430123456" />
               )}
               <Field label="Date of birth" value={form.date_of_birth} onChange={value => setField('date_of_birth', value)} type="date" placeholder="" />
-              <Field label="Age" value={form.age} onChange={value => setField('age', value)} type="number" placeholder="72" />
               <Field label="Phone" value={form.phone} onChange={value => setField('phone', value)} placeholder="0412 345 678" />
               <Field label="Email" value={form.email} onChange={value => setField('email', value)} type="email" placeholder="mary@email.com" />
-              <Field label="Latitude" value={form.lat} onChange={value => setField('lat', value)} type="number" placeholder="-31.95" />
-              <Field label="Longitude" value={form.lng} onChange={value => setField('lng', value)} type="number" placeholder="115.86" />
             </div>
 
             <Field label="Address" value={form.address} onChange={value => setField('address', value)} placeholder="Full street address" />

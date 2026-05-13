@@ -49,14 +49,6 @@ export default async function IncidentsPage() {
 
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#f0f1f3] p-1.5 text-xs font-medium">
-        <span className="rounded-full bg-[#0f172a] px-4 py-2 text-white">All</span>
-        <span className="rounded-full px-4 py-2 text-[#64748b]">Open</span>
-        <span className="rounded-full px-4 py-2 text-[#64748b]">Under review</span>
-        <span className="rounded-full px-4 py-2 text-[#64748b]">Resolved</span>
-        <span className="rounded-full bg-[#f7f8f9] px-4 py-2 text-[#64748b]">This week</span>
-      </nav>
-
       <section className="grid gap-4 md:grid-cols-4">
         <SummaryCard label="Total incidents" value={counts.total} tone="white" />
         <SummaryCard label="Open" value={counts.open} tone="white" danger="red" />

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 interface AdminTopbarProps {
   adminName?: string
@@ -40,9 +41,11 @@ export default function AdminTopbar({ adminName, unreadCount = 0, onViviOpen }: 
 
   return (
     <header className="sticky top-0 z-30 hidden h-16 items-center gap-3 border-b border-[#e6e8ec] bg-white/85 px-6 backdrop-blur-xl lg:flex">
-      {/* Search */}
+      {/* Search — opens the Vivi AI drawer which doubles as universal search */}
       <button
         type="button"
+        onClick={onViviOpen}
+        aria-label="Search clients, shifts, and notes"
         className="flex h-9 min-w-[280px] items-center gap-2 rounded-[10px] border border-[#e6e8ec] bg-[#fafbfc] px-3 text-left text-[12.5px] text-[#94a3b8] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
       >
         <span className="material-symbols-outlined text-[16px]" aria-hidden="true">search</span>
@@ -67,18 +70,18 @@ export default function AdminTopbar({ adminName, unreadCount = 0, onViviOpen }: 
         <kbd className="rounded-[4px] bg-white/20 px-1.5 py-0.5 font-mono text-[9px]">⌘ /</kbd>
       </button>
 
-      {/* Quick add */}
-      <button
-        type="button"
+      {/* Quick add — opens roster (the primary creation surface) */}
+      <Link
+        href="/admin/roster"
         className="flex h-9 items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-3.5 text-[12.5px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
       >
         <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
-        Quick add
-      </button>
+        New shift
+      </Link>
 
       {/* Notifications */}
-      <button
-        type="button"
+      <Link
+        href="/admin/notifications"
         className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#475569] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
         aria-label={unreadCount > 0 ? `${unreadCount} unread notifications` : 'Notifications'}
       >
@@ -86,13 +89,14 @@ export default function AdminTopbar({ adminName, unreadCount = 0, onViviOpen }: 
         {unreadCount > 0 && (
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#DC2626]" />
         )}
-      </button>
+      </Link>
 
-      {/* Help */}
+      {/* Help — opens Vivi AI assistant which can answer how-to questions */}
       <button
         type="button"
+        onClick={onViviOpen}
         className="flex h-9 w-9 items-center justify-center rounded-full text-[#475569] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
-        aria-label="Help"
+        aria-label="Help — ask Vivi"
       >
         <span className="material-symbols-outlined text-[18px]" aria-hidden="true">help</span>
       </button>

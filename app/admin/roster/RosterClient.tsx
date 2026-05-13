@@ -1253,15 +1253,23 @@ export default function RosterClient({
                 required
                 value={form.client_id}
                 onChange={e => setField(setForm, 'client_id', e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
+                disabled={clients.length === 0}
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <option value="">Select client</option>
+                <option value="">{clients.length === 0 ? 'No standard clients available' : 'Select client'}</option>
                 {clients.map(c => (
                   <option key={c.id} value={c.id}>
                     {c.full_name ?? 'Unnamed client'}{c.address ? ` â€“ ${c.address}` : ''}
                   </option>
                 ))}
               </select>
+              {clients.length === 0 ? (
+                <p className="mt-2 text-[11px] leading-5 text-[#64748b]">
+                  Roster shifts are only created for standard (non-NDIS) clients. NDIS participants are scheduled via service agreements.
+                  {' '}
+                  <Link href="/admin/clients/new" className="font-semibold text-[#6B2C91] underline">Add a standard client</Link>.
+                </p>
+              ) : null}
             </div>
           </div>
 

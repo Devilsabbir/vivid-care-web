@@ -136,12 +136,11 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
         )}
       </div>
 
-      {/* Org switcher */}
+      {/* Region indicator — informational only (single-region deployment) */}
       <div className="border-b border-[#e6e8ec] px-3 py-3">
-        <button
-          type="button"
-          className="flex w-full items-center gap-2.5 rounded-[10px] border border-[#e6e8ec] bg-white px-2.5 py-2 hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
-          aria-label="Switch organisation region"
+        <div
+          className="flex w-full items-center gap-2.5 rounded-[10px] border border-[#e6e8ec] bg-white px-2.5 py-2"
+          aria-label="Current region"
         >
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] bg-gradient-to-br from-[#6B2C91] to-[#2BAEE0] text-[10px] font-semibold uppercase tracking-[0.06em] text-white">
             WA
@@ -150,23 +149,8 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
             <div className="truncate text-[12px] font-semibold leading-tight text-[#0f172a]">
               Western Australia · Perth
             </div>
-            <div className="text-[10.5px] text-[#94a3b8]">Region · 42 clients</div>
+            <div className="text-[10.5px] text-[#94a3b8]">Region</div>
           </div>
-          <span className="material-symbols-outlined text-[14px] text-[#94a3b8]" aria-hidden="true">
-            expand_more
-          </span>
-        </button>
-      </div>
-
-      {/* Search bar */}
-      <div className="border-b border-[#e6e8ec] px-3 py-2.5">
-        <div className="flex h-[30px] w-full items-center gap-2 rounded-[8px] border border-[#e6e8ec] bg-[#fafbfc] px-2.5 text-[12px] text-[#94a3b8]">
-          <span className="material-symbols-outlined text-[14px]">search</span>
-          <span className="flex-1">Search…</span>
-          <span className="flex items-center gap-0.5">
-            <kbd className="inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-[4px] border border-[#e6e8ec] bg-white px-1 font-mono text-[10px] text-[#64748b]">⌘</kbd>
-            <kbd className="inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-[4px] border border-[#e6e8ec] bg-white px-1 font-mono text-[10px] text-[#64748b]">K</kbd>
-          </span>
         </div>
       </div>
 

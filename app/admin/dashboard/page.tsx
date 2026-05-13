@@ -299,18 +299,17 @@ export default async function AdminDashboard() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex rounded-full bg-[#f0f1f3] p-1 text-[12px] font-medium">
-            <button type="button" className="rounded-full px-3 py-1.5 text-[#64748b] hover:text-[#0f172a]">Day</button>
-            <button type="button" className="rounded-full bg-[#0f172a] px-3 py-1.5 text-white">Week</button>
-            <button type="button" className="rounded-full px-3 py-1.5 text-[#64748b] hover:text-[#0f172a]">Month</button>
-          </div>
-          <button
-            type="button"
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f0f1f3] px-3 py-1.5 text-[12px] font-medium text-[#475569]">
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">calendar_view_week</span>
+            This week
+          </span>
+          <Link
+            href="/admin/shift-history"
             className="inline-flex items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-4 py-1.5 text-[12px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9]"
           >
-            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">download</span>
-            Export
-          </button>
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">history</span>
+            History
+          </Link>
           <Link
             href="/admin/roster"
             className="inline-flex items-center gap-1.5 rounded-full bg-[#6B2C91] px-4 py-1.5 text-[12px] font-semibold text-white shadow-[0_4px_14px_rgba(107,44,145,0.25)] hover:bg-[#54206F]"

@@ -91,7 +91,10 @@ export default function ClientDetailClient({
   const [geocoding, setGeocoding] = useState(false)
   const [geocodeMsg, setGeocodeMsg] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
+  // Memoise the supabase browser client so it isn't re-instantiated on every
+  // render — otherwise realtime channel handles / cached headers get
+  // rebuilt unnecessarily.
+  const [supabase] = useState(() => createClient())
 
   async function handleRefreshCoords() {
     if (!client.address || geocoding) return
@@ -152,7 +155,11 @@ export default function ClientDetailClient({
     if (!file || !docType) return
     setUploading(true)
 
-    const path = `client/${client.id}/${docType}/${Date.now()}_${file.name}`
+    // Sanitise the file name to keep storage paths safe (Supabase enforces
+    // url-safe-ish object keys; spaces / non-ASCII / control chars can
+    // break signed URLs and download Content-Disposition).
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 80)
+    const path = `client/${client.id}/${docType}/${Date.now()}_${safeName}`
     const { error: uploadError } = await supabase.storage.from('documents').upload(path, file)
     if (uploadError) {
       setUploading(false)

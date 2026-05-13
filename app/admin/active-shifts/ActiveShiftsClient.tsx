@@ -62,19 +62,34 @@ export default function ActiveShiftsClient({
   const [staffLocations, setStaffLocations] = useState(initialStaffLocations)
   const [supabase] = useState(() => createClient())
 
-  // Realtime: refetch shifts when any shift changes
+  // Realtime: refetch shifts when any shift changes. The window must match
+  // the server-side parent query in page.tsx (-7 days to +14 days, status
+  // 'active' OR 'scheduled') — otherwise the first realtime tick collapses
+  // the visible list to a 24h sub-window.
   useEffect(() => {
     const channel = supabase
       .channel('active_shifts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'shifts' }, async () => {
-        const { data, error } = await supabase
-          .from('shifts')
-          .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
-          .in('status', ['active', 'scheduled'])
-          .gte('start_time', new Date(Date.now() - 86400000).toISOString())
-          .order('start_time', { ascending: true })
-        if (error) console.error('[ActiveShiftsClient] shifts refetch failed:', error)
-        if (data) setShifts(data as ShiftRow[])
+        const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString()
+        const fourteenDaysAhead = new Date(Date.now() + 14 * 86400000).toISOString()
+        const [{ data: active, error: activeErr }, { data: scheduled, error: schedErr }] =
+          await Promise.all([
+            supabase
+              .from('shifts')
+              .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
+              .eq('status', 'active')
+              .order('start_time', { ascending: true }),
+            supabase
+              .from('shifts')
+              .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
+              .eq('status', 'scheduled')
+              .gte('start_time', sevenDaysAgo)
+              .lte('start_time', fourteenDaysAhead)
+              .order('start_time', { ascending: true }),
+          ])
+        if (activeErr) console.error('[ActiveShiftsClient] active shifts refetch failed:', activeErr)
+        if (schedErr) console.error('[ActiveShiftsClient] scheduled shifts refetch failed:', schedErr)
+        setShifts([...(active ?? []), ...(scheduled ?? [])] as ShiftRow[])
       })
       .subscribe()
 

@@ -138,6 +138,14 @@ export async function POST(request: NextRequest) {
     if (error || !data) {
       return NextResponse.json({ error: 'Agreement not found' }, { status: 404 })
     }
+    // Mirror the public-token branch's guards so admin in-person sign also
+    // refuses to overwrite an already-signed or expired row.
+    if (data.status === 'signed') {
+      return NextResponse.json({ error: 'Already signed' }, { status: 409 })
+    }
+    if (data.status === 'expired') {
+      return NextResponse.json({ error: 'This agreement has expired' }, { status: 410 })
+    }
     agreement = data
   }
 
@@ -168,10 +176,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
   }
 
-  // Upload to Supabase Storage
-  const filePath = `agreements/${agreement.id}.pdf`
+  // Post-sign PDF — upload to the `agreements` bucket under a prefix the
+  // existing read RLS already covers, so the NDIS client (or owning staff
+  // member) can mint a short-lived signed URL to download/view their own
+  // signed copy from the mobile app or web client portal.
+  //
+  // Client agreements:  agreements/client/<client_id>/signed-<id>.pdf
+  // Staff agreements:   agreements/staff/<staff_id>/signed-<id>.pdf
+  //                     (no client-read RLS uses this prefix today but the
+  //                      `staff_id = auth.uid()` documents-bucket policy
+  //                      doesn't apply here either — admins still cover it
+  //                      via the "Admins can manage agreements storage" ALL
+  //                      policy; signed-URL minting via service role works
+  //                      regardless of bucket policies.)
+  const filePath =
+    agreement.target_type === 'client'
+      ? `client/${agreement.target_id}/signed-${agreement.id}.pdf`
+      : `staff/${agreement.target_id}/signed-${agreement.id}.pdf`
+
   const { error: uploadError } = await service.storage
-    .from('documents')
+    .from('agreements')
     .upload(filePath, pdfBuffer, {
       contentType: 'application/pdf',
       upsert: true,
@@ -182,16 +206,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'PDF upload failed' }, { status: 500 })
   }
 
-  // Generate signed URL valid for ~20 years
-  const { data: signedData, error: signedUrlError } = await service.storage
-    .from('documents')
-    .createSignedUrl(filePath, 630_720_000)
-
-  if (signedUrlError || !signedData?.signedUrl) {
-    return NextResponse.json({ error: 'Could not generate download URL' }, { status: 500 })
-  }
-
-  // Update agreement row
+  // Store the storage *path* in pdf_url (not a long-lived signed URL).
+  // Admin downloads + mobile WebView mint short-lived signed URLs on demand.
+  // Supabase clamps signed-URL TTL well below the legacy 20-year value, so
+  // path-based storage is the only reliable approach.
   const { error: updateError } = await service
     .from('agreements')
     .update({
@@ -199,7 +217,7 @@ export async function POST(request: NextRequest) {
       signed_at: signedAt,
       signature_data_url: signatureDataUrl,
       signer_name: signerName.trim(),
-      pdf_url: signedData.signedUrl,
+      pdf_url: filePath,
     })
     .eq('id', agreement.id)
 
@@ -208,5 +226,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to save signature' }, { status: 500 })
   }
 
-  return NextResponse.json({ success: true, pdfUrl: signedData.signedUrl })
+  // We now return the storage path; clients mint short-lived signed URLs
+  // on demand via createSignedUrl().
+  return NextResponse.json({ success: true, pdfPath: filePath })
 }

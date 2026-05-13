@@ -10,10 +10,22 @@ export default async function RosterPage() {
     { data: clients, error: clientsError },
     { data: supportTypes, error: supportTypesError },
   ] = await Promise.all([
-    supabase
-      .from('shifts')
-      .select('id, staff_id, client_id, title, support_type_key, documentation_status, start_time, end_time, notes, status, profiles!shifts_staff_id_fkey(full_name), clients(full_name, address, lat, lng)')
-      .order('start_time', { ascending: true }),
+    // Roster shows 4 weeks back (for end-of-week review) plus 8 weeks
+    // forward (for planning), capped at 500 rows so the initial payload
+    // doesn't balloon as historical data accumulates.
+    (() => {
+      const FOUR_WEEKS_MS = 4 * 7 * 86400 * 1000
+      const EIGHT_WEEKS_MS = 8 * 7 * 86400 * 1000
+      const fromIso = new Date(Date.now() - FOUR_WEEKS_MS).toISOString()
+      const toIso = new Date(Date.now() + EIGHT_WEEKS_MS).toISOString()
+      return supabase
+        .from('shifts')
+        .select('id, staff_id, client_id, title, support_type_key, documentation_status, start_time, end_time, notes, status, profiles!shifts_staff_id_fkey(full_name), clients(full_name, address, lat, lng)')
+        .gte('start_time', fromIso)
+        .lte('start_time', toIso)
+        .order('start_time', { ascending: true })
+        .limit(500)
+    })(),
     supabase
       .from('profiles')
       .select('id, full_name')

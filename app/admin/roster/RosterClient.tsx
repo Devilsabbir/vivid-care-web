@@ -8,7 +8,7 @@ import Modal from '@/components/ui/Modal'
 import RosterValidationPanel from '@/components/roster/RosterValidationPanel'
 import { useRosterValidation } from './useRosterValidation'
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types ──────────────────────────────────────────────────────────────────
 
 type ShiftStatus = 'scheduled' | 'active' | 'completed' | 'cancelled'
 type RosterView = 'week' | 'day' | 'staff'
@@ -76,12 +76,12 @@ const EMPTY_FORM: CreateShiftForm = {
   start_time: '', end_time: '', notes: '',
 }
 
-// â”€â”€â”€ Roster hour range â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Roster hour range ───────────────────────────────────────────────────────
 const HOUR_START = 6   // 6 am
 const HOUR_END   = 22  // 10 pm
 const HOURS      = Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => HOUR_START + i)
 
-// â”€â”€â”€ Utility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Utility ─────────────────────────────────────────────────────────────────
 
 function getWeekStart(d: Date): Date {
   const s = new Date(d)
@@ -208,7 +208,7 @@ function statusBadgeCls(s: ShiftStatus): string {
   return 'rounded-full bg-[#dbeafe] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1d4ed8]'
 }
 
-// â”€â”€â”€ Shift Pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Shift Pill ───────────────────────────────────────────────────────────────
 
 function ShiftPill({
   shift, onClick, compact = false,
@@ -282,7 +282,7 @@ function ShiftPill({
   )
 }
 
-// â”€â”€â”€ Week View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Week View ────────────────────────────────────────────────────────────────
 
 function WeekView({
   weekShifts, staff, todayIdx, weekStart: ws,
@@ -315,7 +315,7 @@ function WeekView({
         className="grid"
         style={{ minWidth: 900, gridTemplateColumns: '180px repeat(7, 1fr)' }}
       >
-        {/* â”€â”€ Header row â”€â”€ */}
+        {/* ── Header row ── */}
         <div className="sticky top-0 left-0 z-30 border-b border-[#e6e8ec] bg-white px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#94a3b8]">
           Staff
         </div>
@@ -346,7 +346,7 @@ function WeekView({
           )
         })}
 
-        {/* â”€â”€ Unassigned row â”€â”€ */}
+        {/* ── Unassigned row ── */}
         {unassigned.length > 0 && (
           <>
             <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e6e8ec] bg-[#fffdf5] px-4 py-3">
@@ -376,7 +376,7 @@ function WeekView({
           </>
         )}
 
-        {/* â”€â”€ Staff rows â”€â”€ */}
+        {/* ── Staff rows ── */}
         {staff.map(person => (
           <Fragment key={person.id}>
             <div className="sticky left-0 z-10 flex items-center gap-2.5 border-b border-[#e6e8ec] bg-white px-4 py-2.5">
@@ -414,7 +414,7 @@ function WeekView({
   )
 }
 
-// â”€â”€â”€ Day View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Day View ─────────────────────────────────────────────────────────────────
 
 function DayView({
   dayShifts, staff, nowHour,
@@ -549,7 +549,7 @@ function DayView({
   )
 }
 
-// â”€â”€â”€ Staff View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Staff View ───────────────────────────────────────────────────────────────
 
 function StaffView({
   dayShifts, staff, nowHour,
@@ -648,7 +648,7 @@ function StaffView({
   )
 }
 
-// â”€â”€â”€ Filter Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Filter Bar ───────────────────────────────────────────────────────────────
 
 function FilterBar({
   view, setView, weekStart: ws, weekOffset, setWeekOffset,
@@ -761,7 +761,7 @@ function FilterBar({
   )
 }
 
-// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Component ────────────────────────────────────────────────────────────
 
 export default function RosterClient({
   shifts, staff, clients, supportTypes,
@@ -914,7 +914,7 @@ export default function RosterClient({
     router.refresh()
   }
 
-  // â”€â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div className="flex flex-col gap-4">

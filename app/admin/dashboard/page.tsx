@@ -361,7 +361,9 @@ export default async function AdminDashboard() {
           icon="calendar_month"
           label="Shifts today"
           value={shiftsToday}
-          sub={`of ${shiftsScheduledToday || shiftsToday} scheduled`}
+          sub={shiftsScheduledToday > 0 && shiftsScheduledToday !== shiftsToday
+            ? `of ${shiftsScheduledToday} scheduled`
+            : `${shiftsToday === 1 ? 'shift' : 'shifts'} on today's roster`}
           delta={(() => {
             const diff = (shiftsSpark[7] ?? 0) - (shiftsSpark[0] ?? 0)
             // Only prefix '+' when positive — negatives already render with a
@@ -408,7 +410,15 @@ export default async function AdminDashboard() {
           value={openIncidentsCount}
           sub={openIncidentsCount > 0 ? 'awaiting review' : 'all clear'}
           delta={openIncidentsCount > 0 ? 'review by deadline' : 'no open items'}
-          direction={openIncidentsCount === 0 ? 'up' : 'flat'}
+          // For incidents, "down" is good (fewer open items than yesterday)
+          // and "up" is bad. Comparing today's open count to the rolling
+          // average across the sparkline shows trend at a glance.
+          direction={(() => {
+            const avg = incidentsSpark.slice(0, -1).reduce((a, b) => a + b, 0) / Math.max(1, incidentsSpark.length - 1)
+            if (openIncidentsCount > avg + 0.5) return 'up'
+            if (openIncidentsCount < avg - 0.5) return 'down'
+            return 'flat'
+          })()}
           target={Math.max(0, 100 - Math.min(100, openIncidentsCount * 20))}
           context={openIncidentsCount === 0 ? 'All clear' : openIncidentsCount > 5 ? 'Above threshold' : 'Below threshold'}
           color="#D97706"
@@ -438,31 +448,62 @@ function percent(value: number, total: number) {
   return total ? Math.round((value / total) * 100) : 0
 }
 
+/**
+ * All KPI / sparkline date math runs in Australia/Perth time so the
+ * "today" / "this week" windows align with how VividCare staff actually
+ * operate. Vercel functions run in UTC; without these helpers, "today"
+ * would shift by 8h and the early/late hours of a Perth day would land
+ * in the wrong sparkline bucket.
+ */
+
+const PERTH_TZ = 'Australia/Perth'
+
+/** YYYY-MM-DD for `date`, expressed in Perth local time. */
+function perthYmd(date: Date): { y: number; m: number; d: number } {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: PERTH_TZ,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(date)
+  const y = Number(parts.find(p => p.type === 'year')?.value ?? 1970)
+  const m = Number(parts.find(p => p.type === 'month')?.value ?? 1)
+  const d = Number(parts.find(p => p.type === 'day')?.value ?? 1)
+  return { y, m, d }
+}
+
+/** Returns the Perth-local midnight (00:00 Perth) for the given moment, as a Date. */
 function dayStart(date: Date) {
-  const next = new Date(date)
-  next.setHours(0, 0, 0, 0)
-  return next
+  const { y, m, d } = perthYmd(date)
+  // Perth = UTC+8, no DST. 00:00 Perth = 16:00 UTC of the previous day.
+  return new Date(Date.UTC(y, m - 1, d, 0, 0, 0) - 8 * 3600 * 1000)
 }
 
+/** Returns 23:59:59.999 Perth time for the given moment, as a Date. */
 function dayEnd(date: Date) {
-  const next = new Date(date)
-  next.setHours(23, 59, 59, 999)
-  return next
+  const start = dayStart(date)
+  return new Date(start.getTime() + 24 * 3600 * 1000 - 1)
 }
 
+/** Add `days` Perth-days and return the resulting Perth-midnight. */
 function addDays(date: Date, days: number) {
-  const next = new Date(date)
-  next.setDate(next.getDate() + days)
-  return dayStart(next)
+  const start = dayStart(date)
+  return new Date(start.getTime() + days * 24 * 3600 * 1000)
 }
 
+/** Monday-of-week (Perth) for the given moment, as Perth-midnight. */
 function monday(date: Date) {
-  const next = dayStart(date)
-  const day = next.getDay()
-  next.setDate(next.getDate() + (day === 0 ? -6 : 1 - day))
-  return next
+  const start = dayStart(date)
+  // Get Perth weekday: format "narrow weekday" gives Mon=2, etc — easier
+  // path is to take Perth Y/M/D, construct that as UTC midnight, and use
+  // getUTCDay (0=Sun..6=Sat). Then offset.
+  const { y, m, d } = perthYmd(date)
+  const perthMidnightAsUtc = new Date(Date.UTC(y, m - 1, d))
+  const day = perthMidnightAsUtc.getUTCDay()
+  const offsetToMonday = day === 0 ? -6 : 1 - day
+  return new Date(start.getTime() + offsetToMonday * 24 * 3600 * 1000)
 }
 
+/** YYYY-MM-DD stamp in Perth, used as a chart bucket key. */
 function stamp(date: Date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  const { y, m, d } = perthYmd(date)
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
 }

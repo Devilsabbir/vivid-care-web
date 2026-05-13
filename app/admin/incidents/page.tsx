@@ -8,6 +8,7 @@ type IncidentRow = {
   severity: 'low' | 'medium' | 'high' | 'emergency'
   status: 'open' | 'investigating' | 'resolved'
   reported_at: string
+  shift_id: string | null
   staff: { full_name: string | null }[] | null
   clients: { full_name: string | null }[] | null
 }
@@ -16,7 +17,7 @@ export default async function IncidentsPage() {
   const supabase = await createClient()
   const { data, error: incidentsError } = await supabase
     .from('incidents')
-    .select('id, title, description, severity, status, reported_at, staff:profiles!staff_id(full_name), clients(full_name)')
+    .select('id, title, description, severity, status, reported_at, shift_id, staff:profiles!staff_id(full_name), clients(full_name)')
     .order('reported_at', { ascending: false })
   if (incidentsError) console.error('[incidents page] incidents fetch failed:', incidentsError)
 
@@ -86,9 +87,11 @@ export default async function IncidentsPage() {
                 <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">
                   {severityLabel(item.severity)}
                 </span>
-                <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">
-                  Shift-linked
-                </span>
+                {item.shift_id ? (
+                  <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">
+                    Shift-linked
+                  </span>
+                ) : null}
                 <span className="ml-auto inline-flex items-center gap-1 rounded-xl bg-[#0f172a] px-3 py-1.5 text-[11px] font-medium text-white">
                   Review
                   <span className="material-symbols-outlined text-[14px]">chevron_right</span>

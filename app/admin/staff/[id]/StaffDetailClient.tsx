@@ -56,7 +56,7 @@ export default function StaffDetailClient({
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
+  const [supabase] = useState(() => createClient())
 
   const expectedConfirmName = (member.full_name ?? '').trim()
   const deleteConfirmReady =
@@ -121,7 +121,10 @@ export default function StaffDetailClient({
     if (!file || !docType) return
     setUploading(true)
 
-    const path = `staff/${member.id}/${docType}/${Date.now()}_${file.name}`
+    // Sanitise the file name so spaces / non-ASCII chars don't break the
+    // storage path or signed-URL Content-Disposition header.
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 80)
+    const path = `staff/${member.id}/${docType}/${Date.now()}_${safeName}`
     const { error: uploadError } = await supabase.storage.from('documents').upload(path, file)
     if (uploadError) {
       setUploading(false)

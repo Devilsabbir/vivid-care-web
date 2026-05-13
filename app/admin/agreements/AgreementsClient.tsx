@@ -199,15 +199,12 @@ export default function AgreementsClient({
       window.open(pdfUrlOrPath, '_blank', 'noopener')
       return
     }
-    const bucket = pdfUrlOrPath.startsWith('agreements/')
-      ? 'documents' // legacy path inside documents bucket
-      : 'agreements'
-    const cleanPath = pdfUrlOrPath.startsWith('agreements/')
-      ? pdfUrlOrPath.slice('agreements/'.length)
-      : pdfUrlOrPath
+    // All admin-uploaded and post-sign generated PDFs now live in the
+    // `agreements` bucket. (Legacy rows that stored a full https URL
+    // are handled by the early return above.)
     const { data, error } = await supabase.storage
-      .from(bucket)
-      .createSignedUrl(cleanPath, 60 * 10) // 10 min for download
+      .from('agreements')
+      .createSignedUrl(pdfUrlOrPath, 60 * 10) // 10 min for download
     if (error || !data?.signedUrl) {
       setMessage(`Could not open PDF: ${error?.message ?? 'unknown error'}`)
       return

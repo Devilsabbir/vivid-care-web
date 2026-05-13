@@ -15,9 +15,12 @@ export default async function PublicSignPage({
     .from('agreements')
     .select('id, title, status, expires_on, signing_token, clients(full_name)')
     .eq('signing_token', params.token)
-    .single()
+    .maybeSingle()
 
-  if (error || !agreement) return notFound()
+  if (error) {
+    console.error('[sign/token page] agreements fetch failed:', error)
+  }
+  if (!agreement) return notFound()
 
   const participantName =
     (agreement.clients as any)?.full_name ?? 'Participant'

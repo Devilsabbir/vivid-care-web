@@ -1,6 +1,7 @@
 ﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
+import TimeGreeting from '@/components/admin/dashboard/TimeGreeting'
 import AlertBanner from '@/components/admin/dashboard/AlertBanner'
 import KpiCard from '@/components/admin/dashboard/KpiCard'
 import DashboardLiveMap from '@/components/admin/dashboard/DashboardLiveMap'
@@ -9,6 +10,21 @@ import ClientMixDonut from '@/components/admin/dashboard/ClientMixDonut'
 import ComplianceWidget, { type ExpiringDoc } from '@/components/admin/dashboard/ComplianceWidget'
 import ActivityFeed, { type ActivityRow } from '@/components/admin/dashboard/ActivityFeed'
 import TeamStatusPanel, { type TeamMember } from '@/components/admin/dashboard/TeamStatusPanel'
+
+/**
+ * Decimal hour-of-day in Australia/Perth (UTC+8, no DST) for a UTC date.
+ * Used by the roster timeline so a shift at 8:35 Perth lands at slot 8.58
+ * regardless of where this code runs.
+ */
+function perthDecimalHour(d: Date): number {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Perth',
+    hour: 'numeric', minute: 'numeric', hour12: false,
+  }).formatToParts(d)
+  const h = Number(parts.find(p => p.type === 'hour')?.value ?? 0)
+  const m = Number(parts.find(p => p.type === 'minute')?.value ?? 0)
+  return (h === 24 ? 0 : h) + m / 60
+}
 
 type Shift = {
   id: string
@@ -180,8 +196,10 @@ export default async function AdminDashboard() {
 
     const start = new Date(s.start_time)
     const end = new Date(s.end_time)
-    const startHour = start.getHours() + start.getMinutes() / 60
-    const endHour = end.getHours() + end.getMinutes() / 60
+    // Use Australia/Perth-local hours so blocks land in the correct slot
+    // regardless of where the server / admin's browser is.
+    const startHour = perthDecimalHour(start)
+    const endHour = perthDecimalHour(end)
     const clientRel = Array.isArray(s.clients) ? s.clients[0] : s.clients
     const clientName = clientRel?.full_name ?? 'Client'
     const isLive = s.status === 'active' || (s.clock_in_time && !s.clock_out_time)
@@ -195,7 +213,17 @@ export default async function AdminDashboard() {
           ? 'blue'
           : 'purple'
 
-    const fmt = (d: Date) => `${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, '0')}${d.getHours() < 12 ? 'a' : 'p'}`
+    // Format the time label in Perth time too so it matches the block position
+    const fmt = (d: Date) => {
+      const parts = new Intl.DateTimeFormat('en-AU', {
+        timeZone: 'Australia/Perth',
+        hour: 'numeric', minute: '2-digit', hour12: true,
+      }).formatToParts(d)
+      const h = parts.find(p => p.type === 'hour')?.value ?? ''
+      const m = parts.find(p => p.type === 'minute')?.value ?? '00'
+      const ap = (parts.find(p => p.type === 'dayPeriod')?.value ?? 'am').toLowerCase()
+      return `${h}:${m}${ap.charAt(0)}` // e.g. 8:35a / 4:30p
+    }
 
     timelineBlocks.push({
       id: s.id,
@@ -289,11 +317,9 @@ export default async function AdminDashboard() {
       <DashboardRealtimeRefresh />
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-[28px] font-semibold tracking-[-0.02em] text-[#0f172a] md:text-[32px]">
-            Good morning, {firstName}
-          </h1>
+          <TimeGreeting firstName={firstName} />
           <p className="mt-1 text-[13px] text-[#64748b]">
-            {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Perth' })}
             {' · '}
             {shiftsToday} shifts scheduled across {staffWorkingToday} support workers
           </p>

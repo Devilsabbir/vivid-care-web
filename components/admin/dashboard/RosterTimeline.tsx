@@ -6,7 +6,7 @@ export interface ShiftBlock {
   id: string
   staffId: string
   clientName: string
-  startHour: number // decimal hours 0-24 (e.g. 9.5 = 9:30)
+  startHour: number // decimal hours 0-24 (e.g. 9.5 = 9:30) — Australia/Perth local
   endHour: number
   color: 'purple' | 'green' | 'blue' | 'amber' | 'red' | 'outline'
   sub: string
@@ -26,6 +26,9 @@ interface RosterTimelineProps {
 }
 
 const HOURS = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+const HOUR_START = HOURS[0]
+const HOUR_END = HOURS[HOURS.length - 1] + 1 // 19
+const HOUR_SPAN = HOUR_END - HOUR_START      // 12
 
 const BLOCK_PALETTE: Record<ShiftBlock['color'], { bg: string; text: string; border: string }> = {
   purple:  { bg: '#F4ECF8', text: '#54206F', border: '#C9A6DE' },
@@ -49,31 +52,52 @@ function initials(name: string): string {
   return name.split(' ').filter(Boolean).slice(0, 2).map(p => p[0]?.toUpperCase() ?? '').join('')
 }
 
+/** Current decimal hour in Australia/Perth (UTC+8, no DST). */
+function perthDecimalHour(d: Date): number {
+  const fmt = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Perth',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  })
+  const parts = fmt.formatToParts(d)
+  const h = Number(parts.find(p => p.type === 'hour')?.value ?? 0)
+  const m = Number(parts.find(p => p.type === 'minute')?.value ?? 0)
+  // en-AU sometimes returns "24" for midnight — normalise.
+  return (h === 24 ? 0 : h) + m / 60
+}
+
+/** Date for the "Live roster · …" header, formatted in Perth. */
+function perthDateLabel(d: Date): string {
+  return d.toLocaleDateString('en-AU', {
+    timeZone: 'Australia/Perth',
+    weekday: 'long', day: 'numeric', month: 'short',
+  })
+}
+
 /**
- * Workers × 12-hour timeline grid.
- * Each row uses CSS Grid (1 staff col + 12 hour cols). Shift blocks overlay the
- * row with `gridColumn: start / span` based on shift start/end hours.
- * A vertical "NOW" line scrolls across the grid; tick re-renders every minute.
+ * Workers × 12-hour timeline grid (Australia/Perth time).
+ * The hour band lives in a track that fills the row to the right of the
+ * 180px worker column. Shift blocks and the NOW line use percentage-based
+ * left/width so a 15-minute shift is exactly 15 minutes wide.
  */
 export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
-  const [now, setNow] = useState(new Date())
+  const [now, setNow] = useState<Date>(() => new Date())
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60_000)
     return () => clearInterval(id)
   }, [])
 
-  const nowHour = now.getHours() + now.getMinutes() / 60
-  const lastHour = HOURS[HOURS.length - 1] + 1
-  const inRange = nowHour >= HOURS[0] && nowHour <= lastHour
-  // Position as percentage across the 12-hour band (which spans columns 2..13 of the grid).
-  const nowPct = ((nowHour - HOURS[0]) / HOURS.length) * 100
+  const nowHour = perthDecimalHour(now)
+  const nowInRange = nowHour >= HOUR_START && nowHour <= HOUR_END
+  const nowPct = ((nowHour - HOUR_START) / HOUR_SPAN) * 100
 
   return (
     <section className="overflow-hidden rounded-[16px] border border-[#e6e8ec] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
       <header className="flex flex-col items-start gap-3 border-b border-[#f0f1f3] px-5 py-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h3 className="text-[14px] font-semibold text-[#0f172a]">
-            Live roster · {now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}
+            Live roster · {perthDateLabel(now)}
           </h3>
           <p className="mt-1 text-[12px] text-[#64748b]">
             {staff.length} workers · {blocks.length} shifts · {blocks.filter(b => b.live).length} in progress
@@ -87,7 +111,7 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
       </header>
 
       <div className="relative overflow-x-auto">
-        {/* Hour header */}
+        {/* Hour header — 180px worker col + 12 equal hour cells */}
         <div
           className="sticky top-0 z-10 grid border-b border-[#f0f1f3] bg-white"
           style={{ gridTemplateColumns: '180px repeat(12, minmax(56px, 1fr))' }}
@@ -102,10 +126,10 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
           ))}
         </div>
 
-        {/* Body with rows */}
+        {/* Body */}
         <div className="relative">
-          {/* NOW line — positioned over the hour band (which starts at 180px) */}
-          {inRange && (
+          {/* NOW vertical line — sits in the same coordinate system as the blocks */}
+          {nowInRange && (
             <div
               className="pointer-events-none absolute top-0 bottom-0 z-20"
               style={{ left: `calc(180px + (100% - 180px) * ${nowPct} / 100)` }}
@@ -127,7 +151,7 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
                 <div
                   key={row.id}
                   className="relative grid border-b border-[#f0f1f3]"
-                  style={{ gridTemplateColumns: '180px repeat(12, minmax(56px, 1fr))', minHeight: 64 }}
+                  style={{ gridTemplateColumns: '180px 1fr', minHeight: 64 }}
                 >
                   {/* Worker label column */}
                   <div className="flex items-center gap-2.5 px-4 py-3">
@@ -143,46 +167,61 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
                     </div>
                   </div>
 
-                  {/* Hour gridlines */}
-                  {HOURS.map((_, hi) => (
-                    <div key={hi} className="border-l border-[#f0f1f3]" />
-                  ))}
+                  {/* Timeline track — single column, contains gridlines + absolute blocks */}
+                  <div className="relative h-full">
+                    {/* Hour gridlines — 12 equal cells */}
+                    <div
+                      className="absolute inset-0 grid"
+                      style={{ gridTemplateColumns: 'repeat(12, 1fr)' }}
+                    >
+                      {HOURS.map((_, hi) => (
+                        <div key={hi} className="border-l border-[#f0f1f3]" />
+                      ))}
+                    </div>
 
-                  {/* Shift blocks positioned via grid-column */}
-                  {rowBlocks.map(b => {
-                    const p = BLOCK_PALETTE[b.color]
-                    const clampedStart = Math.max(HOURS[0], Math.min(lastHour, b.startHour))
-                    const clampedEnd = Math.max(HOURS[0], Math.min(lastHour, b.endHour))
-                    const startCol = Math.floor(clampedStart - HOURS[0]) + 2 // +1 for 1-indexed grid, +1 for worker col
-                    const span = Math.max(1, Math.ceil(clampedEnd - clampedStart))
-                    return (
-                      <div
-                        key={b.id}
-                        className="my-2 mx-0.5 flex flex-col justify-center gap-0.5 overflow-hidden rounded-[8px] px-2 py-1.5"
-                        style={{
-                          gridColumn: `${startCol} / span ${span}`,
-                          backgroundColor: p.bg,
-                          border: `1px solid ${p.border}`,
-                        }}
-                      >
+                    {/* Shift blocks — absolute, minute-precise */}
+                    {rowBlocks.map(b => {
+                      const p = BLOCK_PALETTE[b.color]
+                      const clampedStart = Math.max(HOUR_START, Math.min(HOUR_END, b.startHour))
+                      const clampedEnd = Math.max(HOUR_START, Math.min(HOUR_END, b.endHour))
+                      const leftPct = ((clampedStart - HOUR_START) / HOUR_SPAN) * 100
+                      const widthPct = Math.max(
+                        // Visual floor: 1.5% of the band so a sub-15-minute block is still tappable/visible
+                        1.5,
+                        ((clampedEnd - clampedStart) / HOUR_SPAN) * 100,
+                      )
+                      return (
                         <div
-                          className="flex items-center gap-1.5 text-[11px] font-semibold leading-none"
-                          style={{ color: p.text }}
+                          key={b.id}
+                          className="absolute flex flex-col justify-center gap-0.5 overflow-hidden rounded-[8px] px-2 py-1.5"
+                          style={{
+                            top: 8,
+                            bottom: 8,
+                            left: `${leftPct}%`,
+                            width: `${widthPct}%`,
+                            backgroundColor: p.bg,
+                            border: `1px solid ${p.border}`,
+                          }}
                         >
-                          {b.live && (
-                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A] animate-pulse" />
-                          )}
-                          <span className="truncate">{b.clientName}</span>
+                          <div
+                            className="flex items-center gap-1.5 text-[11px] font-semibold leading-none"
+                            style={{ color: p.text }}
+                          >
+                            {b.live && (
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A] animate-pulse" />
+                            )}
+                            <span className="truncate">{b.clientName}</span>
+                          </div>
+                          <div
+                            className="truncate text-[10px] leading-tight"
+                            style={{ color: p.text, opacity: 0.75 }}
+                          >
+                            {b.sub}
+                          </div>
                         </div>
-                        <div
-                          className="truncate text-[10px] leading-tight"
-                          style={{ color: p.text, opacity: 0.75 }}
-                        >
-                          {b.sub}
-                        </div>
-                      </div>
-                    )
-                  })}
+                      )
+                    })}
+                  </div>
                 </div>
               )
             })

@@ -201,43 +201,91 @@ export default function StaffDetailClient({
                 <Field label="Role" value="Support worker" />
               </div>
 
-              {/* Hourly rate editor */}
-              <div className="mt-6 rounded-[18px] bg-[#fafbfc] p-4">
-                <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-                  <div className="flex-1">
-                    <label htmlFor="hourly-rate" className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
-                      Hourly rate (AUD)
-                    </label>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-sm font-medium text-[#64748b]">$</span>
-                      <input
-                        id="hourly-rate"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        value={hourlyRate}
-                        onChange={e => setHourlyRate(e.target.value)}
-                        className="w-32 rounded-xl border border-[#e6e8ec] bg-white px-3 py-2 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
-                      />
-                      <span className="text-sm text-[#94a3b8]">/ hr</span>
+              {/* Hourly rate — prominent current value + editor */}
+              {(() => {
+                const savedRate = typeof member.hourly_rate === 'number' ? member.hourly_rate : null
+                const hasRate = savedRate !== null
+                const editedRateNumber = parseFloat(hourlyRate)
+                const isUnsavedChange = hasRate
+                  ? !Number.isNaN(editedRateNumber) && Math.abs(editedRateNumber - (savedRate ?? 0)) > 0.0001
+                  : hourlyRate.trim().length > 0
+                return (
+                  <div className="mt-6 rounded-[18px] bg-[#fafbfc] p-4">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Current hourly rate</p>
+                          <div className="mt-1 flex items-baseline gap-1.5">
+                            {hasRate ? (
+                              <>
+                                <span className="font-headline text-[2.1rem] leading-none tracking-[-0.04em] text-[#0f172a]">
+                                  ${(savedRate ?? 0).toFixed(2)}
+                                </span>
+                                <span className="text-sm text-[#64748b]">/ hr</span>
+                              </>
+                            ) : (
+                              <span className="rounded-full bg-[#FEF3C7] px-3 py-1 text-[12px] font-semibold text-[#92400E]">
+                                Not set yet
+                              </span>
+                            )}
+                          </div>
+                          {hasRate && savedRate === 0 && (
+                            <p className="mt-1 text-[11px] text-[#94a3b8]">Staff member is currently unpaid.</p>
+                          )}
+                          {!hasRate && (
+                            <p className="mt-1 text-[11px] text-[#92400E]">Set a rate so the payments page can calculate amounts owed.</p>
+                          )}
+                        </div>
+                        {hasRate && (
+                          <span className="rounded-full bg-[#F1F9E1] px-2.5 py-1 text-[11px] font-semibold text-[#5E8D1F]">
+                            Active
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="border-t border-[#e6e8ec] pt-4">
+                        <label htmlFor="hourly-rate" className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+                          Change rate to
+                        </label>
+                        <div className="mt-2 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-[#64748b]">$</span>
+                              <input
+                                id="hourly-rate"
+                                type="number"
+                                min="0"
+                                step="0.5"
+                                value={hourlyRate}
+                                onChange={e => setHourlyRate(e.target.value)}
+                                className="w-32 rounded-xl border border-[#e6e8ec] bg-white px-3 py-2 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+                              />
+                              <span className="text-sm text-[#94a3b8]">/ hr</span>
+                              {isUnsavedChange && (
+                                <span className="rounded-full bg-[#FEF3C7] px-2 py-0.5 text-[10px] font-semibold text-[#92400E]">Unsaved</span>
+                              )}
+                            </div>
+                            <p className="mt-1 text-[11px] text-[#94a3b8]">Used by the payments page to calculate amounts owed from clocked hours.</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleSaveRate}
+                            disabled={savingRate || !isUnsavedChange}
+                            className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
+                          >
+                            {savingRate ? 'Saving…' : 'Save rate'}
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <p className="mt-1 text-[11px] text-[#94a3b8]">Used by the payments page to calculate amounts owed from clocked hours.</p>
+                    {rateMessage && (
+                      <p className={`mt-3 text-xs ${rateMessage.startsWith('Save failed') || rateMessage.startsWith('Enter') ? 'text-[#991b1b]' : 'text-[#54206F]'}`}>
+                        {rateMessage}
+                      </p>
+                    )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleSaveRate}
-                    disabled={savingRate}
-                    className="rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
-                  >
-                    {savingRate ? 'Saving…' : 'Save rate'}
-                  </button>
-                </div>
-                {rateMessage && (
-                  <p className={`mt-3 text-xs ${rateMessage.startsWith('Save failed') || rateMessage.startsWith('Enter') ? 'text-[#991b1b]' : 'text-[#54206F]'}`}>
-                    {rateMessage}
-                  </p>
-                )}
-              </div>
+                )
+              })()}
             </section>
 
             {/* Compliance summary */}

@@ -11,6 +11,8 @@ const ERROR_MESSAGES: Record<string, string> = {
     'The client portal is only available to NDIS participants. Please contact Vivid Care if you believe this is an error.',
   client_not_linked:
     'Your account is not linked to a client record. Please contact Vivid Care.',
+  staff_use_mobile_app:
+    'Staff workflows have moved to the VividCare mobile app. Please sign in there instead — ask your administrator if you need a download link.',
 }
 
 export default function LoginPage() {
@@ -59,6 +61,16 @@ function LoginPageInner() {
 
       const role = profile?.role
 
+      // Staff workflows have moved to the mobile app — bounce off the web
+      // login with a friendly message instead of forwarding to /staff/home
+      // (which no longer exists).
+      if (role === 'staff') {
+        await supabase.auth.signOut()
+        setError(ERROR_MESSAGES.staff_use_mobile_app)
+        setLoading(false)
+        return
+      }
+
       // Client portal access is restricted to NDIS clients only.
       if (role === 'client') {
         if (!profile?.client_id) {
@@ -82,7 +94,7 @@ function LoginPageInner() {
         }
       }
 
-      const dest = role === 'admin' ? '/admin/dashboard' : role === 'client' ? '/client/home' : '/staff/home'
+      const dest = role === 'admin' ? '/admin/dashboard' : '/client/home'
       router.push(dest)
       router.refresh()
     }

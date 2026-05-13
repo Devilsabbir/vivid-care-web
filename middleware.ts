@@ -68,10 +68,15 @@ export async function middleware(request: NextRequest) {
         if (clientRecord?.client_type !== 'ndis') return supabaseResponse
       }
 
+      // Staff role: web portal retired — keep them on /login so they see the
+      // "use the mobile app" message instead of trying to forward to a
+      // nonexistent /staff/home.
+      if (profile?.role === 'staff') return supabaseResponse
+
       const dest =
         profile?.role === 'admin' ? '/admin/dashboard' :
         profile?.role === 'client' ? '/client/home' :
-        '/staff/home'
+        '/login'
       return NextResponse.redirect(new URL(dest, request.url))
     }
     return supabaseResponse
@@ -108,6 +113,22 @@ export async function middleware(request: NextRequest) {
     return redirectResponse
   }
 
+  // The web staff portal has been retired — staff now use the mobile app.
+  // When a staff-role user lands anywhere on the web, sign them out and bounce
+  // to /login with an explanatory error code. signOut() clears cookies via the
+  // setAll callback above; carry them onto the redirect so the next request
+  // doesn't keep the stale session.
+  if (role === 'staff') {
+    await supabase.auth.signOut()
+    const redirectResponse = NextResponse.redirect(
+      new URL('/login?error=staff_use_mobile_app', request.url),
+    )
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return redirectResponse
+  }
+
   // For client-role users, look up client_type to enforce the NDIS-only portal rule.
   // Use whitelist semantics: only client_type === 'ndis' is allowed in.
   let clientIsNdis = false
@@ -136,27 +157,18 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Root redirect
+  // Root redirect — only admin and client roles reach here (staff was bounced above).
   if (pathname === '/') {
-    const dest =
-      role === 'admin' ? '/admin/dashboard' :
-      role === 'client' ? '/client/home' :
-      '/staff/home'
+    const dest = role === 'admin' ? '/admin/dashboard' : '/client/home'
     return NextResponse.redirect(new URL(dest, request.url))
   }
 
   // Role enforcement
   if (pathname.startsWith('/admin') && role !== 'admin') {
-    const dest = role === 'client' ? '/client/home' : '/staff/home'
-    return NextResponse.redirect(new URL(dest, request.url))
-  }
-  if (pathname.startsWith('/staff') && role !== 'staff') {
-    const dest = role === 'admin' ? '/admin/dashboard' : '/client/home'
-    return NextResponse.redirect(new URL(dest, request.url))
+    return NextResponse.redirect(new URL('/client/home', request.url))
   }
   if (pathname.startsWith('/client') && role !== 'client') {
-    const dest = role === 'admin' ? '/admin/dashboard' : '/staff/home'
-    return NextResponse.redirect(new URL(dest, request.url))
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
   }
 
   return supabaseResponse

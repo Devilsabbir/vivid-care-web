@@ -31,6 +31,7 @@ export interface ClientRecord {
   status?: string | null
   lat?: number | null
   lng?: number | null
+  address?: string | null
 }
 
 export function validateShift(
@@ -167,10 +168,16 @@ export function checkClientActive(client: ClientRecord): ValidationResult | null
 }
 
 export function checkClientAddressMapped(client: ClientRecord): ValidationResult | null {
-  if (!client.lat || !client.lng) {
+  // Only warn if the client has NO address at all. If an address exists but
+  // coordinates haven't been resolved yet, the geocoding lookup will fill
+  // them in — and the admin can hit "Refresh coordinates" on the client
+  // detail page if the auto-lookup failed. The roster create flow doesn't
+  // need to nag.
+  const hasAddress = typeof client.address === 'string' && client.address.trim().length > 0
+  if (!hasAddress) {
     return {
       type: 'warning',
-      message: 'No address coordinates set for this client. Their location won\'t appear on the live map.',
+      message: 'No address set for this client. Their location won\'t appear on the live map.',
       icon: 'pin_drop',
     }
   }

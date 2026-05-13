@@ -85,8 +85,44 @@ export default function ClientDetailClient({
   const [docType, setDocType] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [geocoding, setGeocoding] = useState(false)
+  const [geocodeMsg, setGeocodeMsg] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  async function handleRefreshCoords() {
+    if (!client.address || geocoding) return
+    setGeocoding(true)
+    setGeocodeMsg(null)
+    try {
+      const res = await fetch('/api/admin/geocode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: client.address }),
+      })
+      const payload = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setGeocodeMsg(payload.message ?? payload.error ?? 'Could not look up this address.')
+        setGeocoding(false)
+        return
+      }
+      const { error: updateError } = await supabase
+        .from('clients')
+        .update({ lat: payload.lat, lng: payload.lng })
+        .eq('id', client.id)
+      if (updateError) {
+        setGeocodeMsg('Saved location but database update failed: ' + updateError.message)
+        setGeocoding(false)
+        return
+      }
+      setGeocodeMsg(`Updated — ${payload.lat.toFixed(5)}, ${payload.lng.toFixed(5)}`)
+      setGeocoding(false)
+      router.refresh()
+    } catch (err: any) {
+      setGeocodeMsg(err?.message ?? 'Network error.')
+      setGeocoding(false)
+    }
+  }
 
   useEffect(() => {
     const urlTab = searchParams.get('tab') as Tab | null
@@ -199,8 +235,33 @@ export default function ClientDetailClient({
               </div>
               {client.address && (
                 <div className="mt-4 rounded-[18px] bg-[#fafbfc] p-4">
-                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Address</p>
-                  <p className="mt-2 text-sm font-medium text-[#0f172a]">{client.address}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Address</p>
+                      <p className="mt-2 text-sm font-medium text-[#0f172a]">{client.address}</p>
+                      <p className="mt-1 text-[11px] text-[#94a3b8]">
+                        {summary.addressMapped
+                          ? `Pinned at ${client.lat?.toFixed?.(5)}, ${client.lng?.toFixed?.(5)}`
+                          : 'Not pinned on the live map yet'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRefreshCoords}
+                      disabled={geocoding}
+                      className="inline-flex items-center gap-1.5 rounded-2xl border border-[#e6e8ec] bg-white px-3 py-2 text-[11px] font-semibold text-[#475569] disabled:opacity-60 hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+                    >
+                      <span className={`material-symbols-outlined text-[14px] ${geocoding ? 'animate-spin' : ''}`}>
+                        {geocoding ? 'progress_activity' : 'pin_drop'}
+                      </span>
+                      {geocoding ? 'Looking up…' : (summary.addressMapped ? 'Refresh coordinates' : 'Pin on map')}
+                    </button>
+                  </div>
+                  {geocodeMsg && (
+                    <p className={`mt-3 text-[11px] ${geocodeMsg.startsWith('Updated') ? 'text-[#166534]' : 'text-[#92400e]'}`}>
+                      {geocodeMsg}
+                    </p>
+                  )}
                 </div>
               )}
               {client.notes && (

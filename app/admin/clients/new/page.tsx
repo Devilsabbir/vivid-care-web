@@ -33,25 +33,65 @@ export default function NewClientPage() {
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [form, setForm] = useState<ClientForm>(INITIAL_FORM)
 
   function setField(field: keyof ClientForm, value: string) {
     setForm(current => ({ ...current, [field]: value }))
   }
 
+  /**
+   * Ask the server to geocode an address via /api/admin/geocode (Nominatim).
+   * Returns null on any failure so the caller can still save the client
+   * with empty coords.
+   */
+  async function geocode(address: string): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const res = await fetch('/api/admin/geocode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address }),
+      })
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}))
+        console.warn('[new client] geocode failed:', payload)
+        return null
+      }
+      const data = await res.json()
+      return { lat: data.lat, lng: data.lng }
+    } catch (err) {
+      console.warn('[new client] geocode error:', err)
+      return null
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setSaving(true)
     setError('')
+    setInfo('')
 
-    // Age is derived from date_of_birth on display; lat/lng are managed
-    // elsewhere (geocoding job / direct DB edit) so they aren't part of the
-    // admin-facing create form.
+    // 1. Geocode the address up-front (if provided). If it fails the client
+    //    still saves; admin can re-try from the detail page later.
+    let coords: { lat: number; lng: number } | null = null
+    if (form.address.trim()) {
+      setInfo('Looking up location…')
+      coords = await geocode(form.address.trim())
+    }
+
+    setInfo(coords
+      ? 'Saving client…'
+      : (form.address.trim()
+        ? 'Saving client (address could not be geocoded — you can retry later from the client page)…'
+        : 'Saving client…'))
+
     const { error: insertError } = await supabase.from('clients').insert({
       full_name: form.full_name,
       client_type: form.client_type,
       date_of_birth: form.date_of_birth || null,
       address: form.address || null,
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
       ndis_number: form.client_type === 'ndis' ? (form.ndis_number || null) : null,
       phone: form.phone || null,
       email: form.email || null,
@@ -61,6 +101,7 @@ export default function NewClientPage() {
 
     if (insertError) {
       setError(insertError.message)
+      setInfo('')
       setSaving(false)
       return
     }
@@ -146,6 +187,13 @@ export default function NewClientPage() {
             {error ? (
               <div className="rounded-2xl bg-[#fee2e2] px-4 py-3 text-sm text-[#991b1b]">
                 {error}
+              </div>
+            ) : null}
+
+            {info && !error ? (
+              <div className="flex items-center gap-2 rounded-2xl bg-[#F4ECF8] px-4 py-3 text-sm text-[#54206F]">
+                <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
+                {info}
               </div>
             ) : null}
 

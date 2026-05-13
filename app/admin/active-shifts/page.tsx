@@ -5,20 +5,37 @@ import ActiveShiftsClient from './ActiveShiftsClient'
 export default async function ActiveShiftsPage() {
   const supabase = await createClient()
 
+  // Show all currently-active shifts (regardless of start_time — they're clocked
+  // in NOW) plus scheduled shifts in a reasonable window (-7d running late, +14d
+  // upcoming). The old `>= now() - 24h` filter was hiding stale-but-still-active
+  // shifts and any roster older than yesterday.
+  const SEVEN_DAYS_AGO = new Date(Date.now() - 7 * 86400000).toISOString()
+  const FOURTEEN_DAYS_AHEAD = new Date(Date.now() + 14 * 86400000).toISOString()
+
   const [
-    { data: shifts, error: shiftsError },
+    { data: activeShifts, error: activeError },
+    { data: scheduledShifts, error: scheduledError },
     { data: staffLocations, error: locError },
   ] = await Promise.all([
     supabase
       .from('shifts')
       .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
-      .in('status', ['active', 'scheduled'])
-      .gte('start_time', new Date(Date.now() - 86400000).toISOString())
+      .eq('status', 'active')
+      .order('start_time', { ascending: true }),
+    supabase
+      .from('shifts')
+      .select('*, staff:profiles!staff_id(full_name, phone), clients(full_name, address, lat, lng)')
+      .eq('status', 'scheduled')
+      .gte('start_time', SEVEN_DAYS_AGO)
+      .lte('start_time', FOURTEEN_DAYS_AHEAD)
       .order('start_time', { ascending: true }),
     supabase
       .from('staff_locations')
       .select('staff_id, lat, lng, accuracy, updated_at, shift_id'),
   ])
+
+  const shifts = [...(activeShifts ?? []), ...(scheduledShifts ?? [])]
+  const shiftsError = activeError ?? scheduledError
   if (shiftsError) console.error('[active-shifts page] shifts fetch failed:', shiftsError)
   if (locError) console.error('[active-shifts page] staff_locations fetch failed:', locError)
 

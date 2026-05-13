@@ -70,6 +70,7 @@ export default function AgreementsClient({
     funding_type: 'ndia',
     payment_method: 'eft',
   })
+  const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [templateForm, setTemplateForm] = useState(EMPTY_TEMPLATE)
   const [createOpen, setCreateOpen] = useState(false)
   const [templateOpen, setTemplateOpen] = useState(false)
@@ -103,35 +104,115 @@ export default function AgreementsClient({
       setMessage('Please enter a description of supports.')
       return
     }
+    // Reject anything other than PDFs and >10MB so we don't bloat storage.
+    if (pdfFile) {
+      if (pdfFile.type !== 'application/pdf' && !pdfFile.name.toLowerCase().endsWith('.pdf')) {
+        setMessage('Attached file must be a PDF.')
+        return
+      }
+      if (pdfFile.size > 10 * 1024 * 1024) {
+        setMessage('Attached PDF must be 10MB or smaller.')
+        return
+      }
+    }
     setSaving('agreement')
     setMessage(null)
 
     const template = templateMap.get(createForm.template_id)
 
-    const { error } = await supabase.from('agreements').insert({
-      template_id: createForm.template_id || null,
-      target_type: createForm.target_type,
-      target_id: createForm.target_id,
-      title: createForm.title.trim() || template?.name || 'Agreement',
-      status: 'pending_signature',
-      expires_on: createForm.expires_on || null,
-      created_by: adminId,
-      advocate_name: createForm.advocate_name.trim() || null,
-      supports_description: createForm.supports_description.trim(),
-      funding_type: createForm.funding_type,
-      payment_method: createForm.payment_method,
-    })
+    // 1. Insert the agreement row first so we get an id to namespace storage by.
+    const { data: created, error: insertErr } = await supabase
+      .from('agreements')
+      .insert({
+        template_id: createForm.template_id || null,
+        target_type: createForm.target_type,
+        target_id: createForm.target_id,
+        title: createForm.title.trim() || template?.name || 'Agreement',
+        status: 'pending_signature',
+        expires_on: createForm.expires_on || null,
+        created_by: adminId,
+        advocate_name: createForm.advocate_name.trim() || null,
+        supports_description: createForm.supports_description.trim(),
+        funding_type: createForm.funding_type,
+        payment_method: createForm.payment_method,
+      })
+      .select('id')
+      .single()
 
-    setSaving(null)
-
-    if (error) {
-      setMessage(error.message)
+    if (insertErr || !created) {
+      setSaving(null)
+      setMessage(insertErr?.message ?? 'Failed to create agreement.')
       return
     }
 
+    // 2. If admin attached a PDF, upload it and patch pdf_url to the storage
+    //    path (mobile + signing pages call createSignedUrl on demand).
+    if (pdfFile) {
+      const safeName = pdfFile.name.replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 80)
+      const path = `client/${createForm.target_id}/${created.id}-${safeName}`
+      const { error: uploadErr } = await supabase.storage
+        .from('agreements')
+        .upload(path, pdfFile, {
+          contentType: pdfFile.type || 'application/pdf',
+          upsert: true,
+        })
+      if (uploadErr) {
+        setSaving(null)
+        setMessage(
+          `Agreement saved but PDF upload failed: ${uploadErr.message}. You can retry by editing the agreement.`,
+        )
+        return
+      }
+      const { error: patchErr } = await supabase
+        .from('agreements')
+        .update({ pdf_url: path })
+        .eq('id', created.id)
+      if (patchErr) {
+        setSaving(null)
+        setMessage(
+          `PDF uploaded but agreement row update failed: ${patchErr.message}.`,
+        )
+        return
+      }
+    }
+
+    setSaving(null)
     setCreateOpen(false)
-    setMessage('Agreement created.')
+    setPdfFile(null)
+    setMessage(
+      pdfFile
+        ? 'Agreement created and PDF attached. Notification sent to the client.'
+        : 'Agreement created. Notification sent to the client.',
+    )
     router.refresh()
+  }
+
+  /**
+   * Open a PDF in a new tab. pdf_url may be either:
+   *  - A full https URL (legacy: signed URL written by the post-sign generator)
+   *  - A storage path like `client/<client_id>/<agreement_id>-name.pdf`
+   *    (new: admin-uploaded PDF)
+   * Detect which and resolve a signed URL for the path case.
+   */
+  async function openPdf(pdfUrlOrPath: string) {
+    if (pdfUrlOrPath.startsWith('http://') || pdfUrlOrPath.startsWith('https://')) {
+      window.open(pdfUrlOrPath, '_blank', 'noopener')
+      return
+    }
+    const bucket = pdfUrlOrPath.startsWith('agreements/')
+      ? 'documents' // legacy path inside documents bucket
+      : 'agreements'
+    const cleanPath = pdfUrlOrPath.startsWith('agreements/')
+      ? pdfUrlOrPath.slice('agreements/'.length)
+      : pdfUrlOrPath
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(cleanPath, 60 * 10) // 10 min for download
+    if (error || !data?.signedUrl) {
+      setMessage(`Could not open PDF: ${error?.message ?? 'unknown error'}`)
+      return
+    }
+    window.open(data.signedUrl, '_blank', 'noopener')
   }
 
   async function handleCreateTemplate() {
@@ -266,14 +347,13 @@ export default function AgreementsClient({
                       </>
                     ) : null}
                     {agreement.pdf_url ? (
-                      <a
-                        href={agreement.pdf_url}
-                        target="_blank"
-                        rel="noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => openPdf(agreement.pdf_url!)}
                         className="rounded-2xl border border-[#dcd7cf] bg-white px-4 py-2 text-sm font-semibold text-[#0f172a]"
                       >
                         Download PDF
-                      </a>
+                      </button>
                     ) : null}
                   </div>
                 </div>
@@ -354,6 +434,28 @@ export default function AgreementsClient({
               ['cash', 'Cash'],
             ]}
           />
+          <div className="md:col-span-2">
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+              Attach signed PDF (optional)
+            </label>
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
+              className="mt-2 w-full rounded-2xl border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#64748b] outline-none file:mr-3 file:rounded-xl file:border-0 file:bg-[#0f172a] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white"
+            />
+            <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#64748b]">
+              <span className="material-symbols-outlined text-[14px] text-[#6B2C91]">info</span>
+              Upload the service agreement PDF. Max 10MB. The client will see this on their phone
+              along with a signature pad. If you skip this, only the text body is sent (legacy
+              flow).
+            </p>
+            {pdfFile && (
+              <p className="mt-1 text-[11px] font-medium text-[#54206F]">
+                Selected: {pdfFile.name} · {(pdfFile.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            )}
+          </div>
         </div>
         <div className="mt-5 flex gap-3">
           <button type="button" onClick={() => setCreateOpen(false)} className="flex-1 rounded-2xl bg-[#f7f8f9] px-4 py-3 text-sm font-semibold text-[#64748b]">Cancel</button>

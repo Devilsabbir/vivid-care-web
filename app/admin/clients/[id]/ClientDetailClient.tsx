@@ -12,6 +12,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import Tabs from '@/components/ui/Tabs'
 import DocumentCard from '@/components/compliance/DocumentCard'
 import StatusBadge from '@/components/ui/StatusBadge'
+import MobileAccessCard from '@/components/admin/clients/MobileAccessCard'
 
 // Mirrors the staff record's structured DOC_TYPES dropdown so admins file
 // client documents into known categories that the compliance hub can group.
@@ -68,12 +69,14 @@ export default function ClientDetailClient({
   shifts,
   incidents = [],
   agreements = [],
+  linkedUser = null,
 }: {
   client: any
   documents: any[]
   shifts: any[]
   incidents?: any[]
   agreements?: any[]
+  linkedUser?: { id: string; email: string | null; full_name: string | null } | null
 }) {
   const searchParams = useSearchParams()
   const isNdis = client.client_type !== 'standard'
@@ -314,6 +317,14 @@ export default function ClientDetailClient({
                 <p>{summary.addressMapped ? 'Address pin shown on live map.' : 'Add lat/lng so this client appears on the live map.'}</p>
               </div>
             </RailCard>
+
+            <MobileAccessCard
+              clientId={client.id}
+              clientFullName={client.full_name ?? 'this client'}
+              clientEmail={client.email ?? null}
+              isNdis={isNdis}
+              linkedUser={linkedUser}
+            />
 
             <div className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
               <div className="border-b border-[#f0ece5] px-4 py-3">

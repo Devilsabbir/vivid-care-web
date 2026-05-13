@@ -18,7 +18,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
     supabase.from('documents').select('*').eq('owner_id', params.id).eq('owner_type', 'client').order('created_at', { ascending: false }),
     supabase.from('shifts').select('*, staff:profiles!staff_id(full_name)').eq('client_id', params.id).order('start_time', { ascending: false }).limit(10),
     supabase.from('incidents').select('id, title, severity, status, reported_at').eq('client_id', params.id).order('reported_at', { ascending: false }).limit(10),
-    supabase.from('agreements').select('id, title, status, created_at').eq('client_id', params.id).order('created_at', { ascending: false }).limit(10),
+    supabase.from('agreements').select('id, title, status, created_at, signed_at, expires_on').eq('target_type', 'client').eq('target_id', params.id).order('created_at', { ascending: false }).limit(10),
     // Linked mobile-app auth user (if any) — at most one per client by data
     // shape, since profiles.client_id is set 1:1 by the invite flow.
     supabase.from('profiles').select('id, email, full_name').eq('role', 'client').eq('client_id', params.id).maybeSingle(),

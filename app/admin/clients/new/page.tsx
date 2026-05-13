@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import LiveMap, { type MapMarker } from '@/components/maps/LiveMap'
 
 type ClientForm = {
   full_name: string
@@ -35,9 +36,41 @@ export default function NewClientPage() {
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [form, setForm] = useState<ClientForm>(INITIAL_FORM)
+  // Live map preview state — coords resolved by geocoding the address on blur.
+  const [previewCoords, setPreviewCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [previewedAddress, setPreviewedAddress] = useState<string>('')
+  const [previewStatus, setPreviewStatus] = useState<'idle' | 'looking' | 'not_found'>('idle')
 
   function setField(field: keyof ClientForm, value: string) {
     setForm(current => ({ ...current, [field]: value }))
+    // Clear the map preview if the user starts editing the address again so a
+    // stale pin doesn't linger from a previously-resolved address.
+    if (field === 'address') {
+      if (previewedAddress && value.trim() !== previewedAddress) {
+        setPreviewCoords(null)
+        setPreviewStatus('idle')
+      }
+    }
+  }
+
+  async function handleAddressBlur() {
+    const address = form.address.trim()
+    if (!address) {
+      setPreviewCoords(null)
+      setPreviewStatus('idle')
+      return
+    }
+    if (address === previewedAddress) return // already resolved this exact string
+    setPreviewStatus('looking')
+    const result = await geocode(address)
+    setPreviewedAddress(address)
+    if (result) {
+      setPreviewCoords(result)
+      setPreviewStatus('idle')
+    } else {
+      setPreviewCoords(null)
+      setPreviewStatus('not_found')
+    }
   }
 
   /**
@@ -71,12 +104,17 @@ export default function NewClientPage() {
     setError('')
     setInfo('')
 
-    // 1. Geocode the address up-front (if provided). If it fails the client
-    //    still saves; admin can re-try from the detail page later.
+    // 1. Reuse the preview coords if they match the current address (avoids a
+    //    second geocode hit on submit). Otherwise geocode now.
     let coords: { lat: number; lng: number } | null = null
-    if (form.address.trim()) {
-      setInfo('Looking up location…')
-      coords = await geocode(form.address.trim())
+    const trimmedAddress = form.address.trim()
+    if (trimmedAddress) {
+      if (previewCoords && previewedAddress === trimmedAddress) {
+        coords = previewCoords
+      } else {
+        setInfo('Looking up location…')
+        coords = await geocode(trimmedAddress)
+      }
     }
 
     setInfo(coords
@@ -170,7 +208,56 @@ export default function NewClientPage() {
               <Field label="Email" value={form.email} onChange={value => setField('email', value)} type="email" placeholder="mary@email.com" />
             </div>
 
-            <Field label="Address" value={form.address} onChange={value => setField('address', value)} placeholder="Full street address" />
+            {/* Address with inline map preview — geocodes on blur via Nominatim. */}
+            <div>
+              <label htmlFor="client-address" className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+                Address
+              </label>
+              <input
+                id="client-address"
+                type="text"
+                value={form.address}
+                onChange={event => setField('address', event.target.value)}
+                onBlur={handleAddressBlur}
+                placeholder="Full street address (e.g. 12 Hay St, Perth WA 6000)"
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+              />
+
+              {previewStatus === 'looking' && (
+                <div className="mt-2 flex items-center gap-2 rounded-2xl bg-[#F4ECF8] px-3 py-2 text-[12px] text-[#54206F]">
+                  <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+                  Looking up location…
+                </div>
+              )}
+
+              {previewStatus === 'not_found' && (
+                <div className="mt-2 flex items-start gap-2 rounded-2xl bg-[#fef9c3] px-3 py-2 text-[12px] text-[#92400e]">
+                  <span className="material-symbols-outlined mt-0.5 text-[14px]">warning</span>
+                  <span>Couldn&apos;t find this address on the map. Try a more specific address (street number + suburb + state). You can still save the client.</span>
+                </div>
+              )}
+
+              {previewCoords && (
+                <div className="mt-3 overflow-hidden rounded-[18px] border border-[#e6e8ec]">
+                  <LiveMap
+                    markers={[{
+                      id: 'preview',
+                      lat: previewCoords.lat,
+                      lng: previewCoords.lng,
+                      type: 'client',
+                      label: form.full_name.trim() || 'New client',
+                      sublabel: form.address.trim(),
+                    } as MapMarker]}
+                    height="180px"
+                    zoom={16}
+                  />
+                  <p className="border-t border-[#e6e8ec] bg-[#fafbfc] px-3 py-2 text-[11px] text-[#64748b]">
+                    📍 Pinned at {previewCoords.lat.toFixed(5)}, {previewCoords.lng.toFixed(5)} — this is what the live shifts map will show.
+                  </p>
+                </div>
+              )}
+            </div>
+
             <Field label="Emergency contact" value={form.emergency_contact} onChange={value => setField('emergency_contact', value)} placeholder="Name and phone number" />
 
             <div>

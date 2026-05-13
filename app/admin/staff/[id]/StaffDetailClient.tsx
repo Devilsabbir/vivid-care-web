@@ -51,8 +51,41 @@ export default function StaffDetailClient({
   const [hourlyRate, setHourlyRate] = useState<string>(String(member.hourly_rate ?? 0))
   const [savingRate, setSavingRate] = useState(false)
   const [rateMessage, setRateMessage] = useState<string | null>(null)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  const expectedConfirmName = (member.full_name ?? '').trim()
+  const deleteConfirmReady =
+    expectedConfirmName.length > 0 &&
+    deleteConfirmText.trim().toLowerCase() === expectedConfirmName.toLowerCase()
+
+  async function handleDelete() {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      const res = await fetch('/api/admin/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: member.id }),
+      })
+      const payload = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        // Surface the friendly STAFF_HAS_UPCOMING_SHIFTS message verbatim
+        setDeleteError(payload.message ?? payload.error ?? 'Delete failed.')
+        setDeleting(false)
+        return
+      }
+      router.push('/admin/staff')
+    } catch (err: any) {
+      console.error('[StaffDetailClient] delete failed:', err)
+      setDeleteError(err?.message ?? 'Delete failed. Network error.')
+      setDeleting(false)
+    }
+  }
 
   async function handleSaveRate() {
     const parsed = parseFloat(hourlyRate)
@@ -263,6 +296,28 @@ export default function StaffDetailClient({
                 <p>{Number(totalHours.toFixed(1))} total hours have been logged across finished work.</p>
               </div>
             </RailCard>
+
+            {/* Danger zone — hard-delete staff member */}
+            <div className="overflow-hidden rounded-[24px] border border-[#fecaca] bg-white shadow-[0_12px_32px_rgba(26,26,24,0.04)]">
+              <div className="border-b border-[#fee2e2] bg-[#fef2f2] px-4 py-3">
+                <h3 className="text-sm font-semibold text-[#991b1b]">Danger zone</h3>
+              </div>
+              <div className="space-y-2 px-4 py-4">
+                <p className="text-[12px] leading-5 text-[#64748b]">
+                  Permanently delete this staff member, their auth login, documents,
+                  notifications, and live location. Historical shifts are kept but
+                  un-attributed.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setDeleteOpen(true)}
+                  className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#fee2e2] px-4 py-3 text-sm font-semibold text-[#991b1b] hover:bg-[#fecaca] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626]"
+                >
+                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                  Delete staff member
+                </button>
+              </div>
+            </div>
           </aside>
         </div>
       )}
@@ -400,6 +455,71 @@ export default function StaffDetailClient({
           ) : (
             <EmptyState icon="history" title="No activity yet" description="Staff activity timeline will populate as shifts are completed." />
           )}
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteOpen && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+          <div
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm"
+            onClick={() => !deleting && setDeleteOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="relative z-[81] w-full max-w-md rounded-[24px] bg-white p-6 shadow-[0_24px_64px_rgba(15,23,42,0.2)]">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#fee2e2]">
+                <span className="material-symbols-outlined text-[20px] text-[#991b1b]">delete_forever</span>
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-base font-semibold text-[#0f172a]">Delete staff member?</h3>
+                <p className="mt-1 text-[13px] leading-5 text-[#64748b]">
+                  This permanently removes <strong>{expectedConfirmName}</strong>, their login,
+                  documents, notifications and live location. Historical shifts will stay in your
+                  records as &quot;Unassigned&quot;. <strong>This cannot be undone.</strong>
+                </p>
+              </div>
+            </div>
+
+            <label className="mt-5 block">
+              <span className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">
+                Type the full name to confirm
+              </span>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={e => setDeleteConfirmText(e.target.value)}
+                placeholder={expectedConfirmName}
+                autoFocus
+                className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626]"
+              />
+            </label>
+
+            {deleteError && (
+              <p className="mt-3 rounded-2xl bg-[#fee2e2] px-3 py-2 text-[12px] text-[#991b1b]">
+                {deleteError}
+              </p>
+            )}
+
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => { setDeleteOpen(false); setDeleteConfirmText(''); setDeleteError(null) }}
+                disabled={deleting}
+                className="rounded-2xl border border-[#e6e8ec] bg-white px-4 py-2.5 text-sm font-medium text-[#475569] disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={!deleteConfirmReady || deleting}
+                className="rounded-2xl bg-[#dc2626] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+              >
+                {deleting ? 'Deleting…' : 'Delete permanently'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

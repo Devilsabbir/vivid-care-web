@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface LinkedUser {
@@ -360,6 +360,18 @@ export default function MobileAccessCard({
 /* ─── Subcomponents ──────────────────────────────────────────────────────── */
 
 function Modal({ children, onClose }: { children: React.ReactNode; onClose?: () => void }) {
+  // Escape closes the modal (unless `onClose` is intentionally omitted to
+  // signal "busy, don't let user dismiss").
+  useEffect(() => {
+    if (!onClose) return
+    const handler = onClose
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') handler()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div

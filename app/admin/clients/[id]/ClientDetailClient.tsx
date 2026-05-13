@@ -81,7 +81,14 @@ export default function ClientDetailClient({
   const searchParams = useSearchParams()
   const isNdis = client.client_type !== 'standard'
   const TAB_ITEMS = isNdis ? NDIS_TAB_ITEMS : BASE_TAB_ITEMS
-  const initialTab = (searchParams.get('tab') as Tab) || 'overview'
+  // Validate the tab param against what's actually available for this
+  // client type. e.g. ?tab=agreements on a non-NDIS client should fall
+  // back to overview, not render a blank panel.
+  const requestedTab = searchParams.get('tab') as Tab | null
+  const initialTab: Tab =
+    requestedTab && TAB_ITEMS.some(t => t.key === requestedTab)
+      ? requestedTab
+      : 'overview'
   const [tab, setTab] = useState<Tab>(initialTab)
   const [deleting, setDeleting] = useState(false)
   const [uploading, setUploading] = useState(false)

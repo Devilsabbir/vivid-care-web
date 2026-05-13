@@ -12,7 +12,6 @@ const NAV_GROUPS = [
       { href: '/admin/dashboard',        icon: 'dashboard',    label: 'Dashboard' },
       { href: '/admin/roster',           icon: 'calendar_month', label: 'Roster' },
       { href: '/admin/shifts',           icon: 'event_note',   label: 'Shifts' },
-      { href: '/admin/shift-history',    icon: 'history',      label: 'Shift history' },
       { href: '/admin/active-shifts',    icon: 'location_on',  label: 'Live shifts' },
     ],
   },

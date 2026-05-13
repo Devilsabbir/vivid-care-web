@@ -31,10 +31,12 @@ interface ClientOption {
 }
 
 export default function ShiftsListClient({
+  view = 'upcoming',
   shifts,
   staff,
   clients,
 }: {
+  view?: 'upcoming' | 'past'
   shifts: Shift[]
   staff: StaffOption[]
   clients: ClientOption[]
@@ -44,6 +46,19 @@ export default function ShiftsListClient({
   const [statusFilter, setStatusFilter] = useState('all')
   const [staffFilter, setStaffFilter] = useState('all')
   const [clientFilter, setClientFilter] = useState('all')
+
+  // Status options narrowed to whatever the current view contains
+  const STATUS_OPTIONS = view === 'past'
+    ? [
+        { value: 'all', label: 'All past' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+      ]
+    : [
+        { value: 'all', label: 'All upcoming' },
+        { value: 'scheduled', label: 'Scheduled' },
+        { value: 'active', label: 'Active' },
+      ]
 
   const filtered = useMemo(() => {
     return shifts.filter(shift => {
@@ -129,11 +144,9 @@ export default function ShiftsListClient({
           className="rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 text-sm text-[#64748b] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
           aria-label="Filter by status"
         >
-          <option value="all">All statuses</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
+          {STATUS_OPTIONS.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
         </select>
 
         <select

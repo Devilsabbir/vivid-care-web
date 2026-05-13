@@ -304,7 +304,7 @@ export default async function AdminDashboard() {
             This week
           </span>
           <Link
-            href="/admin/shift-history"
+            href="/admin/shifts?view=past"
             className="inline-flex items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-4 py-1.5 text-[12px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9]"
           >
             <span className="material-symbols-outlined text-[14px]" aria-hidden="true">history</span>

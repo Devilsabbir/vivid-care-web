@@ -237,7 +237,7 @@ export default function ActiveShiftsClient({
               <h3 className="text-sm font-semibold text-[#0f172a]">Scheduled watchlist</h3>
               <p className="text-xs text-[#64748b]">Upcoming visits that are ready for clock-in monitoring</p>
             </div>
-            <Link href="/admin/shift-history" className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b]">
+            <Link href="/admin/shifts?view=past" className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b]">
               View history
             </Link>
           </div>

@@ -37,8 +37,8 @@ export default function ShiftCard({ shift, href, compact }: ShiftCardProps) {
           )}
         </div>
         <p className="text-[12px] text-[#7d7a73]">
-          {dateStr} Â· {startStr} â€“ {endStr}
-          {shift.staff_name && ` Â· ${shift.staff_name}`}
+          {dateStr} · {startStr} – {endStr}
+          {shift.staff_name && ` · ${shift.staff_name}`}
         </p>
         {!compact && shift.location && (
           <p className="mt-0.5 text-[11px] text-[#94a3b8] truncate">{shift.location}</p>

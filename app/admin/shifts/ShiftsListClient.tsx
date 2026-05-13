@@ -85,7 +85,7 @@ export default function ShiftsListClient({
           <div>
             <p className="font-medium text-[#0f172a]">{start.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}</p>
             <p className="text-[11px] text-[#64748b]">
-              {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()} â€“ {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
+              {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()} – {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
             </p>
           </div>
         )
@@ -94,7 +94,7 @@ export default function ShiftsListClient({
     {
       key: 'client_name',
       label: 'Client',
-      render: (row) => <span className="font-medium text-[#0f172a]">{row.client_name ?? 'â€”'}</span>,
+      render: (row) => <span className="font-medium text-[#0f172a]">{row.client_name ?? '—'}</span>,
     },
     {
       key: 'staff_name',
@@ -104,7 +104,7 @@ export default function ShiftsListClient({
     {
       key: 'support_type',
       label: 'Support type',
-      render: (row) => row.support_type ?? 'â€”',
+      render: (row) => row.support_type ?? '—',
     },
     {
       key: 'clock',
@@ -112,7 +112,7 @@ export default function ShiftsListClient({
       render: (row) => {
         if (row.clock_in_time && row.clock_out_time) return <StatusBadge status="completed" label="Complete" />
         if (row.clock_in_time) return <StatusBadge status="in_progress" label="Clocked in" />
-        return <span className="text-[#94a3b8]">â€”</span>
+        return <span className="text-[#94a3b8]">—</span>
       },
     },
     {

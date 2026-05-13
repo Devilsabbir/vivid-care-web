@@ -29,7 +29,7 @@ export default function ClientShiftsClient({ shifts }: { shifts: Shift[] }) {
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Your care schedule</p>
         <h1 className="mt-1 font-headline text-2xl font-semibold tracking-[-0.04em] text-[#0f172a]">Visits</h1>
         <p className="mt-1 text-sm text-[#64748b]">
-          {upcoming.length} upcoming Â· {past.length} past
+          {upcoming.length} upcoming · {past.length} past
         </p>
       </div>
 
@@ -112,9 +112,9 @@ function ShiftCard({ shift }: { shift: Shift }) {
               </p>
               <p className="mt-0.5 text-xs text-[#64748b]">
                 {start.toLocaleDateString('en-AU', { weekday: 'short' })}
-                {' Â· '}
+                {' · '}
                 {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
-                {' â€“ '}
+                {' – '}
                 {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
               </p>
             </div>

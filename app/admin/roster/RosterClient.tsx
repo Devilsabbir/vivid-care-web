@@ -57,7 +57,7 @@ type NormalizedShift = {
   documentationStatus: string | null
   startHour: number   // e.g. 9.5 = 9:30 am
   endHour: number
-  weekDayIdx: number  // 0=Mon â€¦ 6=Sun
+  weekDayIdx: number  // 0=Mon … 6=Sun
 }
 
 type CreateShiftForm = {
@@ -123,7 +123,7 @@ function fmtWeekRange(start: Date): string {
   const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
   const s = start.toLocaleDateString('en-AU', opts)
   const e = end.toLocaleDateString('en-AU', { ...opts, year: 'numeric' })
-  return `${s} â€“ ${e}`
+  return `${s} – ${e}`
 }
 
 function fmtDate(d: Date): string {
@@ -224,7 +224,7 @@ function ShiftPill({
       {/* Time + live badge */}
       <div className="flex items-center gap-1" style={{ color: s.text, fontWeight: 600 }}>
         <span style={{ fontVariantNumeric: 'tabular-nums', fontSize: 10.5 }}>
-          {fmtHour(shift.startHour)}â€“{fmtHour(shift.endHour)}
+          {fmtHour(shift.startHour)}–{fmtHour(shift.endHour)}
         </span>
         {isActive && (
           <span className="ml-auto flex items-center gap-1 text-[9px] font-bold" style={{ color: '#6B2C91' }}>
@@ -295,7 +295,7 @@ function WeekView({
     <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 260px)' }}>
       {/*
         Single CSS grid spanning all rows.
-        All cells are direct grid children so column tracks are shared â€”
+        All cells are direct grid children so column tracks are shared —
         this guarantees pixel-perfect alignment regardless of scroll position.
         Header corner: sticky top-0 + left-0  (always visible)
         Header day cells: sticky top-0         (visible when scrolling down)
@@ -1040,7 +1040,7 @@ export default function RosterClient({
               <div>
                 <p className="font-medium text-[#0f172a]">No shifts this week</p>
                 <p className="mt-1 text-xs text-[#64748b]">
-                  {fmtWeekRange(weekStart)} Â· use the controls above to navigate
+                  {fmtWeekRange(weekStart)} · use the controls above to navigate
                 </p>
               </div>
               <button
@@ -1073,7 +1073,7 @@ export default function RosterClient({
                       {selectedShift.clientName}
                     </h4>
                     <p className="text-[12px] text-[#7d7a73]">
-                      {formatTime(selectedShift.start)} â€“ {formatTime(selectedShift.end)}
+                      {formatTime(selectedShift.start)} – {formatTime(selectedShift.end)}
                     </p>
                   </div>
                   <span className={statusBadgeCls(selectedShift.status)}>
@@ -1088,7 +1088,7 @@ export default function RosterClient({
                   </p>
                   <p className="text-[11px] text-[#7d7a73]">
                     {labelSupportType(selectedShift.supportTypeKey)}
-                    {' Â· '}
+                    {' · '}
                     {copyDocStatus(selectedShift.documentationStatus)}
                   </p>
                 </div>
@@ -1259,7 +1259,7 @@ export default function RosterClient({
                 <option value="">{clients.length === 0 ? 'No standard clients available' : 'Select client'}</option>
                 {clients.map(c => (
                   <option key={c.id} value={c.id}>
-                    {c.full_name ?? 'Unnamed client'}{c.address ? ` â€“ ${c.address}` : ''}
+                    {c.full_name ?? 'Unnamed client'}{c.address ? ` – ${c.address}` : ''}
                   </option>
                 ))}
               </select>
@@ -1280,7 +1280,7 @@ export default function RosterClient({
             <input
               value={form.title}
               onChange={e => setField(setForm, 'title', e.target.value)}
-              placeholder="Morning support, community accessâ€¦"
+              placeholder="Morning support, community access…"
               className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
             />
           </div>
@@ -1335,7 +1335,7 @@ export default function RosterClient({
               rows={3}
               value={form.notes}
               onChange={e => setField(setForm, 'notes', e.target.value)}
-              placeholder="Travel notes, medication handover, contact instructionsâ€¦"
+              placeholder="Travel notes, medication handover, contact instructions…"
               className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
             />
           </div>
@@ -1363,7 +1363,7 @@ export default function RosterClient({
               disabled={saving || hasValidationErrors}
               className="flex-1 rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
             >
-              {saving ? 'Saving shiftâ€¦' : 'Create shift'}
+              {saving ? 'Saving shift…' : 'Create shift'}
             </button>
           </div>
         </form>

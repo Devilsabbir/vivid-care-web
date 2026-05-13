@@ -59,7 +59,7 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
             <h4 className="text-sm font-semibold text-[#0f172a]">{doc.doc_type}</h4>
             <p className="text-[11px] text-[#64748b]">
               {doc.file_name ?? 'Document file'}
-              {showOwnerType && ownerType ? ` Â· ${ownerType}` : ''}
+              {showOwnerType && ownerType ? ` · ${ownerType}` : ''}
             </p>
             {errorMsg ? (
               <p className="mt-0.5 text-[11px] text-red-600">{errorMsg}</p>
@@ -72,10 +72,10 @@ export default function DocumentCard({ doc, showOwnerType, ownerType }: Document
             <button
               onClick={handleOpen}
               disabled={opening}
-              aria-label={opening ? 'Opening documentâ€¦' : 'Open document file'}
+              aria-label={opening ? 'Opening document…' : 'Open document file'}
               className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[11px] font-medium text-[#64748b] transition hover:bg-[#e6e8ec] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] disabled:opacity-60"
             >
-              {opening ? 'Openingâ€¦' : 'Open file'}
+              {opening ? 'Opening…' : 'Open file'}
             </button>
           ) : null}
         </div>

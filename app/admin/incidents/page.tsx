@@ -69,7 +69,7 @@ export default async function IncidentsPage() {
                 <div className="min-w-0">
                   <h3 className="text-sm font-semibold text-[#0f172a]">{item.title}</h3>
                   <p className="mt-1 text-[11px] text-[#64748b]">
-                    {formatIncidentDate(item.reported_at)} Â· {item.staffName}
+                    {formatIncidentDate(item.reported_at)} · {item.staffName}
                   </p>
                 </div>
                 <span className={statusClass(item.status)}>{statusLabel(item.status)}</span>
@@ -130,7 +130,7 @@ function SummaryCard({
 function formatIncidentDate(value: string) {
   const date = new Date(value)
   return date.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) +
-    ' Â· ' +
+    ' · ' +
     date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }
 

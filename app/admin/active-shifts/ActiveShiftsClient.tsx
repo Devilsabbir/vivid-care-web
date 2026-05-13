@@ -189,7 +189,7 @@ export default function ActiveShiftsClient({
         </aside>
       </section>
 
-      {/* Live location map â€” visible when any staff have a GPS position */}
+      {/* Live location map — visible when any staff have a GPS position */}
       {mapMarkers.length > 0 && (
         <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-5 shadow-[0_16px_40px_rgba(26,26,24,0.04)] md:p-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -252,7 +252,7 @@ export default function ActiveShiftsClient({
             <EmptyState
               icon="event_available"
               title="No scheduled shifts in the watch window"
-              copy="As new shifts approach their start time, theyâ€™ll appear here for live monitoring."
+              copy="As new shifts approach their start time, they’ll appear here for live monitoring."
             />
           )}
         </section>

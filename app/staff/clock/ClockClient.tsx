@@ -26,7 +26,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
   // The shift currently clocked in (not yet clocked out)
   const activeShift = shifts.find((s: any) => s.clock_in_time && !s.clock_out_time)
 
-  // Live location tracking â€” runs only while a shift is active
+  // Live location tracking — runs only while a shift is active
   const { stopTracking } = useLocationTracker({
     staffId,
     shiftId: activeShift?.id ?? null,
@@ -197,7 +197,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
         </div>
       ) : null}
 
-      {/* Location sharing disclosure â€” shown while a shift is active */}
+      {/* Location sharing disclosure — shown while a shift is active */}
       {activeShift && (
         <div className="flex items-center gap-2 rounded-2xl bg-[#F4ECF8] px-4 py-3 text-xs text-[#54206F]">
           <span className="material-symbols-outlined text-[16px]">location_on</span>
@@ -239,7 +239,7 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
               </div>
             ) : null}
 
-            {/* Mini map â€” shows client location pin */}
+            {/* Mini map — shows client location pin */}
             {shift.clients?.lat && shift.clients?.lng ? (() => {
               const clientMarkers: MapMarker[] = [{
                 id: `client-${shift.id}`,

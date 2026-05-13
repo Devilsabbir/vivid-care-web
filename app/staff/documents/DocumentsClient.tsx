@@ -53,7 +53,7 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       return
     }
 
-    // Store the storage path (not a public URL) â€” signed URLs are generated
+    // Store the storage path (not a public URL) — signed URLs are generated
     // on demand so the private bucket restriction is respected.
     const { error: dbErr } = await supabase.from('documents').insert({
       owner_id: staffId,
@@ -90,7 +90,7 @@ export default function DocumentsClient({ myDocs, clientDocs, clients, staffId }
       return
     }
 
-    // Store the storage path (not a public URL) â€” signed URLs are generated
+    // Store the storage path (not a public URL) — signed URLs are generated
     // on demand so the private bucket restriction is respected.
     const { error: dbErr } = await supabase.from('documents').insert({
       owner_id: selectedClient,
@@ -301,7 +301,7 @@ function DocOpenButton({ docId }: { docId: string }) {
     <button
       onClick={handleOpen}
       disabled={opening}
-      aria-label={opening ? 'Opening documentâ€¦' : 'Open document'}
+      aria-label={opening ? 'Opening document…' : 'Open document'}
       className="rounded-xl bg-[#f7f8f9] p-2 text-[#0f172a] transition hover:bg-[#e6e8ec] disabled:opacity-60"
     >
       <span className={`material-symbols-outlined text-[20px] ${opening ? 'animate-spin' : ''}`}>

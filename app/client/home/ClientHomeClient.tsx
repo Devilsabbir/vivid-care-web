@@ -61,7 +61,7 @@ export default function ClientHomeClient({
         </div>
       </section>
 
-      {/* Agreements callout â€” only when there are pending signatures */}
+      {/* Agreements callout — only when there are pending signatures */}
       {pendingAgreements > 0 ? (
         <Link
           href="/client/agreements"
@@ -152,7 +152,7 @@ function VisitCard({ shift }: { shift: Shift }) {
         </p>
         <p className="mt-0.5 text-xs text-[#64748b]">
           {start.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
-          {' '}â€“{' '}
+          {' '}–{' '}
           {end.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()}
         </p>
         {shift.support_type && (

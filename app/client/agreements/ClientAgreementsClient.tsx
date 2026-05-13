@@ -66,7 +66,7 @@ export default function ClientAgreementsClient({
               key={agreement.id}
               className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_12px_26px_rgba(23,23,22,0.04)]"
             >
-              {/* Header row â€” always visible */}
+              {/* Header row — always visible */}
               <button
                 type="button"
                 onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
@@ -94,7 +94,7 @@ export default function ClientAgreementsClient({
                       : agreement.status === 'pending_signature'
                         ? 'Awaiting your signature'
                         : `Created ${formatDate(agreement.created_at)}`}
-                    {agreement.expires_on ? ` Â· Expires ${formatDate(agreement.expires_on)}` : ''}
+                    {agreement.expires_on ? ` · Expires ${formatDate(agreement.expires_on)}` : ''}
                   </p>
                 </div>
 
@@ -106,7 +106,7 @@ export default function ClientAgreementsClient({
                 </span>
               </button>
 
-              {/* Action bar â€” shown when pending signature */}
+              {/* Action bar — shown when pending signature */}
               {agreement.status === 'pending_signature' && agreement.signing_token && !isExpanded && (
                 <div className="border-t border-[#f0f1f3] px-4 pb-4 pt-3">
                   <Link

@@ -13,6 +13,23 @@ import Tabs from '@/components/ui/Tabs'
 import DocumentCard from '@/components/compliance/DocumentCard'
 import StatusBadge from '@/components/ui/StatusBadge'
 
+// Mirrors the staff record's structured DOC_TYPES dropdown so admins file
+// client documents into known categories that the compliance hub can group.
+const CLIENT_DOC_TYPES = [
+  'Service Agreement',
+  'Care Plan',
+  'Behaviour Support Plan',
+  'Risk Assessment',
+  'Medical Information',
+  'Medication List',
+  'Consent Form',
+  'Emergency Contact Form',
+  'Goals and Outcomes',
+  'Funding / Budget Plan',
+  'NDIS Plan',
+  'Other',
+]
+
 /** Years between a DOB and today; null if DOB missing or invalid. */
 function calculateAge(dob: string | null | undefined): number | null {
   if (!dob) return null
@@ -285,20 +302,23 @@ export default function ClientDetailClient({
             <div className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
               <h3 className="text-sm font-semibold text-[#0f172a]">Upload client document</h3>
               <p className="mt-1 text-xs text-[#94a3b8]">Store agreements, support plans, and care records</p>
-              <form onSubmit={handleUpload} className="mt-5 grid gap-4">
+              <form onSubmit={handleUpload} className="mt-5 grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="client-doc-type" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Document type</label>
-                  <input id="client-doc-type" value={docType} onChange={e => setDocType(e.target.value)} required placeholder="Client agreement, care plan..." className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]" />
+                  <select id="client-doc-type" value={docType} onChange={e => setDocType(e.target.value)} required className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
+                    <option value="">Select document</option>
+                    {CLIENT_DOC_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                  </select>
                 </div>
                 <div>
                   <label htmlFor="client-expiry" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Expiry date</label>
                   <input id="client-expiry" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]" />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="client-file" className="block text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">File</label>
                   <input id="client-file" type="file" required onChange={e => setFile(e.target.files?.[0] ?? null)} className="mt-2 w-full rounded-2xl border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#64748b] outline-none" />
                 </div>
-                <div className="flex justify-end">
+                <div className="md:col-span-2 flex justify-end">
                   <button type="submit" disabled={uploading} className="rounded-2xl bg-[#0f172a] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2">
                     {uploading ? 'Uploading...' : 'Upload document'}
                   </button>

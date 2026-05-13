@@ -51,7 +51,7 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
   const formatDate = (d: Date) => d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })
 
   const state = getShiftState(shift)
-  const geoReady = Boolean(client?.lat && client?.lng)
+  const addressMapped = Boolean(client?.lat && client?.lng)
 
   return (
     <div className="space-y-4 pb-8">
@@ -68,15 +68,15 @@ export default function StaffShiftDetailClient({ shift, client, clockEvents }: S
       <div className="rounded-[24px] bg-[#0f172a] p-5 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
         <div className="flex items-center justify-between">
           <StatusBadge status={state.status as any} label={state.label} />
-          {geoReady ? (
+          {addressMapped ? (
             <span className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium text-[#6B2C91]">
-              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">location_on</span>
-              Geofence active
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">pin_drop</span>
+              Address mapped
             </span>
           ) : (
             <span className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium text-[#fef08a]">
-              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">location_off</span>
-              No geofence
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">map</span>
+              Address review
             </span>
           )}
         </div>

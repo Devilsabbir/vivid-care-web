@@ -12,7 +12,7 @@ type ClientCard = {
   phone: string | null
   shiftsThisWeek: number
   assignedStaff: number
-  hasGeofence: boolean
+  hasMappedAddress: boolean
 }
 
 export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
@@ -77,8 +77,8 @@ export default function ClientsTable({ clients }: { clients: ClientCard[] }) {
                 ) : (
                   <span className="rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]">Client</span>
                 )}
-                <span className={client.hasGeofence ? 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
-                  {client.hasGeofence ? 'Geofence ready' : 'Address review'}
+                <span className={client.hasMappedAddress ? 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]' : 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'}>
+                  {client.hasMappedAddress ? 'Address mapped' : 'Address review'}
                 </span>
               </div>
             </Link>

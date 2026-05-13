@@ -51,7 +51,7 @@ export default async function ClientsPage() {
       phone: client.phone,
       shiftsThisWeek: clientShifts.length,
       assignedStaff: new Set(clientShifts.map(shift => shift.staff_id)).size,
-      hasGeofence: Boolean(client.lat && client.lng),
+      hasMappedAddress: Boolean(client.lat && client.lng),
     }
   })
 

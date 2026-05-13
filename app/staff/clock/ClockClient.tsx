@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { isWithinGeofence, isWithinShiftWindow } from '@/lib/utils/distance'
+import { isWithinShiftWindow } from '@/lib/utils/distance'
 import { Badge } from '@/components/ui/Badge'
 import ErrorToast from '@/components/ui/ErrorToast'
 import { useErrorToast } from '@/lib/hooks/useErrorToast'
@@ -96,14 +96,6 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
         showError('You can only clock in within 15 minutes of your shift start time.')
         setLoading(null)
         return
-      }
-
-      if (shift.clients?.lat && shift.clients?.lng) {
-        if (!isWithinGeofence(lat, lng, shift.clients.lat, shift.clients.lng)) {
-          showError('You must be within 300m of the client location to clock in.')
-          setLoading(null)
-          return
-        }
       }
 
       const { error: shiftError } = await supabase.from('shifts').update({
@@ -240,14 +232,14 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
                   <div>
                     <p className="font-medium text-[#0f172a]">{shift.clients.address}</p>
                     <p className="mt-1 text-xs text-[#64748b]">
-                      Stay within 300 metres of the client location before attempting to clock in.
+                      Your GPS position is recorded on clock-in and clock-out so your coordinator can confirm attendance.
                     </p>
                   </div>
                 </div>
               </div>
             ) : null}
 
-            {/* Mini geofence map â€” shows client pin + 300m zone */}
+            {/* Mini map â€” shows client location pin */}
             {shift.clients?.lat && shift.clients?.lng ? (() => {
               const clientMarkers: MapMarker[] = [{
                 id: `client-${shift.id}`,
@@ -256,11 +248,10 @@ export default function ClockClient({ initialShifts, adminIds, staffId }: {
                 type: 'client',
                 label: shift.clients.full_name ?? 'Client',
                 sublabel: shift.clients.address ?? undefined,
-                geofenceRadius: 300,
               }]
               return (
                 <div className="mt-3 overflow-hidden rounded-[22px]">
-                  <LiveMap markers={clientMarkers} height="180px" showGeofences zoom={15} />
+                  <LiveMap markers={clientMarkers} height="180px" zoom={15} />
                 </div>
               )
             })() : null}

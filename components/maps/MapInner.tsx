@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef } from 'react'
 import L from 'leaflet'
-import { MapContainer, TileLayer, CircleMarker, Circle, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { MapMarker, LiveMapProps } from './LiveMap'
 
@@ -44,7 +44,6 @@ export default function MapInner({
   markers,
   height = '380px',
   className = '',
-  showGeofences = true,
   zoom = 13,
 }: LiveMapProps) {
   // Default centre: Perth, WA
@@ -85,21 +84,6 @@ export default function MapInner({
           const color = markerColor(marker)
           return (
             <Fragment key={marker.id}>
-              {/* Geofence ring for client markers */}
-              {showGeofences && marker.type === 'client' && marker.geofenceRadius && (
-                <Circle
-                  center={[marker.lat, marker.lng]}
-                  radius={marker.geofenceRadius}
-                  pathOptions={{
-                    color: '#6B2C91',
-                    fillColor: '#6B2C91',
-                    fillOpacity: 0.08,
-                    weight: 1.5,
-                    dashArray: '6 4',
-                  }}
-                />
-              )}
-
               {/* Dot marker */}
               <CircleMarker
                 center={[marker.lat, marker.lng]}

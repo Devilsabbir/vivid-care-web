@@ -122,7 +122,7 @@ function LoginPageInner() {
               />
               <FeatureCard
                 title="Mobile staff flow"
-                copy="Clock in with geofence checks, finish required documentation, and stay on top of todayâ€™s support work."
+                copy="Clock in, finish required documentation, and stay on top of todayâ€™s support work."
               />
               <FeatureCard
                 title="Client portal"

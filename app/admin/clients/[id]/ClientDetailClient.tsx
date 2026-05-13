@@ -119,7 +119,7 @@ export default function ClientDetailClient({
     documents: documents.length,
     shifts: shifts.length,
     assignedStaff: new Set(shifts.map((s: any) => s.staff_id).filter(Boolean)).size,
-    geoReady: Boolean(client.lat && client.lng),
+    addressMapped: Boolean(client.lat && client.lng),
     incidents: incidents.length,
     agreements: agreements.length,
   }), [client.lat, client.lng, documents.length, shifts, incidents.length, agreements.length])
@@ -131,7 +131,7 @@ export default function ClientDetailClient({
         <MetricCard label="Documents" value={summary.documents} sub="Client-facing records" />
         <MetricCard label="Assigned staff" value={summary.assignedStaff} sub="Across recent shifts" />
         <MetricCard label="Recent shifts" value={summary.shifts} sub="Latest support visits" />
-        <MetricCard label="Geofence" value={summary.geoReady ? 'Active' : 'N/A'} sub={summary.geoReady ? 'Configured' : 'Missing coordinates'} accent={!summary.geoReady} />
+        <MetricCard label="Address" value={summary.addressMapped ? 'Mapped' : 'Review'} sub={summary.addressMapped ? 'Pin shown on live map' : 'Missing coordinates'} accent={!summary.addressMapped} />
       </section>
 
       {/* Tabs */}
@@ -163,7 +163,7 @@ export default function ClientDetailClient({
                 <Field label="Phone" value={client.phone ?? 'Not recorded'} />
                 <Field label="Email" value={client.email ?? 'Not recorded'} />
                 <Field label="Emergency contact" value={client.emergency_contact ?? 'Not recorded'} />
-                <Field label="Geofence" value={summary.geoReady ? `${client.lat}, ${client.lng}` : 'Coordinates not configured'} />
+                <Field label="Map coordinates" value={summary.addressMapped ? `${client.lat}, ${client.lng}` : 'Coordinates not configured'} />
               </div>
               {client.address && (
                 <div className="mt-4 rounded-[18px] bg-[#fafbfc] p-4">
@@ -218,7 +218,7 @@ export default function ClientDetailClient({
               <div className="space-y-2 text-[12px] leading-6 text-[#64748b]">
                 <p>{summary.documents} document records stored.</p>
                 <p>{summary.shifts} recent rostered visits.</p>
-                <p>{summary.geoReady ? 'Geofence enforced for attendance.' : 'Add lat/lng to enable geofencing.'}</p>
+                <p>{summary.addressMapped ? 'Address pin shown on live map.' : 'Add lat/lng so this client appears on the live map.'}</p>
               </div>
             </RailCard>
 

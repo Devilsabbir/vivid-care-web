@@ -60,7 +60,7 @@ export default async function ClockPage() {
         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f8a80]">Attendance</p>
         <h1 className="mt-3 font-headline text-[1.85rem] font-semibold leading-none tracking-[-0.05em]">Clock in and out</h1>
         <p className="mt-3 text-sm leading-6 text-[#d1ccc3]">
-          Use this screen when you arrive or leave. GPS verification is required when a client geofence is configured.
+          Use this screen when you arrive or leave. Your GPS position is captured on clock-in and clock-out so your coordinator can see your location.
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-3">

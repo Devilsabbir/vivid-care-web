@@ -19,7 +19,7 @@ Vivid Care is a Next.js + Supabase platform for Australian disability and aged-c
 - "Client" — standard non-NDIS client; no signature collection required, no client portal access
 
 ## Key admin workflows you can help with
-- **Roster:** Drag-and-drop shift creation, conflict detection, geofence checks, bulk assignment
+- **Roster:** Drag-and-drop shift creation, conflict detection, address-mapping checks, bulk assignment
 - **Agreements:** Generate NDIS service agreements (NDIS clients only), share signing links, sign in-person, track expiry
 - **Compliance:** Track staff documents (passport, police check, CPR, etc.), expiry monitoring, upload renewals
 - **Incidents:** Review, investigate, resolve, severity escalation

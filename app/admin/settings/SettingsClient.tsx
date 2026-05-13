@@ -276,7 +276,6 @@ export default function SettingsClient({
             <Input label="Contact name (authorised signatory)" value={settingsForm.contact_name ?? ''} onChange={value => setSettingsForm(current => ({ ...current, contact_name: value }))} />
             <Input label="Website" value={settingsForm.website ?? ''} onChange={value => setSettingsForm(current => ({ ...current, website: value }))} />
             <Input label="Timezone" value={settingsForm.timezone} onChange={value => setSettingsForm(current => ({ ...current, timezone: value }))} />
-            <Input label="Geofence radius (m)" type="number" value={String(settingsForm.geofence_radius_meters)} onChange={value => setSettingsForm(current => ({ ...current, geofence_radius_meters: Number(value) }))} />
             <Input label="Clock-in window (min)" type="number" value={String(settingsForm.clock_in_window_minutes)} onChange={value => setSettingsForm(current => ({ ...current, clock_in_window_minutes: Number(value) }))} />
             <Input label="Pay period" value={settingsForm.pay_period} onChange={value => setSettingsForm(current => ({ ...current, pay_period: value }))} />
             <Input label="Warning days" value={settingsForm.doc_warning_days} onChange={value => setSettingsForm(current => ({ ...current, doc_warning_days: value }))} />

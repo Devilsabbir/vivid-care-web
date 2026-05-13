@@ -70,10 +70,10 @@ export function validateShift(
     })
   }
 
-  // Check geofence
+  // Check client address mapping
   if (client) {
-    const geoResult = checkGeofenceConfigured(client)
-    if (geoResult) results.push(geoResult)
+    const addressResult = checkClientAddressMapped(client)
+    if (addressResult) results.push(addressResult)
   }
 
   return results
@@ -166,12 +166,12 @@ export function checkClientActive(client: ClientRecord): ValidationResult | null
   return null
 }
 
-export function checkGeofenceConfigured(client: ClientRecord): ValidationResult | null {
+export function checkClientAddressMapped(client: ClientRecord): ValidationResult | null {
   if (!client.lat || !client.lng) {
     return {
       type: 'warning',
-      message: 'No location set for this client. Geofence validation won\'t apply.',
-      icon: 'location_off',
+      message: 'No address coordinates set for this client. Their location won\'t appear on the live map.',
+      icon: 'pin_drop',
     }
   }
   return null

@@ -39,7 +39,7 @@ type NormalizedShift = {
   clientAddress: string | null
   clientLat: number | null
   clientLng: number | null
-  hasGeofence: boolean
+  hasMappedAddress: boolean
 }
 
 type StaffLocation = {
@@ -114,7 +114,7 @@ export default function ActiveShiftsClient({
         clientAddress: client?.address ?? null,
         clientLat: client?.lat ?? null,
         clientLng: client?.lng ?? null,
-        hasGeofence: Boolean(client?.lat && client?.lng),
+        hasMappedAddress: Boolean(client?.lat && client?.lng),
       }
     })
   }, [shifts])
@@ -135,7 +135,6 @@ export default function ActiveShiftsClient({
           type: 'client',
           label: shift.clientName,
           sublabel: shift.clientAddress ?? undefined,
-          geofenceRadius: 300,
         })
       }
     })
@@ -160,7 +159,7 @@ export default function ActiveShiftsClient({
   const active = normalizedShifts.filter(shift => shift.status === 'active')
   const scheduled = normalizedShifts.filter(shift => shift.status === 'scheduled')
   const monitored = normalizedShifts.length
-  const geoReady = normalizedShifts.filter(shift => shift.hasGeofence).length
+  const mapped = normalizedShifts.filter(shift => shift.hasMappedAddress).length
   const avgProgress = active.length
     ? Math.round(active.reduce((total, shift) => total + shiftProgress(shift), 0) / active.length)
     : 0
@@ -169,7 +168,7 @@ export default function ActiveShiftsClient({
     <div className="flex flex-col gap-6">
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_320px]">
         <StatCard label="Active now" value={active.length} sub="Shifts currently in progress" />
-        <StatCard label="Scheduled next" value={scheduled.length} sub={`${geoReady}/${monitored} shifts have geofence coordinates`} accent />
+        <StatCard label="Scheduled next" value={scheduled.length} sub={`${mapped}/${monitored} shifts have client addresses mapped`} accent />
         <aside className="relative overflow-hidden rounded-[24px] bg-[#0f172a] p-6 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
           <div className="absolute right-[-24px] top-[-24px] h-36 w-36 rounded-full bg-white/5" />
           <div className="relative flex h-full flex-col justify-between gap-8">
@@ -204,9 +203,6 @@ export default function ActiveShiftsClient({
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded-full bg-[#00AAEF]" /> Client
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full border-2 border-[#6B2C91]/30 bg-transparent" /> Geofence
               </span>
             </div>
           </div>
@@ -266,7 +262,7 @@ export default function ActiveShiftsClient({
             title="What this board shows"
             items={[
               'Active shifts refresh in realtime when attendance state changes.',
-              'Geofence readiness flags whether the client location is configured.',
+              'Client locations are shown on the map for visual proximity checks.',
               'Use the roster planner to reassign or inspect the full weekly schedule.',
             ]}
           />
@@ -276,7 +272,7 @@ export default function ActiveShiftsClient({
             items={[
               `${active.length} currently active`,
               `${scheduled.length} queued for later today`,
-              `${monitored - geoReady} shifts missing geofence coordinates`,
+              `${monitored - mapped} shifts missing client address coordinates`,
             ]}
           />
         </aside>
@@ -331,8 +327,8 @@ function LiveShiftCard({ shift }: { shift: NormalizedShift }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-[11px]">
-          <span className={pillClass(shift.hasGeofence ? 'green' : 'amber')}>
-            {shift.hasGeofence ? 'Geofence ready' : 'Geofence missing'}
+          <span className={pillClass(shift.hasMappedAddress ? 'green' : 'amber')}>
+            {shift.hasMappedAddress ? 'Address mapped' : 'Address review'}
           </span>
           {shift.clockInTime ? (
             <span className="rounded-full bg-[#f7f8f9] px-3 py-1.5 text-[#64748b]">
@@ -365,7 +361,7 @@ function ScheduledShiftCard({ shift }: { shift: NormalizedShift }) {
           {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
         </p>
         <p className="mt-1 text-[11px] text-[#9a978f]">
-          {shift.clientAddress ?? 'Address pending'}{shift.hasGeofence ? ' / geo-ready' : ' / geo-missing'}
+          {shift.clientAddress ?? 'Address pending'}{shift.hasMappedAddress ? ' / mapped' : ' / address review'}
         </p>
       </div>
     </Link>

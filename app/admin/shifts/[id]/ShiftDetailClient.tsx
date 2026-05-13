@@ -132,7 +132,7 @@ export default function ShiftDetailClient({
   const hours = Math.floor(durationMinutes / 60)
   const mins = durationMinutes % 60
 
-  const geoReady = Boolean(client?.lat && client?.lng)
+  const addressMapped = Boolean(client?.lat && client?.lng)
 
   const isEditable = shift.status === 'scheduled' || shift.status === 'active'
   const isCancellable = shift.status === 'scheduled' || shift.status === 'active'
@@ -329,7 +329,7 @@ export default function ShiftDetailClient({
             value={actualStart ? `${formatTime(actualStart)} – ${actualEnd ? formatTime(actualEnd) : 'ongoing'}` : '—'}
             sub={actualStart ? 'Clock recorded' : 'Not yet clocked'}
           />
-          <MetricCard label="Geofence" value={geoReady ? 'Active' : 'N/A'} sub={geoReady ? `${client.lat}, ${client.lng}` : 'No coordinates'} accent={!geoReady} />
+          <MetricCard label="Address" value={addressMapped ? 'Mapped' : 'Review'} sub={addressMapped ? `${client.lat}, ${client.lng}` : 'No coordinates'} accent={!addressMapped} />
           <MetricCard label="Status" value={shift.status} sub="Current workflow state" />
         </div>
 
@@ -370,7 +370,6 @@ export default function ShiftDetailClient({
                   type: 'client',
                   label: client.full_name ?? 'Client',
                   sublabel: client.address ?? undefined,
-                  geofenceRadius: 300,
                 })
               }
 
@@ -421,7 +420,7 @@ export default function ShiftDetailClient({
                       {liveLocation && <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#6B2C91]" />Live</span>}
                     </div>
                     <div className="mt-3 overflow-hidden rounded-[16px]">
-                      <LiveMap markers={locationMarkers} height="220px" showGeofences />
+                      <LiveMap markers={locationMarkers} height="220px" />
                     </div>
                   </div>
                 </Card>
@@ -525,22 +524,21 @@ export default function ShiftDetailClient({
               )}
             </RailCard>
 
-            {/* Geofence status */}
-            <RailCard title="Geofence">
+            {/* Address mapping status */}
+            <RailCard title="Client address">
               <div className="space-y-2 text-xs text-[#64748b]">
-                {geoReady ? (
+                {addressMapped ? (
                   <>
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[16px] text-[#166534]" aria-hidden="true">check_circle</span>
-                      Geofence configured
+                      <span className="material-symbols-outlined text-[16px] text-[#166534]" aria-hidden="true">pin_drop</span>
+                      Address mapped on live view
                     </p>
-                    <p>Radius: 300m (default)</p>
                     <p>Coordinates: {client.lat}, {client.lng}</p>
                   </>
                 ) : (
                   <p className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-[16px] text-[#92400e]" aria-hidden="true">warning</span>
-                    No geofence — client coordinates missing
+                    Address review — client coordinates missing
                   </p>
                 )}
               </div>

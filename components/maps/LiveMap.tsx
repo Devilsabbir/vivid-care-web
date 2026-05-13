@@ -10,7 +10,6 @@ export interface MapMarker {
   label: string
   sublabel?: string
   status?: 'active' | 'scheduled' | 'completed'
-  geofenceRadius?: number
   updatedAt?: string
 }
 
@@ -18,7 +17,6 @@ export interface LiveMapProps {
   markers: MapMarker[]
   height?: string
   className?: string
-  showGeofences?: boolean
   zoom?: number
 }
 

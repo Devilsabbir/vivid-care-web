@@ -97,9 +97,19 @@ function addDays(d: Date, n: number): Date {
   return r
 }
 
+/**
+ * Hours-of-day in Australia/Perth (UTC+8, no DST) for a UTC ISO timestamp.
+ * Used by the roster grid so shift positions + NOW line are correct for
+ * Perth ops regardless of where the admin browses from.
+ */
 function toHours(iso: string): number {
-  const d = new Date(iso)
-  return d.getHours() + d.getMinutes() / 60
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Perth',
+    hour: 'numeric', minute: 'numeric', hour12: false,
+  }).formatToParts(new Date(iso))
+  const h = Number(parts.find(p => p.type === 'hour')?.value ?? 0)
+  const m = Number(parts.find(p => p.type === 'minute')?.value ?? 0)
+  return (h === 24 ? 0 : h) + m / 60
 }
 
 function weekDayIdx(iso: string, weekStart: Date): number {
@@ -720,7 +730,7 @@ function FilterBar({
                 onClick={() => setSelectedDay(d)}
                 className={`h-7 rounded-[9px] px-2.5 text-[11px] font-medium transition-all ${
                   isSelected
-                    ? 'bg-[#0f172a] text-[#6B2C91] shadow-sm'
+                    ? 'bg-[#0f172a] text-white shadow-sm'
                     : 'text-[#64748b] hover:text-[#0f172a]'
                 }`}
               >

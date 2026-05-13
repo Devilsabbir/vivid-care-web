@@ -362,7 +362,13 @@ export default async function AdminDashboard() {
           label="Shifts today"
           value={shiftsToday}
           sub={`of ${shiftsScheduledToday || shiftsToday} scheduled`}
-          delta={`+${shiftsSpark[7] - (shiftsSpark[0] ?? 0)} vs 7 days ago`}
+          delta={(() => {
+            const diff = (shiftsSpark[7] ?? 0) - (shiftsSpark[0] ?? 0)
+            // Only prefix '+' when positive — negatives already render with a
+            // leading minus from String(diff), so '+-3' was the visible bug.
+            const sign = diff > 0 ? '+' : ''
+            return `${sign}${diff} vs 7 days ago`
+          })()}
           direction={shiftsSpark[7] >= (shiftsSpark[0] ?? 0) ? 'up' : 'down'}
           target={percent(completed, planned || 1)}
           context={percent(completed, planned || 1) >= 80 ? 'On target' : 'Below target'}

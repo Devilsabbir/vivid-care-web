@@ -248,7 +248,7 @@ export default function AgreementsClient({
                         <button
                           type="button"
                           onClick={() => router.push(`/sign-inperson/${agreement.id}`)}
-                          className="rounded-2xl bg-[#6B2C91] px-4 py-2 text-sm font-semibold text-[#0f172a]"
+                          className="rounded-2xl bg-[#6B2C91] px-4 py-2 text-sm font-semibold text-white hover:bg-[#54206F]"
                         >
                           Sign in person
                         </button>

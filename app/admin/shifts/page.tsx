@@ -97,7 +97,7 @@ export default async function ShiftsPage({
       </header>
 
       {view === 'past' && (
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <SummaryCard label="Historical shifts" value={normalizedShifts.length} />
           <SummaryCard label="Completed" value={completedCount} accent />
           <SummaryCard label="Cancelled" value={cancelledCount} danger />

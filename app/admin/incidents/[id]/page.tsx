@@ -2,6 +2,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import IncidentStatusUpdate from './IncidentStatusUpdate'
+import IncidentChat from './IncidentChat'
 
 type IncidentDetail = {
   id: string
@@ -17,6 +18,7 @@ type IncidentDetail = {
 
 export default async function IncidentDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data, error: incidentError } = await supabase
     .from('incidents')
@@ -92,6 +94,15 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
               {incident.description ?? 'No additional narrative was provided in this incident report.'}
             </p>
           </section>
+
+          {/* Real-time chat with the reporter */}
+          {user && (
+            <IncidentChat
+              incidentId={incident.id}
+              adminId={user.id}
+              reporterName={reporter}
+            />
+          )}
 
           <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
             <h2 className="text-lg font-semibold text-[#0f172a]">Response checklist</h2>

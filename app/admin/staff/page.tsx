@@ -95,37 +95,42 @@ export default async function StaffPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-            <span className="font-headline">Staff</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
-              <span className="material-symbols-outlined text-[18px]">badge</span>
-              operations
-            </span>
-          </div>
-          <p className="text-sm text-[#64748b]">Roster visibility, document readiness, and live workforce health in one view</p>
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1
+            className="m-0 text-[28px] font-bold leading-[1.15] text-[#1A1320]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            Staff
+          </h1>
+          <p className="mt-1.5 text-[14px] text-[#6B6371]">
+            Roster visibility, document readiness, and live workforce health in one view.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-[#f7f8f9] px-3 py-2 text-xs font-medium text-[#64748b]">
+          <span className="inline-flex h-[34px] items-center rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548]">
             {summary.activeThisWeek} active this week
           </span>
           <Link
             href="/admin/staff/new"
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
           >
-            <span className="material-symbols-outlined text-[18px]">person_add</span>
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">person_add</span>
             Add staff
           </Link>
         </div>
       </header>
 
-      <nav className="flex flex-wrap gap-2 rounded-full bg-[#f0f1f3] p-1.5 text-xs font-medium">
-        <span className="rounded-full bg-[#0f172a] px-4 py-2 text-white">All staff</span>
-        <span className="rounded-full px-4 py-2 text-[#64748b]">Active</span>
-        <span className="rounded-full px-4 py-2 text-[#64748b]">Inactive</span>
-        <span className="rounded-full px-4 py-2 text-[#64748b]">Expiring docs</span>
+      {/* Segmented filter tabs — matches the design's .adm-tabs treatment.
+          Currently visual only; wiring filters is future work. */}
+      <nav className="inline-flex w-fit gap-[2px] rounded-[10px] bg-[#F1EEF4] p-[3px]">
+        <span className="rounded-[8px] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1A1320] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+          All staff
+        </span>
+        <span className="rounded-[8px] px-3 py-1.5 text-[12.5px] font-medium text-[#3F3548]">Active</span>
+        <span className="rounded-[8px] px-3 py-1.5 text-[12.5px] font-medium text-[#3F3548]">Inactive</span>
+        <span className="rounded-[8px] px-3 py-1.5 text-[12.5px] font-medium text-[#3F3548]">Expiring docs</span>
       </nav>
 
       <section className="grid gap-4 md:grid-cols-3">
@@ -152,11 +157,30 @@ function SummaryCard({
   tone: 'white' | 'accent'
   danger?: boolean
 }) {
+  const isAccent = tone === 'accent'
+  const valueColor = isAccent ? '#FFFFFF' : danger ? '#D97706' : '#1A1320'
+  const labelColor = isAccent ? 'rgba(255,255,255,0.7)' : danger ? '#5C3A06' : '#6B6371'
+  const subColor = isAccent ? 'rgba(255,255,255,0.7)' : '#97909C'
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <p className={`text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : danger ? 'text-[#ca8a04]' : 'text-[#64748b]'}`}>{label}</p>
-      <p className={`mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] ${danger ? 'text-[#ca8a04]' : 'text-[#0f172a]'}`}>{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
+    <div
+      className="rounded-[16px] p-[18px] shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]"
+      style={{ background: isAccent ? '#6B2C91' : '#FFFFFF' }}
+    >
+      <p
+        className="text-[12px] font-medium uppercase"
+        style={{ letterSpacing: '0.06em', color: labelColor }}
+      >
+        {label}
+      </p>
+      <p
+        className="mt-3 text-[32px] font-bold leading-none"
+        style={{ letterSpacing: '-0.02em', color: valueColor }}
+      >
+        {value}
+      </p>
+      <p className="mt-2 text-[11.5px] font-medium" style={{ color: subColor }}>
+        {sub}
+      </p>
     </div>
   )
 }

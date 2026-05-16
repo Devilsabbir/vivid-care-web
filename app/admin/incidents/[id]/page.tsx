@@ -36,35 +36,49 @@ export default async function IncidentDetailPage({ params }: { params: { id: str
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
-          <Link
-            href="/admin/incidents"
-            className="inline-flex items-center gap-2 rounded-full bg-[#f7f8f9] px-4 py-2 text-xs font-medium text-[#64748b]"
-          >
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-            Back to incidents
-          </Link>
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#6B6371]">
+        <Link
+          href="/admin/incidents"
+          className="flex h-6 w-6 items-center justify-center rounded-md text-[#6B6371] hover:bg-[#F8F6FA] hover:text-[#1A1320]"
+          aria-label="Back to incidents list"
+        >
+          <span className="material-symbols-outlined text-[14px]">chevron_left</span>
+        </Link>
+        <Link href="/admin/incidents" className="hover:text-[#1A1320]">Incidents</Link>
+        <span className="material-symbols-outlined text-[12px] text-[#C7C2CB]" aria-hidden="true">chevron_right</span>
+        <span className="font-semibold text-[#1A1320] truncate max-w-[480px]">{incident.title}</span>
+      </div>
 
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className={severityBadge(incident.severity)}>{severityLabel(incident.severity)}</span>
-              <span className={statusBadge(incident.status)}>{statusLabel(incident.status)}</span>
-            </div>
-            <h1 className="max-w-3xl text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.5rem]">
-              <span className="font-headline">{incident.title}</span>
-            </h1>
-            <p className="text-sm text-[#64748b]">
-              Logged on {formatReportedAt(incident.reported_at)} by {reporter}
-            </p>
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={severityBadge(incident.severity)}>{severityLabel(incident.severity)}</span>
+            <span className={statusBadge(incident.status)}>{statusLabel(incident.status)}</span>
           </div>
+          <h1
+            className="mt-2 max-w-3xl text-[28px] font-bold leading-[1.15] text-[#1A1320]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            {incident.title}
+          </h1>
+          <p className="mt-1.5 text-[13.5px] text-[#6B6371]">
+            Reported {formatReportedAt(incident.reported_at)} by <span className="font-semibold text-[#3F3548]">{reporter}</span>
+          </p>
         </div>
 
-        <div className="rounded-[24px] bg-[#0f172a] px-5 py-4 text-white shadow-[0_16px_40px_rgba(26,26,24,0.14)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">Linked client</p>
-          <p className="mt-2 text-lg font-semibold">{client}</p>
-          <p className="mt-1 text-sm text-white/65">
-            {shift ? `${formatTime(shift.start_time)} - ${formatTime(shift.end_time)} shift window` : 'No linked shift window'}
+        <div
+          className="rounded-[16px] bg-white px-5 py-4 shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)] lg:min-w-[280px]"
+        >
+          <p
+            className="text-[10px] font-medium uppercase text-[#6B6371]"
+            style={{ letterSpacing: '0.06em' }}
+          >
+            Linked client
+          </p>
+          <p className="mt-2 text-[16px] font-semibold leading-tight text-[#1A1320]">{client}</p>
+          <p className="mt-1 text-[12.5px] text-[#6B6371]">
+            {shift ? `${formatTime(shift.start_time)} – ${formatTime(shift.end_time)} shift window` : 'No linked shift window'}
           </p>
         </div>
       </header>
@@ -197,15 +211,18 @@ function relationRow<T>(value: T | T[] | null): T | null {
 }
 
 function severityBadge(severity: IncidentDetail['severity']) {
-  if (severity === 'emergency' || severity === 'high') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
-  if (severity === 'medium') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
+  const base = 'rounded-full px-2 py-[3px] text-[11px] font-semibold uppercase'
+  // letterSpacing applied via inline style elsewhere; using arbitrary tracking class
+  if (severity === 'emergency' || severity === 'high') return `${base} bg-[#FCE7E7] text-[#DC2626] tracking-[0.04em]`
+  if (severity === 'medium') return `${base} bg-[#FEF3D6] text-[#5C3A06] tracking-[0.04em]`
+  return `${base} bg-[#F1EEF4] text-[#3F3548] tracking-[0.04em]`
 }
 
 function statusBadge(status: IncidentDetail['status']) {
-  if (status === 'investigating') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#92400e]'
-  if (status === 'resolved') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#54206F]'
-  return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#991b1b]'
+  const base = 'rounded-full px-2 py-[3px] text-[11px] font-semibold uppercase tracking-[0.04em]'
+  if (status === 'investigating') return `${base} bg-[#FEF3D6] text-[#5C3A06]`
+  if (status === 'resolved') return `${base} bg-[#F1F9E1] text-[#5E8D1F]`
+  return `${base} bg-[#FCE7E7] text-[#DC2626]`
 }
 
 function severityLabel(severity: IncidentDetail['severity']) {

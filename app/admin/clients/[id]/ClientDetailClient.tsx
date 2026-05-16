@@ -207,8 +207,129 @@ export default function ClientDetailClient({
     agreements: agreements.length,
   }), [client.lat, client.lng, documents.length, shifts, incidents.length, agreements.length])
 
+  // Avatar initials + brand gradient — same pattern as the Clients list.
+  const initials = (client.full_name ?? 'Client')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part: string) => part[0]?.toUpperCase())
+    .join('')
+  const computedAge = calculateAge(client.date_of_birth)
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* ── Breadcrumb back-to-list ──────────────────────────────── */}
+      <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#6B6371]">
+        <Link
+          href="/admin/clients"
+          className="flex h-6 w-6 items-center justify-center rounded-md text-[#6B6371] hover:bg-[#F8F6FA] hover:text-[#1A1320]"
+          aria-label="Back to clients list"
+        >
+          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">chevron_left</span>
+        </Link>
+        <Link href="/admin/clients" className="hover:text-[#1A1320]">Clients</Link>
+        <span className="material-symbols-outlined text-[12px] text-[#C7C2CB]" aria-hidden="true">chevron_right</span>
+        <span className="font-semibold text-[#1A1320]">{client.full_name ?? 'Unnamed client'}</span>
+      </div>
+
+      {/* ── Hero ─────────────────────────────────────────────────── */}
+      <section
+        className="rounded-[16px] bg-white p-6"
+        style={{ boxShadow: '0 4px 14px rgba(46,18,64,0.05), 0 1px 3px rgba(46,18,64,0.04)' }}
+      >
+        <div className="flex flex-col gap-5 md:flex-row md:items-center">
+          {/* Avatar */}
+          <div
+            className="flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-full text-[28px] font-bold uppercase tracking-[0.05em] text-white"
+            style={{
+              background: isNdis
+                ? 'linear-gradient(135deg, #6B2C91 0%, #2BAEE0 100%)'
+                : 'linear-gradient(135deg, #6B2C91 0%, #54206F 100%)',
+              letterSpacing: '0.02em',
+            }}
+          >
+            {initials}
+          </div>
+
+          {/* Name + chips + contact row */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1
+                className="m-0 text-[28px] font-bold leading-[1.1] text-[#1A1320]"
+                style={{ letterSpacing: '-0.02em' }}
+              >
+                {client.full_name ?? 'Unnamed client'}
+              </h1>
+              <span className={
+                isNdis
+                  ? 'inline-flex items-center gap-1 rounded-full bg-[#E6F5FC] px-2 py-[3px] text-[11px] font-semibold uppercase tracking-[0.04em] text-[#1380AB]'
+                  : 'inline-flex items-center gap-1 rounded-full bg-[#F1EEF4] px-2 py-[3px] text-[11px] font-semibold uppercase tracking-[0.04em] text-[#3F3548]'
+              }>
+                {isNdis ? 'NDIS Client' : 'Standard'}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F1F9E1] px-2 py-[3px] text-[11px] font-semibold uppercase tracking-[0.04em] text-[#5E8D1F]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#8DC63F]" />
+                Active
+              </span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13px] font-medium text-[#3F3548]">
+              {computedAge !== null && (
+                <span>{computedAge} years</span>
+              )}
+              {client.address && (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-[#C7C2CB]" aria-hidden="true" />
+                  <span className="material-symbols-outlined text-[14px] text-[#97909C]" aria-hidden="true">place</span>
+                  <span className="text-[#6B6371]">{client.address}</span>
+                </span>
+              )}
+              {client.phone && (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-[#C7C2CB]" aria-hidden="true" />
+                  <span className="material-symbols-outlined text-[14px] text-[#97909C]" aria-hidden="true">call</span>
+                  <span className="text-[#6B6371]">{client.phone}</span>
+                </span>
+              )}
+              {client.email && (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-[#C7C2CB]" aria-hidden="true" />
+                  <span className="material-symbols-outlined text-[14px] text-[#97909C]" aria-hidden="true">mail</span>
+                  <span className="text-[#6B6371]">{client.email}</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {isNdis && (
+              <Link
+                href={`/admin/agreements`}
+                className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
+              >
+                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">draw</span>
+                Agreements
+              </Link>
+            )}
+            <Link
+              href="/admin/roster"
+              className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
+            >
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">calendar_month</span>
+              Schedule shift
+            </Link>
+            <Link
+              href={`/admin/incidents/new?client_id=${client.id}`}
+              className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
+            >
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
+              New note
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Metrics */}
       <section className="grid gap-4 md:grid-cols-4">
         <MetricCard label="Documents" value={summary.documents} sub="Client-facing records" />

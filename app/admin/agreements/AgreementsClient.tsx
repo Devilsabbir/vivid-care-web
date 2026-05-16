@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Modal from '@/components/ui/Modal'
 import { createClient } from '@/lib/supabase/client'
@@ -78,6 +78,23 @@ export default function AgreementsClient({
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
   const [supabase] = useState(() => createClient())
+
+  // Realtime: refresh the list when any agreement changes (e.g. a client
+  // signs on their phone). Keeps the admin "Signed/Pending" badge fresh
+  // without forcing a manual hard-refresh.
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-agreements-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'agreements' },
+        () => router.refresh(),
+      )
+      .subscribe()
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [supabase, router])
 
   const targetNameMap = useMemo(() => {
     const map = new Map<string, string>()
@@ -354,6 +371,24 @@ export default function AgreementsClient({
                     ) : null}
                   </div>
                 </div>
+
+                {agreement.status === 'signed' && agreement.signature_data_url ? (
+                  <div className="mt-4 rounded-2xl border border-[#e6e8ec] bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Signature</p>
+                    <div className="mt-2 flex items-center justify-center rounded-xl border border-[#f0f1f3] bg-[#fafbfc] p-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={agreement.signature_data_url}
+                        alt={`Signature by ${agreement.signer_name ?? 'signer'}`}
+                        className="h-24 w-auto max-w-full object-contain"
+                      />
+                    </div>
+                    <p className="mt-2 text-[12px] text-[#64748b]">
+                      Signed by <span className="font-semibold text-[#0f172a]">{agreement.signer_name ?? 'Unknown signer'}</span>
+                      {agreement.signed_at ? ` / ${formatDate(agreement.signed_at)}` : ''}
+                    </p>
+                  </div>
+                ) : null}
               </article>
             ))}
             {agreements.length === 0 ? <p className="text-sm text-[#64748b]">No agreements created yet.</p> : null}

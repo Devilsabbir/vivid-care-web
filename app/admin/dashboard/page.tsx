@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import DashboardRealtimeRefresh from '@/components/admin/DashboardRealtimeRefresh'
 import TimeGreeting from '@/components/admin/dashboard/TimeGreeting'
 import AlertBanner from '@/components/admin/dashboard/AlertBanner'
-import KpiCard from '@/components/admin/dashboard/KpiCard'
+import KpiGrid, { type KpiTile } from '@/components/admin/dashboard/KpiGrid'
 import DashboardLiveMap from '@/components/admin/dashboard/DashboardLiveMap'
 import RosterTimeline, { type ShiftBlock, type StaffRow } from '@/components/admin/dashboard/RosterTimeline'
 import ClientMixDonut from '@/components/admin/dashboard/ClientMixDonut'
@@ -356,88 +356,88 @@ export default async function AdminDashboard() {
         />
       )}
 
-      {/* Eyebrow row above the KPI grid — mirrors the design's
-          "Today at a glance · vs last 4 Tuesdays" pattern, making the
-          comparison window explicit so the 7-day deltas read cleanly. */}
-      <div className="mb-2.5 flex items-baseline justify-between px-0.5">
-        <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6B6371]">
-          Today at a glance
-        </div>
-        <div className="text-[11.5px] font-medium text-[#97909C]">
-          vs last 7 days
-        </div>
-      </div>
-
-      <section className="grid gap-3.5 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard
-          icon="calendar_month"
-          label="Shifts today"
-          value={shiftsToday}
-          sub={shiftsScheduledToday > 0 && shiftsScheduledToday !== shiftsToday
-            ? `of ${shiftsScheduledToday} scheduled`
-            : `${shiftsToday === 1 ? 'shift' : 'shifts'} on today's roster`}
-          delta={(() => {
-            const diff = (shiftsSpark[7] ?? 0) - (shiftsSpark[0] ?? 0)
-            // Only prefix '+' when positive — negatives already render with a
-            // leading minus from String(diff), so '+-3' was the visible bug.
-            const sign = diff > 0 ? '+' : ''
-            return `${sign}${diff} vs 7 days ago`
-          })()}
-          direction={shiftsSpark[7] >= (shiftsSpark[0] ?? 0) ? 'up' : 'down'}
-          target={percent(completed, planned || 1)}
-          context={percent(completed, planned || 1) >= 80 ? 'On target' : 'Below target'}
-          color="#6B2C91"
-          bg="#F4ECF8"
-          spark={shiftsSpark}
-        />
-        <KpiCard
-          icon="schedule"
-          label="Hours this week"
-          value={`${hoursThisWeek}h`}
-          sub="team total"
-          delta={hoursThisWeek > 0 ? 'tracked from clock-in/out' : 'no clocked hours yet'}
-          direction="up"
-          target={Math.min(100, Math.round((hoursThisWeek / 200) * 100))}
-          context={hoursThisWeek >= 150 ? 'Above average' : 'Normal'}
-          color="#1380AB"
-          bg="#E6F5FC"
-          spark={hoursSpark}
-        />
-        <KpiCard
-          icon="payments"
-          label="NDIS revenue"
-          value={`$${(ndisRevenueThisWeek / 1000).toFixed(ndisRevenueThisWeek >= 10000 ? 0 : 1)}k`}
-          sub="unbilled this week"
-          delta="From clocked NDIS shifts"
-          direction="flat"
-          target={Math.min(100, Math.round((ndisRevenueThisWeek / 30000) * 100))}
-          context="Tracking"
-          color="#5E8D1F"
-          bg="#F1F9E1"
-          spark={revenueSpark}
-        />
-        <KpiCard
-          icon="warning"
-          label="Open incidents"
-          value={openIncidentsCount}
-          sub={openIncidentsCount > 0 ? 'awaiting review' : 'all clear'}
-          delta={openIncidentsCount > 0 ? 'review by deadline' : 'no open items'}
-          // For incidents, "down" is good (fewer open items than yesterday)
-          // and "up" is bad. Comparing today's open count to the rolling
-          // average across the sparkline shows trend at a glance.
-          direction={(() => {
-            const avg = incidentsSpark.slice(0, -1).reduce((a, b) => a + b, 0) / Math.max(1, incidentsSpark.length - 1)
-            if (openIncidentsCount > avg + 0.5) return 'up'
-            if (openIncidentsCount < avg - 0.5) return 'down'
-            return 'flat'
-          })()}
-          target={Math.max(0, 100 - Math.min(100, openIncidentsCount * 20))}
-          context={openIncidentsCount === 0 ? 'All clear' : openIncidentsCount > 5 ? 'Above threshold' : 'Below threshold'}
-          color="#D97706"
-          bg="#FEF3D6"
-          spark={incidentsSpark}
-        />
-      </section>
+      {/* KPI grid — admin can rearrange the tiles via "Customize" in the
+          eyebrow row; order persists in localStorage per device. */}
+      {(() => {
+        const kpiTiles: KpiTile[] = [
+          {
+            key: 'shifts_today',
+            icon: 'calendar_month',
+            label: 'Shifts today',
+            value: shiftsToday,
+            sub:
+              shiftsScheduledToday > 0 && shiftsScheduledToday !== shiftsToday
+                ? `of ${shiftsScheduledToday} scheduled`
+                : `${shiftsToday === 1 ? 'shift' : 'shifts'} on today's roster`,
+            delta: (() => {
+              const diff = (shiftsSpark[7] ?? 0) - (shiftsSpark[0] ?? 0)
+              const sign = diff > 0 ? '+' : ''
+              return `${sign}${diff} vs 7 days ago`
+            })(),
+            direction: shiftsSpark[7] >= (shiftsSpark[0] ?? 0) ? 'up' : 'down',
+            target: percent(completed, planned || 1),
+            context: percent(completed, planned || 1) >= 80 ? 'On target' : 'Below target',
+            color: '#6B2C91',
+            bg: '#F4ECF8',
+            spark: shiftsSpark,
+          },
+          {
+            key: 'hours_week',
+            icon: 'schedule',
+            label: 'Hours this week',
+            value: `${hoursThisWeek}h`,
+            sub: 'team total',
+            delta: hoursThisWeek > 0 ? 'tracked from clock-in/out' : 'no clocked hours yet',
+            direction: 'up',
+            target: Math.min(100, Math.round((hoursThisWeek / 200) * 100)),
+            context: hoursThisWeek >= 150 ? 'Above average' : 'Normal',
+            color: '#1380AB',
+            bg: '#E6F5FC',
+            spark: hoursSpark,
+          },
+          {
+            key: 'ndis_revenue',
+            icon: 'payments',
+            label: 'NDIS revenue',
+            value: `$${(ndisRevenueThisWeek / 1000).toFixed(ndisRevenueThisWeek >= 10000 ? 0 : 1)}k`,
+            sub: 'unbilled this week',
+            delta: 'From clocked NDIS shifts',
+            direction: 'flat',
+            target: Math.min(100, Math.round((ndisRevenueThisWeek / 30000) * 100)),
+            context: 'Tracking',
+            color: '#5E8D1F',
+            bg: '#F1F9E1',
+            spark: revenueSpark,
+          },
+          {
+            key: 'open_incidents',
+            icon: 'warning',
+            label: 'Open incidents',
+            value: openIncidentsCount,
+            sub: openIncidentsCount > 0 ? 'awaiting review' : 'all clear',
+            delta: openIncidentsCount > 0 ? 'review by deadline' : 'no open items',
+            direction: (() => {
+              const avg =
+                incidentsSpark.slice(0, -1).reduce((a, b) => a + b, 0) /
+                Math.max(1, incidentsSpark.length - 1)
+              if (openIncidentsCount > avg + 0.5) return 'up'
+              if (openIncidentsCount < avg - 0.5) return 'down'
+              return 'flat'
+            })(),
+            target: Math.max(0, 100 - Math.min(100, openIncidentsCount * 20)),
+            context:
+              openIncidentsCount === 0
+                ? 'All clear'
+                : openIncidentsCount > 5
+                  ? 'Above threshold'
+                  : 'Below threshold',
+            color: '#D97706',
+            bg: '#FEF3D6',
+            spark: incidentsSpark,
+          },
+        ]
+        return <KpiGrid tiles={kpiTiles} />
+      })()}
 
       <DashboardLiveMap
         initialShifts={(mapShifts ?? []) as any}

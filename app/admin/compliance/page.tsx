@@ -140,13 +140,48 @@ function Tile({
   badge?: string
   danger?: 'amber' | 'red'
 }) {
+  const isAccent = tone === 'accent'
+  const labelColor = isAccent ? 'rgba(255,255,255,0.7)' : '#6B6371'
+  const valueColor = isAccent ? '#FFFFFF' : danger === 'red' ? '#DC2626' : danger === 'amber' ? '#D97706' : '#1A1320'
+  const subColor = isAccent ? 'rgba(255,255,255,0.7)' : '#97909C'
+  const iconBg = isAccent ? 'rgba(255,255,255,0.18)' : '#F4ECF8'
+  const iconFg = isAccent ? '#FFFFFF' : '#54206F'
   return (
-    <div className={`rounded-[24px] p-5 shadow-[0_14px_32px_rgba(26,26,24,0.04)] ${tone === 'accent' ? 'bg-[#6B2C91]' : 'border border-[#e6e8ec] bg-white'}`}>
-      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tone === 'accent' ? 'bg-black/10 text-[#0f172a]' : 'bg-[#f3f1eb] text-[#6c6962]'}`}><span className="material-symbols-outlined text-[18px]">{icon}</span></div>
-      <p className={`mt-4 text-[12px] ${tone === 'accent' ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{label}</p>
-      <p className="mt-2 font-headline text-[2.35rem] leading-none tracking-[-0.07em] text-[#0f172a]">{value}</p>
-      <p className={`mt-2 text-xs ${tone === 'accent' ? 'text-[#54206F]' : 'text-[#64748b]'}`}>{sub}</p>
-      {badge ? <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold ${danger === 'red' ? 'bg-[#fee2e2] text-[#991b1b]' : 'bg-[#fef9c3] text-[#92400e]'}`}>{badge}</span> : null}
+    <div
+      className="relative overflow-hidden rounded-[16px] shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]"
+      style={{ padding: '18px 60px 18px 18px', background: isAccent ? '#6B2C91' : '#FFFFFF' }}
+    >
+      <div
+        className="absolute right-3.5 top-3.5 flex h-8 w-8 items-center justify-center rounded-[9px]"
+        style={{ background: iconBg, color: iconFg }}
+      >
+        <span className="material-symbols-outlined text-[16px]" aria-hidden="true">{icon}</span>
+      </div>
+      <p
+        className="text-[12px] font-medium uppercase"
+        style={{ letterSpacing: '0.06em', color: labelColor }}
+      >
+        {label}
+      </p>
+      <p
+        className="mt-3 text-[32px] font-bold leading-none"
+        style={{ letterSpacing: '-0.02em', color: valueColor }}
+      >
+        {value}
+      </p>
+      <p className="mt-2 text-[11.5px] font-medium" style={{ color: subColor }}>{sub}</p>
+      {badge ? (
+        <span
+          className="mt-2.5 inline-flex rounded-full px-2 py-[3px] text-[11px] font-semibold uppercase"
+          style={{
+            letterSpacing: '0.04em',
+            background: danger === 'red' ? '#FCE7E7' : '#FEF3D6',
+            color: danger === 'red' ? '#DC2626' : '#5C3A06',
+          }}
+        >
+          {badge}
+        </span>
+      ) : null}
     </div>
   )
 }

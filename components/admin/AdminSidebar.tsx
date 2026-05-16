@@ -68,11 +68,13 @@ function NavItems({
                 onClick={onLinkClick}
                 aria-current={active ? 'page' : undefined}
                 className={[
-                  'flex h-8 w-full items-center gap-2.5 rounded-[7px] px-2.5 text-[13px] font-medium transition-all duration-100',
+                  // Design spec: 36px height, 9px radius, 13.5px font, slate-700 default,
+                  // active = purple-50 bg + purple-700 fg + 3px left bar indicator
+                  'relative flex h-9 w-full items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] transition-colors duration-100',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]',
                   active
-                    ? 'bg-[#F4ECF8] text-[#54206F]'
-                    : 'text-[#475569] hover:bg-[#f7f8f9] hover:text-[#0f172a]',
+                    ? 'bg-[#F4ECF8] font-semibold text-[#54206F] before:absolute before:-left-3.5 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-[#6B2C91]'
+                    : 'font-medium text-[#3F3548] hover:bg-[#F8F6FA] hover:text-[#1A1320]',
                 ].join(' ')}
               >
                 <span
@@ -186,8 +188,8 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
 
   return (
     <>
-      {/* ── Desktop sidebar (lg+) ── */}
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[232px] flex-col border-r border-[#e6e8ec] bg-white lg:flex">
+      {/* ── Desktop sidebar (lg+) — design spec: 248px wide ── */}
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[248px] flex-col border-r border-[#F1EEF4] bg-white lg:flex">
         {sidebarContent()}
       </aside>
 

@@ -356,7 +356,19 @@ export default async function AdminDashboard() {
         />
       )}
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* Eyebrow row above the KPI grid — mirrors the design's
+          "Today at a glance · vs last 4 Tuesdays" pattern, making the
+          comparison window explicit so the 7-day deltas read cleanly. */}
+      <div className="mb-2.5 flex items-baseline justify-between px-0.5">
+        <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6B6371]">
+          Today at a glance
+        </div>
+        <div className="text-[11.5px] font-medium text-[#97909C]">
+          vs last 7 days
+        </div>
+      </div>
+
+      <section className="grid gap-3.5 md:grid-cols-2 xl:grid-cols-4">
         <KpiCard
           icon="calendar_month"
           label="Shifts today"

@@ -22,12 +22,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f8f9] text-[#0f172a]">
+    <div className="min-h-screen bg-[#F7F5FA] text-[#1A1320]">
       <AdminSidebar adminName={adminName} />
-      <div className="min-h-screen pl-0 pt-14 lg:pl-[232px] lg:pt-0">
+      {/* Sidebar is 248px wide on lg+ — match the design spec. */}
+      <div className="min-h-screen pl-0 pt-14 lg:pl-[248px] lg:pt-0">
         <AdminShell adminName={adminName} unreadCount={unreadCount}>
           <main>
-            <div className="mx-auto w-full max-w-[1480px] px-4 py-6 md:px-6 md:py-7">
+            {/* Design spec: 28px padding top/bottom, 32px left/right, max 1400px content. */}
+            <div className="mx-auto w-full max-w-[1400px] px-5 py-6 md:px-8 md:py-7">
               {children}
             </div>
           </main>

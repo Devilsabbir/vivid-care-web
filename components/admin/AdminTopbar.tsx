@@ -40,13 +40,13 @@ export default function AdminTopbar({ adminName, unreadCount = 0, onViviOpen }: 
   }, [onViviOpen])
 
   return (
-    <header className="sticky top-0 z-30 hidden h-16 items-center gap-3 border-b border-[#e6e8ec] bg-white/85 px-6 backdrop-blur-xl lg:flex">
-      {/* Search — opens the Vivi AI drawer which doubles as universal search */}
+    <header className="sticky top-0 z-30 hidden h-16 items-center gap-[18px] border-b border-[#F1EEF4] bg-white/85 px-7 backdrop-blur-xl lg:flex">
+      {/* Search — design spec: flex-1, max 420px, 36px tall, slate-50 bg */}
       <button
         type="button"
         onClick={onViviOpen}
         aria-label="Search clients, shifts, and notes"
-        className="flex h-9 min-w-[280px] items-center gap-2 rounded-[10px] border border-[#e6e8ec] bg-[#fafbfc] px-3 text-left text-[12.5px] text-[#94a3b8] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+        className="flex h-9 max-w-[420px] flex-1 items-center gap-2.5 rounded-[10px] border border-[#F1EEF4] bg-[#F8F6FA] px-3 text-left text-[13.5px] text-[#6B6371] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
       >
         <span className="material-symbols-outlined text-[16px]" aria-hidden="true">search</span>
         <span className="flex-1 truncate">Search clients, shifts, notes…</span>
@@ -70,10 +70,10 @@ export default function AdminTopbar({ adminName, unreadCount = 0, onViviOpen }: 
         <kbd className="rounded-[4px] bg-white/20 px-1.5 py-0.5 font-mono text-[9px]">⌘ /</kbd>
       </button>
 
-      {/* Quick add — opens roster (the primary creation surface) */}
+      {/* Quick add — design spec: primary purple pillbtn */}
       <Link
         href="/admin/roster"
-        className="flex h-9 items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-3.5 text-[12.5px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+        className="flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-2"
       >
         <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
         New shift

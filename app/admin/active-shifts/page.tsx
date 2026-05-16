@@ -41,25 +41,33 @@ export default async function ActiveShiftsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-            <span className="font-headline">Live shifts</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
-              <span className="material-symbols-outlined text-[18px]">location_on</span>
-              monitoring board
-            </span>
-          </div>
-          <p className="text-sm text-[#64748b]">Realtime attendance visibility for the active roster and the next shifts about to start</p>
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1
+            className="m-0 text-[28px] font-bold leading-[1.15] text-[#1A1320]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            Live shifts
+          </h1>
+          <p className="mt-1.5 text-[14px] text-[#6B6371]">
+            Real-time attendance visibility for the active roster and the next shifts about to start.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/admin/roster" aria-label="Open roster" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]">
-            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">calendar_month</span>
+          <Link
+            href="/admin/roster"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">calendar_month</span>
+            Open roster
           </Link>
-          <Link href="/admin/dashboard" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white">
-            <span className="material-symbols-outlined text-[18px]">dashboard</span>
-            Back to dashboard
+          <Link
+            href="/admin/dashboard"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">dashboard</span>
+            Dashboard
           </Link>
         </div>
       </header>

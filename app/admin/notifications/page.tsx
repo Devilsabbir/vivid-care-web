@@ -32,36 +32,25 @@ export default async function AdminNotificationsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-            <span className="font-headline">Notifications</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
-              <span className="material-symbols-outlined text-[18px]">notifications</span>
-              live feed
-            </span>
-          </div>
-          <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-            <span className="font-headline">for operations alerts</span>
-          </div>
-          <p className="text-sm text-[#64748b]">
-            {unreadCount} unread item{unreadCount === 1 ? '' : 's'} across roster, attendance, incident, and compliance activity
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1
+            className="m-0 text-[28px] font-bold leading-[1.15] text-[#1A1320]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            Notifications
+          </h1>
+          <p className="mt-1.5 text-[14px] text-[#6B6371]">
+            {unreadCount} unread item{unreadCount === 1 ? '' : 's'} across roster, attendance, incident, and compliance activity.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Link
-            href="/admin/dashboard"
-            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b]"
-          >
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            <span className="sr-only">Dashboard</span>
-          </Link>
-          <Link
             href="/admin/incidents"
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
           >
-            <span className="material-symbols-outlined text-[18px]">warning</span>
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">warning</span>
             Review incidents
           </Link>
         </div>

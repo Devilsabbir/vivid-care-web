@@ -63,27 +63,27 @@ export default async function ClientsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-            <span className="font-headline">Clients</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]">
-              <span className="material-symbols-outlined text-[18px]">group</span>
-              service hub
-            </span>
-          </div>
-          <p className="text-sm text-[#64748b]">Client records, NDIS visibility, and weekly allocation load in one place</p>
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1
+            className="m-0 text-[28px] font-bold leading-[1.15] text-[#1A1320]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            Clients
+          </h1>
+          <p className="mt-1.5 text-[14px] text-[#6B6371]">
+            Client records, NDIS visibility, and weekly allocation load in one place.
+          </p>
         </div>
-
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-[#f7f8f9] px-3 py-2 text-xs font-medium text-[#64748b]">
+          <span className="inline-flex h-[34px] items-center rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548]">
             {summary.activeThisWeek} receiving support this week
           </span>
           <Link
             href="/admin/clients/new"
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
           >
-            <span className="material-symbols-outlined text-[18px]">person_add</span>
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">person_add</span>
             Add client
           </Link>
         </div>

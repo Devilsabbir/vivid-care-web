@@ -56,19 +56,26 @@ export default async function CompliancePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2 text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]">
-            <span className="font-headline">Document</span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#6B2C91] px-4 py-1 text-sm font-semibold tracking-normal text-[#0f172a]"><span className="material-symbols-outlined text-[18px]">description</span>hub</span>
-          </div>
-          <div className="text-[2rem] font-medium tracking-[-0.05em] text-[#0f172a] md:text-[2.35rem]"><span className="font-headline">and compliance</span></div>
-          <p className="text-sm text-[#64748b]">Live document health across staff, client, and compliance records</p>
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1
+            className="m-0 text-[28px] font-bold leading-[1.15] text-[#1A1320]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            Documents &amp; compliance
+          </h1>
+          <p className="mt-1.5 text-[14px] text-[#6B6371]">
+            Live document health across staff and client records.
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/notifications" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">notifications</span></Link>
-          <Link href="/admin/staff" aria-label="Staff directory" className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#e6e8ec] bg-white text-[#64748b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"><span className="material-symbols-outlined text-[20px]" aria-hidden="true">badge</span></Link>
-          <Link href="/admin/staff" className="inline-flex items-center gap-2 rounded-2xl bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white"><span className="material-symbols-outlined text-[18px]">upload_file</span>Review uploads</Link>
+          <Link
+            href="/admin/staff"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
+          >
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">upload_file</span>
+            Review uploads
+          </Link>
         </div>
       </header>
 

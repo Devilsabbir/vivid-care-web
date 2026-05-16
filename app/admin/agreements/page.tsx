@@ -7,24 +7,25 @@ export default async function AgreementsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  // NDIS-only refactor: agreements are issued solely to NDIS clients, so we
+  // no longer need to load staff at all. The agreement_templates target_type
+  // column is retained for schema safety but every template/agreement created
+  // here writes 'client'.
   const [
     { data: templates, error: templatesError },
     { data: agreements, error: agreementsError },
-    { data: staff, error: staffError },
     { data: clients, error: clientsError },
   ] = await Promise.all([
     supabase.from('agreement_templates').select('*').order('created_at', { ascending: false }),
-    supabase.from('agreements').select('*').order('created_at', { ascending: false }),
-    supabase.from('profiles').select('id, full_name, role').in('role', ['admin', 'staff']).order('full_name', { ascending: true }),
+    supabase.from('agreements').select('*').eq('target_type', 'client').order('created_at', { ascending: false }),
     supabase.from('clients').select('id, full_name').eq('client_type', 'ndis').order('full_name', { ascending: true }),
   ])
 
   if (templatesError) console.error('[agreements page] agreement_templates fetch failed:', templatesError)
   if (agreementsError) console.error('[agreements page] agreements fetch failed:', agreementsError)
-  if (staffError) console.error('[agreements page] profiles fetch failed:', staffError)
   if (clientsError) console.error('[agreements page] clients fetch failed:', clientsError)
 
-  const schemaReady = !templatesError && !agreementsError && !staffError && !clientsError
+  const schemaReady = !templatesError && !agreementsError && !clientsError
 
   return (
     <div className="space-y-6">
@@ -51,7 +52,6 @@ export default async function AgreementsPage() {
         adminId={user?.id ?? ''}
         templates={templates ?? []}
         agreements={agreements ?? []}
-        staff={staff ?? []}
         clients={clients ?? []}
       />
     </div>

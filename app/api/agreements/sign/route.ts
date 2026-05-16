@@ -176,23 +176,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
   }
 
-  // Post-sign PDF — upload to the `agreements` bucket under a prefix the
-  // existing read RLS already covers, so the NDIS client (or owning staff
-  // member) can mint a short-lived signed URL to download/view their own
-  // signed copy from the mobile app or web client portal.
-  //
-  // Client agreements:  agreements/client/<client_id>/signed-<id>.pdf
-  // Staff agreements:   agreements/staff/<staff_id>/signed-<id>.pdf
-  //                     (no client-read RLS uses this prefix today but the
-  //                      `staff_id = auth.uid()` documents-bucket policy
-  //                      doesn't apply here either — admins still cover it
-  //                      via the "Admins can manage agreements storage" ALL
-  //                      policy; signed-URL minting via service role works
-  //                      regardless of bucket policies.)
-  const filePath =
-    agreement.target_type === 'client'
-      ? `client/${agreement.target_id}/signed-${agreement.id}.pdf`
-      : `staff/${agreement.target_id}/signed-${agreement.id}.pdf`
+  // Post-sign PDF — agreements are NDIS-client-only since the refactor.
+  // Path:  agreements/client/<client_id>/signed-<id>.pdf
+  // The "Authenticated read agreements scoped" RLS policy already covers
+  // this prefix for the client to read their own signed copy.
+  if (agreement.target_type !== 'client') {
+    return NextResponse.json(
+      { error: 'Only client agreements can be signed via this endpoint.' },
+      { status: 400 },
+    )
+  }
+  const filePath = `client/${agreement.target_id}/signed-${agreement.id}.pdf`
 
   const { error: uploadError } = await service.storage
     .from('agreements')

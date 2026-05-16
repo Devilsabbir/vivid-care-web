@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation'
 import Modal from '@/components/ui/Modal'
 import { createClient } from '@/lib/supabase/client'
 
+// Agreements are always issued to NDIS clients now — staff agreement flow
+// was retired (see refactor: NDIS-only documents). target_type column is
+// retained in the DB for migration safety but every new row writes 'client'.
 type TemplateRow = {
   id: string
   name: string
-  target_type: 'staff' | 'client'
   body: string
   active: boolean
 }
@@ -16,7 +18,6 @@ type TemplateRow = {
 type AgreementRow = {
   id: string
   template_id: string | null
-  target_type: 'staff' | 'client'
   target_id: string
   title: string
   status: 'draft' | 'pending_signature' | 'signed' | 'expired'
@@ -35,12 +36,10 @@ type AgreementRow = {
 type TargetRow = {
   id: string
   full_name: string | null
-  role?: string | null
 }
 
 const EMPTY_TEMPLATE = {
   name: '',
-  target_type: 'client',
   body: '',
 }
 
@@ -49,19 +48,16 @@ export default function AgreementsClient({
   adminId,
   templates,
   agreements,
-  staff,
   clients,
 }: {
   schemaReady: boolean
   adminId: string
   templates: TemplateRow[]
   agreements: AgreementRow[]
-  staff: TargetRow[]
   clients: TargetRow[]
 }) {
   const [createForm, setCreateForm] = useState({
     template_id: templates[0]?.id ?? '',
-    target_type: 'client',
     target_id: clients[0]?.id ?? '',
     title: '',
     expires_on: '',
@@ -98,10 +94,9 @@ export default function AgreementsClient({
 
   const targetNameMap = useMemo(() => {
     const map = new Map<string, string>()
-    clients.forEach(client => map.set(`client:${client.id}`, client.full_name ?? 'Client'))
-    staff.forEach(member => map.set(`staff:${member.id}`, member.full_name ?? 'Staff member'))
+    clients.forEach(client => map.set(client.id, client.full_name ?? 'Client'))
     return map
-  }, [clients, staff])
+  }, [clients])
 
   const templateMap = useMemo(() => {
     const map = new Map<string, TemplateRow>()
@@ -109,16 +104,12 @@ export default function AgreementsClient({
     return map
   }, [templates])
 
-  const targetOptions = createForm.target_type === 'client'
-    ? clients
-    : staff.filter(member => member.role === 'staff')
   const pendingCount = agreements.filter(agreement => agreement.status === 'pending_signature').length
   const signedCount = agreements.filter(agreement => agreement.status === 'signed').length
 
   async function handleCreateAgreement() {
-    if (!createForm.target_id) return
-    if (!createForm.supports_description.trim()) {
-      setMessage('Please enter a description of supports.')
+    if (!createForm.target_id) {
+      setMessage('Please select an NDIS client.')
       return
     }
     // Reject anything other than PDFs and >10MB so we don't bloat storage.
@@ -138,18 +129,19 @@ export default function AgreementsClient({
     const template = templateMap.get(createForm.template_id)
 
     // 1. Insert the agreement row first so we get an id to namespace storage by.
+    // target_type is always 'client' since the NDIS-only refactor.
     const { data: created, error: insertErr } = await supabase
       .from('agreements')
       .insert({
         template_id: createForm.template_id || null,
-        target_type: createForm.target_type,
+        target_type: 'client',
         target_id: createForm.target_id,
-        title: createForm.title.trim() || template?.name || 'Agreement',
+        title: createForm.title.trim() || template?.name || 'Service agreement',
         status: 'pending_signature',
         expires_on: createForm.expires_on || null,
         created_by: adminId,
         advocate_name: createForm.advocate_name.trim() || null,
-        supports_description: createForm.supports_description.trim(),
+        supports_description: createForm.supports_description.trim() || null,
         funding_type: createForm.funding_type,
         payment_method: createForm.payment_method,
       })
@@ -236,7 +228,7 @@ export default function AgreementsClient({
 
     const { error } = await supabase.from('agreement_templates').insert({
       name: templateForm.name.trim(),
-      target_type: templateForm.target_type,
+      target_type: 'client',
       body: templateForm.body.trim(),
       active: true,
       created_by: adminId,
@@ -303,7 +295,7 @@ export default function AgreementsClient({
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-[#0f172a]">{template.name}</p>
-                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#64748b]">{template.target_type}</p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#64748b]">NDIS client</p>
                   </div>
                   <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${template.active ? 'bg-[#F4ECF8] text-[#54206F]' : 'bg-[#e5e7eb] text-[#4b5563]'}`}>
                     {template.active ? 'Active' : 'Inactive'}
@@ -330,7 +322,7 @@ export default function AgreementsClient({
                       <span className={statusClass(agreement.status)}>{copyStatus(agreement.status)}</span>
                     </div>
                     <p className="mt-2 text-[12px] text-[#67635c]">
-                      {targetNameMap.get(`${agreement.target_type}:${agreement.target_id}`) ?? 'Unknown target'} / {agreement.target_type}
+                      {targetNameMap.get(agreement.target_id) ?? 'Unknown client'} / NDIS client
                     </p>
                     <p className="mt-1 text-[12px] text-[#64748b]">
                       Template: {agreement.template_id ? (templateMap.get(agreement.template_id)?.name ?? 'Template') : 'Custom'}{agreement.expires_on ? ` / Expires ${formatDate(agreement.expires_on)}` : ''}
@@ -399,27 +391,17 @@ export default function AgreementsClient({
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Generate agreement" wide>
         <div className="grid gap-4 md:grid-cols-2">
           <SelectField label="Template" value={createForm.template_id} onChange={value => setCreateForm(current => ({ ...current, template_id: value }))} options={templates.map(template => [template.id, template.name])} />
-          <SelectField
-            label="Target type"
-            value={createForm.target_type}
-            onChange={value => setCreateForm(current => ({
-              ...current,
-              target_type: value as 'staff' | 'client',
-              target_id: value === 'client' ? clients[0]?.id ?? '' : staff.filter(member => member.role === 'staff')[0]?.id ?? '',
-            }))}
-            options={[
-              ['client', 'Client'],
-              ['staff', 'Staff'],
-            ]}
-          />
           <div>
-            <SelectField label="Target" value={createForm.target_id} onChange={value => setCreateForm(current => ({ ...current, target_id: value }))} options={targetOptions.map(option => [option.id, option.full_name ?? 'Unnamed record'])} />
-            {createForm.target_type === 'client' && (
-              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#64748b]">
-                <span className="material-symbols-outlined text-[14px] text-[#6B2C91]">info</span>
-                Only NDIS clients are shown. Standard clients do not require service agreements.
-              </p>
-            )}
+            <SelectField
+              label="NDIS client"
+              value={createForm.target_id}
+              onChange={value => setCreateForm(current => ({ ...current, target_id: value }))}
+              options={clients.map(option => [option.id, option.full_name ?? 'Unnamed client'])}
+            />
+            <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#64748b]">
+              <span className="material-symbols-outlined text-[14px] text-[#6B2C91]">info</span>
+              Documents are only sent to NDIS clients.
+            </p>
           </div>
           <TextField label="Expires on" type="date" value={createForm.expires_on} onChange={value => setCreateForm(current => ({ ...current, expires_on: value }))} />
           <div className="md:col-span-2">
@@ -436,12 +418,12 @@ export default function AgreementsClient({
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Description of supports *</label>
+            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Description of supports (optional)</label>
             <textarea
               rows={3}
               value={createForm.supports_description}
               onChange={e => setCreateForm(c => ({ ...c, supports_description: e.target.value }))}
-              placeholder="e.g. Daily living assistance, community access, and personal care supports."
+              placeholder="e.g. Daily living assistance, community access, and personal care supports. Leave blank if the attached PDF already covers this."
               className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
             />
           </div>
@@ -500,15 +482,9 @@ export default function AgreementsClient({
       <Modal open={templateOpen} onClose={() => setTemplateOpen(false)} title="Create template" wide>
         <div className="grid gap-4">
           <TextField label="Template name" value={templateForm.name} onChange={value => setTemplateForm(current => ({ ...current, name: value }))} />
-          <SelectField
-            label="Target type"
-            value={templateForm.target_type}
-            onChange={value => setTemplateForm(current => ({ ...current, target_type: value as 'staff' | 'client' }))}
-            options={[
-              ['client', 'Client'],
-              ['staff', 'Staff'],
-            ]}
-          />
+          <p className="text-[11px] text-[#64748b]">
+            All templates are used to generate agreements for NDIS clients.
+          </p>
           <div>
             <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Body</label>
             <textarea

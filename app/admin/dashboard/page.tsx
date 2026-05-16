@@ -318,27 +318,23 @@ export default async function AdminDashboard() {
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <TimeGreeting firstName={firstName} />
-          <p className="mt-1 text-[13px] text-[#64748b]">
+          <p className="mt-1.5 text-[14px] text-[#6B6371]">
             {today.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Perth' })}
             {' · '}
             {shiftsToday} shifts scheduled across {staffWorkingToday} support workers
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f0f1f3] px-3 py-1.5 text-[12px] font-medium text-[#475569]">
-            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">calendar_view_week</span>
-            This week
-          </span>
           <Link
             href="/admin/shifts?view=past"
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#e6e8ec] bg-white px-4 py-1.5 text-[12px] font-semibold text-[#0f172a] hover:bg-[#f7f8f9]"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
           >
             <span className="material-symbols-outlined text-[14px]" aria-hidden="true">history</span>
             History
           </Link>
           <Link
             href="/admin/roster"
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#6B2C91] px-4 py-1.5 text-[12px] font-semibold text-white shadow-[0_4px_14px_rgba(107,44,145,0.25)] hover:bg-[#54206F]"
+            className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
           >
             <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
             New shift

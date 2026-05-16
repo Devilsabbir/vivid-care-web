@@ -18,7 +18,10 @@ export default function TimeGreeting({ firstName }: { firstName: string }) {
   }, [])
 
   return (
-    <h1 className="text-[28px] font-semibold tracking-[-0.02em] text-[#0f172a] md:text-[32px]">
+    <h1
+      className="text-[28px] font-bold text-[#1A1320]"
+      style={{ letterSpacing: '-0.02em', lineHeight: 1.15 }}
+    >
       {greeting}, {firstName}
     </h1>
   )

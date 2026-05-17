@@ -272,26 +272,33 @@ export default function AgreementsClient({
         <button
           type="button"
           onClick={() => setTemplateOpen(true)}
-          className="rounded-2xl border border-[#dcd7cf] bg-white px-4 py-2.5 text-sm font-semibold text-[#0f172a]"
+          className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border border-[#E5E1E8] bg-white px-3 text-[12.5px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
         >
+          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">add</span>
           New template
         </button>
         <button
           type="button"
           onClick={() => setCreateOpen(true)}
-          className="rounded-2xl bg-[#0f172a] px-4 py-2.5 text-sm font-semibold text-white"
+          className="inline-flex h-[34px] items-center gap-1.5 rounded-[9px] bg-[#6B2C91] px-3 text-[12.5px] font-medium text-white hover:bg-[#54206F]"
         >
+          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">draw</span>
           Generate agreement
         </button>
       </div>
 
-      <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
-        <aside className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Template library</p>
-          <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">Reusable agreement bodies</h3>
-          <div className="mt-5 space-y-3">
+      <section className="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
+        <aside className="rounded-[16px] bg-white p-5 shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]">
+          <p
+            className="text-[11px] font-semibold uppercase text-[#6B6371]"
+            style={{ letterSpacing: '0.08em' }}
+          >
+            Template library
+          </p>
+          <h3 className="mt-2 text-[16px] font-semibold text-[#1A1320]">Reusable agreement bodies</h3>
+          <div className="mt-4 space-y-2.5">
             {templates.map(template => (
-              <article key={template.id} className="rounded-[20px] border border-[#f0f1f3] bg-[#fafbfc] p-4">
+              <article key={template.id} className="rounded-[12px] border border-[#F1EEF4] bg-[#F8F6FA] p-3.5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-[#0f172a]">{template.name}</p>
@@ -308,35 +315,44 @@ export default function AgreementsClient({
           </div>
         </aside>
 
-        <section className="rounded-[28px] border border-[#e6e8ec] bg-white p-6 shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[#94a3b8]">Agreement register</p>
-          <h3 className="mt-2 text-lg font-semibold text-[#0f172a]">Generated records</h3>
+        <section className="rounded-[16px] bg-white p-5 shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]">
+          <p
+            className="text-[11px] font-semibold uppercase text-[#6B6371]"
+            style={{ letterSpacing: '0.08em' }}
+          >
+            Agreement register
+          </p>
+          <h3 className="mt-2 text-[16px] font-semibold text-[#1A1320]">Generated records</h3>
 
-          <div className="mt-5 space-y-4">
+          <div className="mt-4 space-y-2.5">
             {agreements.map(agreement => (
-              <article key={agreement.id} className="rounded-[22px] border border-[#ede8df] bg-[#fafbfc] p-4">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <article
+                key={agreement.id}
+                className="rounded-[12px] border border-[#F1EEF4] bg-white p-4 transition-shadow hover:shadow-[0_4px_14px_rgba(46,18,64,0.06)]"
+              >
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-semibold text-[#0f172a]">{agreement.title}</p>
+                      <p className="text-[14px] font-semibold text-[#1A1320]">{agreement.title}</p>
                       <span className={statusClass(agreement.status)}>{copyStatus(agreement.status)}</span>
                     </div>
-                    <p className="mt-2 text-[12px] text-[#67635c]">
-                      {targetNameMap.get(agreement.target_id) ?? 'Unknown client'} / NDIS client
+                    <p className="mt-1.5 text-[12px] text-[#6B6371]">
+                      {targetNameMap.get(agreement.target_id) ?? 'Unknown client'} · NDIS client
                     </p>
-                    <p className="mt-1 text-[12px] text-[#64748b]">
-                      Template: {agreement.template_id ? (templateMap.get(agreement.template_id)?.name ?? 'Template') : 'Custom'}{agreement.expires_on ? ` / Expires ${formatDate(agreement.expires_on)}` : ''}
+                    <p className="mt-0.5 text-[11.5px] text-[#97909C]">
+                      Template: {agreement.template_id ? (templateMap.get(agreement.template_id)?.name ?? 'Template') : 'Custom'}{agreement.expires_on ? ` · Expires ${formatDate(agreement.expires_on)}` : ''}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     {agreement.status === 'pending_signature' ? (
                       <>
                         <button
                           type="button"
                           onClick={() => router.push(`/sign-inperson/${agreement.id}`)}
-                          className="rounded-2xl bg-[#6B2C91] px-4 py-2 text-sm font-semibold text-white hover:bg-[#54206F]"
+                          className="inline-flex h-[32px] items-center gap-1.5 rounded-[8px] bg-[#6B2C91] px-3 text-[12px] font-medium text-white hover:bg-[#54206F]"
                         >
+                          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">edit</span>
                           Sign in person
                         </button>
                         <button
@@ -346,8 +362,9 @@ export default function AgreementsClient({
                             navigator.clipboard.writeText(url)
                             setMessage('Signing link copied to clipboard.')
                           }}
-                          className="rounded-2xl border border-[#dcd7cf] bg-white px-4 py-2 text-sm font-semibold text-[#0f172a]"
+                          className="inline-flex h-[32px] items-center gap-1.5 rounded-[8px] border border-[#E5E1E8] bg-white px-3 text-[12px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
                         >
+                          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">link</span>
                           Copy link
                         </button>
                       </>
@@ -356,18 +373,24 @@ export default function AgreementsClient({
                       <button
                         type="button"
                         onClick={() => openPdf(agreement.pdf_url!)}
-                        className="rounded-2xl border border-[#dcd7cf] bg-white px-4 py-2 text-sm font-semibold text-[#0f172a]"
+                        className="inline-flex h-[32px] items-center gap-1.5 rounded-[8px] border border-[#E5E1E8] bg-white px-3 text-[12px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
                       >
-                        Download PDF
+                        <span className="material-symbols-outlined text-[14px]" aria-hidden="true">download</span>
+                        PDF
                       </button>
                     ) : null}
                   </div>
                 </div>
 
                 {agreement.status === 'signed' && agreement.signature_data_url ? (
-                  <div className="mt-4 rounded-2xl border border-[#e6e8ec] bg-white p-3">
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-[#94a3b8]">Signature</p>
-                    <div className="mt-2 flex items-center justify-center rounded-xl border border-[#f0f1f3] bg-[#fafbfc] p-2">
+                  <div className="mt-3 rounded-[10px] border border-[#F1EEF4] bg-[#F8F6FA] p-3">
+                    <p
+                      className="text-[11px] font-semibold uppercase text-[#6B6371]"
+                      style={{ letterSpacing: '0.08em' }}
+                    >
+                      Signature
+                    </p>
+                    <div className="mt-2 flex items-center justify-center rounded-[8px] border border-[#E5E1E8] bg-white p-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={agreement.signature_data_url}
@@ -375,15 +398,21 @@ export default function AgreementsClient({
                         className="h-24 w-auto max-w-full object-contain"
                       />
                     </div>
-                    <p className="mt-2 text-[12px] text-[#64748b]">
-                      Signed by <span className="font-semibold text-[#0f172a]">{agreement.signer_name ?? 'Unknown signer'}</span>
-                      {agreement.signed_at ? ` / ${formatDate(agreement.signed_at)}` : ''}
+                    <p className="mt-2 text-[12px] text-[#6B6371]">
+                      Signed by <span className="font-semibold text-[#1A1320]">{agreement.signer_name ?? 'Unknown signer'}</span>
+                      {agreement.signed_at ? ` · ${formatDate(agreement.signed_at)}` : ''}
                     </p>
                   </div>
                 ) : null}
               </article>
             ))}
-            {agreements.length === 0 ? <p className="text-sm text-[#64748b]">No agreements created yet.</p> : null}
+            {agreements.length === 0 ? (
+              <div className="rounded-[12px] border border-dashed border-[#E5E1E8] bg-[#F8F6FA] py-10 text-center">
+                <span className="material-symbols-outlined text-[24px] text-[#C7C2CB]" aria-hidden="true">draw</span>
+                <p className="mt-2 text-[13px] font-semibold text-[#1A1320]">No agreements yet</p>
+                <p className="mt-1 text-[11.5px] text-[#6B6371]">Click "Generate agreement" to send one to an NDIS client.</p>
+              </div>
+            ) : null}
           </div>
         </section>
       </section>
@@ -408,23 +437,33 @@ export default function AgreementsClient({
             <TextField label="Agreement title" value={createForm.title} onChange={value => setCreateForm(current => ({ ...current, title: value }))} />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Advocate / Representative name (optional)</label>
+            <label
+              className="block text-[11px] font-semibold uppercase text-[#3F3548]"
+              style={{ letterSpacing: '0.08em' }}
+            >
+              Advocate / Representative name (optional)
+            </label>
             <input
               type="text"
               value={createForm.advocate_name}
               onChange={e => setCreateForm(c => ({ ...c, advocate_name: e.target.value }))}
               placeholder="Leave blank if not applicable"
-              className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
+              className="mt-2 h-[44px] w-full rounded-[10px] border-[1.5px] border-[#E5E1E8] bg-white px-3.5 text-[13.5px] text-[#1A1320] outline-none placeholder:text-[#97909C] focus:border-[#6B2C91] focus:shadow-[0_0_0_3px_#F4ECF8]"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Description of supports (optional)</label>
+            <label
+              className="block text-[11px] font-semibold uppercase text-[#3F3548]"
+              style={{ letterSpacing: '0.08em' }}
+            >
+              Description of supports (optional)
+            </label>
             <textarea
               rows={3}
               value={createForm.supports_description}
               onChange={e => setCreateForm(c => ({ ...c, supports_description: e.target.value }))}
               placeholder="e.g. Daily living assistance, community access, and personal care supports. Leave blank if the attached PDF already covers this."
-              className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
+              className="mt-2 w-full rounded-[10px] border-[1.5px] border-[#E5E1E8] bg-white px-3.5 py-3 text-[13.5px] text-[#1A1320] outline-none placeholder:text-[#97909C] focus:border-[#6B2C91] focus:shadow-[0_0_0_3px_#F4ECF8]"
             />
           </div>
           <SelectField
@@ -449,32 +488,45 @@ export default function AgreementsClient({
             ]}
           />
           <div className="md:col-span-2">
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+            <label
+              className="block text-[11px] font-semibold uppercase text-[#3F3548]"
+              style={{ letterSpacing: '0.08em' }}
+            >
               Attach signed PDF (optional)
             </label>
             <input
               type="file"
               accept="application/pdf,.pdf"
               onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
-              className="mt-2 w-full rounded-2xl border border-dashed border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#64748b] outline-none file:mr-3 file:rounded-xl file:border-0 file:bg-[#0f172a] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white"
+              className="mt-2 w-full rounded-[10px] border-[1.5px] border-dashed border-[#C9A6DE] bg-[#F8F6FA] px-3.5 py-3 text-[12.5px] text-[#6B6371] outline-none file:mr-3 file:rounded-[8px] file:border-0 file:bg-[#6B2C91] file:px-3 file:py-1.5 file:text-[11.5px] file:font-semibold file:text-white hover:bg-white"
             />
-            <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#64748b]">
-              <span className="material-symbols-outlined text-[14px] text-[#6B2C91]">info</span>
-              Upload the service agreement PDF. Max 10MB. The client will see this on their phone
-              along with a signature pad. If you skip this, only the text body is sent (legacy
-              flow).
+            <p className="mt-2 flex items-center gap-1 text-[11.5px] text-[#6B6371]">
+              <span className="material-symbols-outlined text-[14px] text-[#6B2C91]" aria-hidden="true">info</span>
+              Upload the service agreement PDF. Max 10 MB. The client will see this on their phone along with a signature pad.
             </p>
             {pdfFile && (
-              <p className="mt-1 text-[11px] font-medium text-[#54206F]">
-                Selected: {pdfFile.name} · {(pdfFile.size / 1024 / 1024).toFixed(2)} MB
+              <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#F4ECF8] px-2.5 py-[3px] text-[11.5px] font-semibold text-[#54206F]">
+                <span className="material-symbols-outlined text-[12px]" aria-hidden="true">attach_file</span>
+                {pdfFile.name} · {(pdfFile.size / 1024 / 1024).toFixed(2)} MB
               </p>
             )}
           </div>
         </div>
-        <div className="mt-5 flex gap-3">
-          <button type="button" onClick={() => setCreateOpen(false)} className="flex-1 rounded-2xl bg-[#f7f8f9] px-4 py-3 text-sm font-semibold text-[#64748b]">Cancel</button>
-          <button type="button" onClick={handleCreateAgreement} disabled={saving === 'agreement'} className="flex-1 rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">
-            {saving === 'agreement' ? 'Creating...' : 'Create agreement'}
+        <div className="mt-5 flex gap-2.5">
+          <button
+            type="button"
+            onClick={() => setCreateOpen(false)}
+            className="flex-1 rounded-[10px] border border-[#E5E1E8] bg-white px-4 py-3 text-[13px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleCreateAgreement}
+            disabled={saving === 'agreement'}
+            className="flex-1 rounded-[10px] bg-[#6B2C91] px-4 py-3 text-[13px] font-semibold text-white shadow-[0_4px_12px_rgba(107,44,145,0.25)] hover:bg-[#54206F] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {saving === 'agreement' ? 'Creating…' : 'Create agreement'}
           </button>
         </div>
       </Modal>
@@ -486,19 +538,35 @@ export default function AgreementsClient({
             All templates are used to generate agreements for NDIS clients.
           </p>
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Body</label>
+            <label
+              className="block text-[11px] font-semibold uppercase text-[#3F3548]"
+              style={{ letterSpacing: '0.08em' }}
+            >
+              Body
+            </label>
             <textarea
               rows={8}
               value={templateForm.body}
               onChange={event => setTemplateForm(current => ({ ...current, body: event.target.value }))}
-              className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
+              className="mt-2 w-full rounded-[10px] border-[1.5px] border-[#E5E1E8] bg-white px-3.5 py-3 text-[13.5px] text-[#1A1320] outline-none focus:border-[#6B2C91] focus:shadow-[0_0_0_3px_#F4ECF8]"
             />
           </div>
         </div>
-        <div className="mt-5 flex gap-3">
-          <button type="button" onClick={() => setTemplateOpen(false)} className="flex-1 rounded-2xl bg-[#f7f8f9] px-4 py-3 text-sm font-semibold text-[#64748b]">Cancel</button>
-          <button type="button" onClick={handleCreateTemplate} disabled={saving === 'template'} className="flex-1 rounded-2xl bg-[#0f172a] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">
-            {saving === 'template' ? 'Saving...' : 'Save template'}
+        <div className="mt-5 flex gap-2.5">
+          <button
+            type="button"
+            onClick={() => setTemplateOpen(false)}
+            className="flex-1 rounded-[10px] border border-[#E5E1E8] bg-white px-4 py-3 text-[13px] font-medium text-[#3F3548] hover:bg-[#F8F6FA]"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleCreateTemplate}
+            disabled={saving === 'template'}
+            className="flex-1 rounded-[10px] bg-[#6B2C91] px-4 py-3 text-[13px] font-semibold text-white shadow-[0_4px_12px_rgba(107,44,145,0.25)] hover:bg-[#54206F] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {saving === 'template' ? 'Saving…' : 'Save template'}
           </button>
         </div>
       </Modal>
@@ -540,12 +608,17 @@ function TextField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{label}</label>
+      <label
+        className="block text-[11px] font-semibold uppercase text-[#3F3548]"
+        style={{ letterSpacing: '0.08em' }}
+      >
+        {label}
+      </label>
       <input
         type={type}
         value={value}
         onChange={event => onChange(event.target.value)}
-        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
+        className="mt-2 h-[44px] w-full rounded-[10px] border-[1.5px] border-[#E5E1E8] bg-white px-3.5 text-[13.5px] text-[#1A1320] outline-none transition-all focus:border-[#6B2C91] focus:shadow-[0_0_0_3px_#F4ECF8]"
       />
     </div>
   )
@@ -564,11 +637,16 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">{label}</label>
+      <label
+        className="block text-[11px] font-semibold uppercase text-[#3F3548]"
+        style={{ letterSpacing: '0.08em' }}
+      >
+        {label}
+      </label>
       <select
         value={value}
         onChange={event => onChange(event.target.value)}
-        className="mt-2 w-full rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none"
+        className="mt-2 h-[44px] w-full rounded-[10px] border-[1.5px] border-[#E5E1E8] bg-white px-3.5 text-[13.5px] text-[#1A1320] outline-none transition-all focus:border-[#6B2C91] focus:shadow-[0_0_0_3px_#F4ECF8]"
       >
         {options.map(([optionValue, optionLabel]) => (
           <option key={optionValue} value={optionValue}>

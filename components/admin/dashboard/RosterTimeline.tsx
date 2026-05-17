@@ -93,34 +93,50 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
   const nowPct = ((nowHour - HOUR_START) / HOUR_SPAN) * 100
 
   return (
-    <section className="overflow-hidden rounded-[16px] border border-[#e6e8ec] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-      <header className="flex flex-col items-start gap-3 border-b border-[#f0f1f3] px-5 py-4 md:flex-row md:items-end md:justify-between">
+    <section className="overflow-hidden rounded-[16px] bg-white shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]">
+      <header className="flex flex-col items-start gap-3 border-b border-[#F1EEF4] px-5 py-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h3 className="text-[14px] font-semibold text-[#0f172a]">
+          <h3 className="text-[15px] font-semibold leading-none text-[#1A1320]">
             Live roster · {perthDateLabel(now)}
           </h3>
-          <p className="mt-1 text-[12px] text-[#64748b]">
+          <p className="mt-1.5 text-[12.5px] text-[#6B6371]">
             {staff.length} workers · {blocks.length} shifts · {blocks.filter(b => b.live).length} in progress
           </p>
         </div>
-        <div className="flex rounded-full bg-[#f0f1f3] p-1 text-[11px] font-medium">
-          <button type="button" className="rounded-full bg-[#0f172a] px-3 py-1 text-white">Today</button>
-          <button type="button" className="rounded-full px-3 py-1 text-[#64748b]">Tomorrow</button>
-          <button type="button" className="rounded-full px-3 py-1 text-[#64748b]">Week</button>
+        {/* Segmented tabs — matches .adm-tabs */}
+        <div className="inline-flex gap-[2px] rounded-[10px] bg-[#F1EEF4] p-[3px]">
+          <button
+            type="button"
+            className="rounded-[8px] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1A1320] shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+          >
+            Today
+          </button>
+          <button type="button" className="rounded-[8px] px-3 py-1.5 text-[12.5px] font-medium text-[#3F3548]">
+            Tomorrow
+          </button>
+          <button type="button" className="rounded-[8px] px-3 py-1.5 text-[12.5px] font-medium text-[#3F3548]">
+            Week
+          </button>
         </div>
       </header>
 
       <div className="relative overflow-x-auto">
         {/* Hour header — 180px worker col + 12 equal hour cells */}
         <div
-          className="sticky top-0 z-10 grid border-b border-[#f0f1f3] bg-white"
+          className="sticky top-0 z-10 grid border-b border-[#F1EEF4] bg-[#F8F6FA]"
           style={{ gridTemplateColumns: '180px repeat(12, minmax(56px, 1fr))' }}
         >
-          <div className="px-4 py-2 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-[#64748b]">
+          <div
+            className="px-4 py-2 text-[11px] font-semibold uppercase text-[#6B6371]"
+            style={{ letterSpacing: '0.06em' }}
+          >
             Worker
           </div>
-          {HOURS.map(h => (
-            <div key={h} className="border-l border-[#f0f1f3] px-2 py-2 text-[10.5px] font-medium text-[#94a3b8]">
+          {HOURS.map((h) => (
+            <div
+              key={h}
+              className="border-l border-[#F1EEF4] px-2 py-2 text-[11px] font-medium text-[#97909C]"
+            >
               {h === 12 ? '12p' : h > 12 ? `${h - 12}p` : `${h}a`}
             </div>
           ))}
@@ -140,8 +156,9 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
           )}
 
           {staff.length === 0 ? (
-            <div className="px-6 py-12 text-center text-[12px] text-[#94a3b8]">
-              No staff have shifts scheduled today.
+            <div className="px-6 py-14 text-center">
+              <span className="material-symbols-outlined text-[22px] text-[#C7C2CB]" aria-hidden="true">groups</span>
+              <p className="mt-2 text-[13px] font-medium text-[#6B6371]">No shifts scheduled today.</p>
             </div>
           ) : (
             staff.map(row => {
@@ -150,20 +167,20 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
               return (
                 <div
                   key={row.id}
-                  className="relative grid border-b border-[#f0f1f3]"
+                  className="relative grid border-b border-[#F1EEF4]"
                   style={{ gridTemplateColumns: '180px 1fr', minHeight: 64 }}
                 >
                   {/* Worker label column */}
-                  <div className="flex items-center gap-2.5 px-4 py-3">
+                  <div className="flex items-center gap-2.5 border-r border-[#F1EEF4] px-4 py-3">
                     <div
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold"
-                      style={{ backgroundColor: tone.bg, color: tone.fg }}
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold uppercase"
+                      style={{ backgroundColor: tone.bg, color: tone.fg, letterSpacing: '0.04em' }}
                     >
                       {initials(row.name)}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[12.5px] font-semibold text-[#0f172a]">{row.name}</div>
-                      <div className="truncate text-[10.5px] text-[#94a3b8]">{row.role}</div>
+                      <div className="truncate text-[12.5px] font-semibold text-[#1A1320]">{row.name}</div>
+                      <div className="truncate text-[11px] font-medium text-[#97909C]">{row.role}</div>
                     </div>
                   </div>
 
@@ -175,7 +192,7 @@ export default function RosterTimeline({ staff, blocks }: RosterTimelineProps) {
                       style={{ gridTemplateColumns: 'repeat(12, 1fr)' }}
                     >
                       {HOURS.map((_, hi) => (
-                        <div key={hi} className="border-l border-[#f0f1f3]" />
+                        <div key={hi} className="border-l border-[#F1EEF4]" />
                       ))}
                     </div>
 

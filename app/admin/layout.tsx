@@ -37,7 +37,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <AdminSidebar adminName={adminName} />
       <div className="adm-main min-h-screen pt-14 lg:pt-0 lg:pl-[248px]">
         <AdminShell adminName={adminName} unreadCount={unreadCount}>
-          <main className="adm-page">{children}</main>
+          {/* mx-auto centres the .adm-page within .adm-main on screens
+              wider than its 1400px max-width — without this the page
+              sticks to the left edge of the content area. */}
+          <main className="adm-page mx-auto">{children}</main>
         </AdminShell>
       </div>
     </div>

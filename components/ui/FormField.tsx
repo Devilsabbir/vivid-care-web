@@ -37,9 +37,17 @@ interface TextareaFieldProps {
   className?: string
 }
 
-const baseInput = 'mt-2 w-full rounded-2xl border bg-[#fafbfc] px-4 py-3 text-sm text-[#0f172a] outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91] focus-visible:ring-offset-1'
-const normalBorder = 'border-[#e6e8ec]'
-const errorBorder = 'border-[#ef4444]'
+// Input recipe aligned with the design's .login-input + .vc-input-native:
+//  - 44px height (textarea grows from there), 10px radius
+//  - 1.5px slate-200 border, warm white background
+//  - 13.5px / 400 slate-900 text, 14.5px slate-400 placeholder
+//  - Focus: purple border + soft purple glow (matches the login + modal pattern)
+const baseInput =
+  'mt-2 w-full rounded-[10px] border-[1.5px] bg-white px-3.5 text-[13.5px] text-[#1A1320] outline-none transition-all placeholder:text-[#97909C] focus:border-[#6B2C91] focus:shadow-[0_0_0_3px_#F4ECF8]'
+const baseInputHeight = 'h-[44px]'
+const normalBorder = 'border-[#E5E1E8]'
+const errorBorder = 'border-[#DC2626]'
+const labelStyle = 'block text-[11px] font-semibold uppercase text-[#3F3548]'
 
 export function FormField({
   label,
@@ -57,9 +65,13 @@ export function FormField({
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+      <label
+        htmlFor={id}
+        className={labelStyle}
+        style={{ letterSpacing: '0.08em' }}
+      >
         {label}
-        {required && <span className="text-[#ef4444]" aria-hidden="true"> *</span>}
+        {required && <span className="text-[#DC2626]" aria-hidden="true"> *</span>}
       </label>
       <input
         id={id}
@@ -72,10 +84,12 @@ export function FormField({
         aria-required={required || undefined}
         aria-invalid={error ? true : undefined}
         aria-describedby={errorId}
-        className={`${baseInput} ${error ? errorBorder : normalBorder} ${disabled ? 'opacity-60' : ''}`}
+        className={`${baseInput} ${baseInputHeight} ${error ? errorBorder : normalBorder} ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
       />
       {error && (
-        <p id={errorId} className="mt-1 text-xs text-[#ef4444]" role="alert">{error}</p>
+        <p id={errorId} className="mt-1.5 text-[12px] font-medium text-[#DC2626]" role="alert">
+          {error}
+        </p>
       )}
     </div>
   )
@@ -96,9 +110,13 @@ export function SelectField({
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+      <label
+        htmlFor={id}
+        className={labelStyle}
+        style={{ letterSpacing: '0.08em' }}
+      >
         {label}
-        {required && <span className="text-[#ef4444]" aria-hidden="true"> *</span>}
+        {required && <span className="text-[#DC2626]" aria-hidden="true"> *</span>}
       </label>
       <select
         id={id}
@@ -109,12 +127,14 @@ export function SelectField({
         aria-required={required || undefined}
         aria-invalid={error ? true : undefined}
         aria-describedby={errorId}
-        className={`${baseInput} ${error ? errorBorder : normalBorder} ${disabled ? 'opacity-60' : ''}`}
+        className={`${baseInput} ${baseInputHeight} ${error ? errorBorder : normalBorder} ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
       >
         {children}
       </select>
       {error && (
-        <p id={errorId} className="mt-1 text-xs text-[#ef4444]" role="alert">{error}</p>
+        <p id={errorId} className="mt-1.5 text-[12px] font-medium text-[#DC2626]" role="alert">
+          {error}
+        </p>
       )}
     </div>
   )
@@ -136,9 +156,13 @@ export function TextareaField({
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.14em] text-[#64748b]">
+      <label
+        htmlFor={id}
+        className={labelStyle}
+        style={{ letterSpacing: '0.08em' }}
+      >
         {label}
-        {required && <span className="text-[#ef4444]" aria-hidden="true"> *</span>}
+        {required && <span className="text-[#DC2626]" aria-hidden="true"> *</span>}
       </label>
       <textarea
         id={id}
@@ -151,10 +175,12 @@ export function TextareaField({
         aria-required={required || undefined}
         aria-invalid={error ? true : undefined}
         aria-describedby={errorId}
-        className={`${baseInput} ${error ? errorBorder : normalBorder} ${disabled ? 'opacity-60' : ''} resize-none`}
+        className={`${baseInput} py-3 ${error ? errorBorder : normalBorder} ${disabled ? 'cursor-not-allowed opacity-60' : ''} resize-none`}
       />
       {error && (
-        <p id={errorId} className="mt-1 text-xs text-[#ef4444]" role="alert">{error}</p>
+        <p id={errorId} className="mt-1.5 text-[12px] font-medium text-[#DC2626]" role="alert">
+          {error}
+        </p>
       )}
     </div>
   )

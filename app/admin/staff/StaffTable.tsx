@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -12,32 +12,39 @@ type StaffCard = {
   docState: 'expired' | 'near_expiry' | 'active' | 'missing'
 }
 
+/**
+ * Staff registry card grid. Mirrors the Clients list visuals: 16px
+ * radius cards, warm purple-tinted shadow, brand-gradient avatar.
+ */
 export default function StaffTable({ staff }: { staff: StaffCard[] }) {
   const [search, setSearch] = useState('')
 
   const filtered = useMemo(() => {
     const query = search.toLowerCase()
-    return staff.filter(member =>
-      member.full_name.toLowerCase().includes(query) ||
-      member.phone?.toLowerCase().includes(query)
+    return staff.filter(
+      (member) =>
+        member.full_name.toLowerCase().includes(query) ||
+        member.phone?.toLowerCase().includes(query),
     )
   }, [search, staff])
 
   return (
-    <section className="overflow-hidden rounded-[28px] border border-[#e6e8ec] bg-white shadow-[0_16px_40px_rgba(26,26,24,0.04)]">
-      <div className="border-b border-[#f0f1f3] px-5 py-4 md:px-6">
+    <section className="overflow-hidden rounded-[16px] bg-white shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]">
+      <div className="border-b border-[#F1EEF4] px-5 py-4 md:px-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-[#0f172a]">Team directory</h3>
-            <p className="text-xs text-[#64748b]">Search the workforce and review roster load and document readiness</p>
+            <h3 className="text-[16px] font-semibold leading-none text-[#1A1320]">Team directory</h3>
+            <p className="mt-1.5 text-[12.5px] text-[#6B6371]">
+              Search the workforce and review roster load and document readiness.
+            </p>
           </div>
-          <div className="flex items-center gap-2 rounded-2xl border border-[#e6e8ec] bg-[#fafbfc] px-4 py-2.5 md:w-[320px]">
-            <span className="material-symbols-outlined text-[18px] text-[#918d85]">search</span>
+          <div className="flex h-9 items-center gap-2.5 rounded-[10px] border border-[#F1EEF4] bg-[#F8F6FA] px-3 md:w-[320px]">
+            <span className="material-symbols-outlined text-[16px] text-[#97909C]">search</span>
             <input
               value={search}
-              onChange={event => setSearch(event.target.value)}
-              placeholder="Search staff..."
-              className="w-full bg-transparent text-sm text-[#0f172a] placeholder:text-[#9d998f] outline-none"
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by name or phone…"
+              className="w-full bg-transparent text-[13.5px] text-[#1A1320] outline-none placeholder:text-[#97909C]"
             />
           </div>
         </div>
@@ -45,19 +52,28 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
 
       {filtered.length > 0 ? (
         <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-3 md:p-6">
-          {filtered.map(member => (
+          {filtered.map((member) => (
             <Link
               key={member.id}
               href={`/admin/staff/${member.id}`}
-              className="rounded-[22px] border border-[#e6e8ec] bg-[#fafbfc] p-5 transition-colors hover:bg-[#f7f8f9]"
+              className="group rounded-[16px] border border-[#F1EEF4] bg-white p-5 transition-all hover:border-[#E6D4F0] hover:bg-[#F8F6FA] hover:shadow-[0_4px_14px_rgba(46,18,64,0.05)]"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0f172a] text-sm font-semibold uppercase tracking-[0.14em] text-[#6B2C91]">
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold uppercase tracking-[0.1em] text-white"
+                  style={{
+                    background: 'linear-gradient(135deg, #6B2C91 0%, #54206F 100%)',
+                  }}
+                >
                   {initials(member.full_name)}
                 </div>
-                <div className="min-w-0">
-                  <h4 className="truncate text-sm font-semibold text-[#0f172a]">{member.full_name}</h4>
-                  <p className="truncate text-xs text-[#64748b]">{member.phone ?? 'Care team member'}</p>
+                <div className="min-w-0 flex-1">
+                  <h4 className="truncate text-[14px] font-semibold leading-tight text-[#1A1320] group-hover:text-[#54206F]">
+                    {member.full_name}
+                  </h4>
+                  <p className="mt-1 truncate text-[12px] text-[#6B6371]">
+                    {member.phone ?? 'Care team member'}
+                  </p>
                 </div>
               </div>
 
@@ -66,20 +82,32 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
                 <StatBox label="Hours" value={`${member.hoursThisWeek.toFixed(1)}h`} />
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#E6F5FC] px-2.5 py-1 text-[10px] font-semibold text-[#1380AB]">Rostered</span>
-                <span className={statusClass(member.docState)}>{statusLabel(member.docState)}</span>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                <span
+                  className="inline-flex items-center gap-1 rounded-full bg-[#E6F5FC] px-2 py-[3px] text-[11px] font-semibold uppercase text-[#1380AB]"
+                  style={{ letterSpacing: '0.04em' }}
+                >
+                  Rostered
+                </span>
+                <span className={statusClass(member.docState)} style={{ letterSpacing: '0.04em' }}>
+                  {statusLabel(member.docState)}
+                </span>
               </div>
             </Link>
           ))}
         </div>
       ) : (
         <div className="px-6 py-16 text-center">
-          <span className="material-symbols-outlined text-[44px] text-[#94a3b8]">badge</span>
-          <p className="mt-3 text-sm font-medium text-[#0f172a]">
+          <div
+            className="mx-auto flex h-14 w-14 items-center justify-center rounded-full"
+            style={{ background: '#F4ECF8', color: '#6B2C91' }}
+          >
+            <span className="material-symbols-outlined text-[26px]" aria-hidden="true">badge</span>
+          </div>
+          <p className="mt-4 text-[14.5px] font-semibold text-[#1A1320]">
             {search ? 'No staff match your search' : 'No staff records yet'}
           </p>
-          <p className="mt-1 text-xs text-[#64748b]">
+          <p className="mt-1.5 mx-auto max-w-md text-[12.5px] text-[#6B6371]">
             {search ? 'Try a different name or phone number.' : 'Add your first team member to start rostering.'}
           </p>
         </div>
@@ -90,9 +118,16 @@ export default function StaffTable({ staff }: { staff: StaffCard[] }) {
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[14px] bg-white px-3 py-3">
-      <p className="text-[10px] text-[#94a3b8]">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[#0f172a]">{value}</p>
+    <div className="rounded-[10px] bg-[#F8F6FA] px-3 py-2.5">
+      <p
+        className="text-[10px] font-medium uppercase text-[#97909C]"
+        style={{ letterSpacing: '0.06em' }}
+      >
+        {label}
+      </p>
+      <p className="mt-1 text-[15px] font-bold text-[#1A1320]" style={{ letterSpacing: '-0.01em' }}>
+        {value}
+      </p>
     </div>
   )
 }
@@ -102,7 +137,7 @@ function initials(name: string) {
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map(part => part[0]?.toUpperCase())
+    .map((part) => part[0]?.toUpperCase())
     .join('')
 }
 
@@ -114,8 +149,10 @@ function statusLabel(state: StaffCard['docState']) {
 }
 
 function statusClass(state: StaffCard['docState']) {
-  if (state === 'expired') return 'rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-semibold text-[#991b1b]'
-  if (state === 'near_expiry') return 'rounded-full bg-[#fef9c3] px-2.5 py-1 text-[10px] font-semibold text-[#92400e]'
-  if (state === 'active') return 'rounded-full bg-[#F4ECF8] px-2.5 py-1 text-[10px] font-semibold text-[#54206F]'
-  return 'rounded-full bg-[#f7f8f9] px-2.5 py-1 text-[10px] font-semibold text-[#64748b]'
+  const base =
+    'inline-flex items-center gap-1 rounded-full px-2 py-[3px] text-[11px] font-semibold uppercase'
+  if (state === 'expired') return `${base} bg-[#FCE7E7] text-[#DC2626]`
+  if (state === 'near_expiry') return `${base} bg-[#FEF3D6] text-[#5C3A06]`
+  if (state === 'active') return `${base} bg-[#F1F9E1] text-[#5E8D1F]`
+  return `${base} bg-[#F1EEF4] text-[#3F3548]`
 }

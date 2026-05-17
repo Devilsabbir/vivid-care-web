@@ -2,34 +2,42 @@ import { type ReactNode } from 'react'
 
 type AlertVariant = 'error' | 'warning' | 'info' | 'success'
 
-const variantStyles: Record<AlertVariant, { bg: string; border: string; icon: string; iconColor: string; titleColor: string }> = {
+/**
+ * Inline alert panel — warm-toned palette aligned with StatusBadge +
+ * design tokens. 12px radius, 32px icon square on the left, 14px title
+ * with 13.5px slate-warm body. Use for form errors, schema notices, etc.
+ */
+const variantStyles: Record<
+  AlertVariant,
+  { bg: string; iconBg: string; iconColor: string; titleColor: string; bodyColor: string }
+> = {
   error: {
-    bg: 'bg-[#fef2f2]',
-    border: 'border-[#fecaca]',
-    icon: 'error',
-    iconColor: 'text-[#991b1b]',
-    titleColor: 'text-[#991b1b]',
+    bg: '#FCE7E7',
+    iconBg: '#F8C9C9',
+    iconColor: '#DC2626',
+    titleColor: '#991B1B',
+    bodyColor: '#7B1818',
   },
   warning: {
-    bg: 'bg-[#fefce8]',
-    border: 'border-[#fef08a]',
-    icon: 'warning',
-    iconColor: 'text-[#92400e]',
-    titleColor: 'text-[#92400e]',
+    bg: '#FEF3D6',
+    iconBg: '#F8E0A4',
+    iconColor: '#D97706',
+    titleColor: '#5C3A06',
+    bodyColor: '#7C5614',
   },
   info: {
-    bg: 'bg-[#eff6ff]',
-    border: 'border-[#bfdbfe]',
-    icon: 'info',
-    iconColor: 'text-[#1d4ed8]',
-    titleColor: 'text-[#1d4ed8]',
+    bg: '#F4ECF8',
+    iconBg: '#E6D4F0',
+    iconColor: '#6B2C91',
+    titleColor: '#54206F',
+    bodyColor: '#3F1856',
   },
   success: {
-    bg: 'bg-[#f0fdf4]',
-    border: 'border-[#bbf7d0]',
-    icon: 'check_circle',
-    iconColor: 'text-[#166534]',
-    titleColor: 'text-[#166534]',
+    bg: '#F1F9E1',
+    iconBg: '#D9EAB8',
+    iconColor: '#5E8D1F',
+    titleColor: '#5E8D1F',
+    bodyColor: '#3F6014',
   },
 }
 
@@ -47,18 +55,42 @@ export default function AlertPanel({
   className?: string
 }) {
   const style = variantStyles[variant]
+  const iconName =
+    icon ??
+    (variant === 'error'
+      ? 'error'
+      : variant === 'warning'
+        ? 'warning'
+        : variant === 'success'
+          ? 'check_circle'
+          : 'info')
 
   return (
     <div
-      className={`flex gap-3 rounded-[18px] border ${style.border} ${style.bg} p-4 ${className}`}
+      className={`flex gap-3 rounded-[12px] p-3.5 ${className}`}
+      style={{ background: style.bg }}
       role="alert"
     >
-      <span className={`material-symbols-outlined mt-0.5 text-[20px] ${style.iconColor}`} aria-hidden="true">
-        {icon ?? style.icon}
-      </span>
+      <div
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px]"
+        style={{ background: style.iconBg, color: style.iconColor }}
+      >
+        <span className="material-symbols-outlined text-[16px]" aria-hidden="true">{iconName}</span>
+      </div>
       <div className="min-w-0 flex-1">
-        {title && <p className={`text-sm font-semibold ${style.titleColor}`}>{title}</p>}
-        {children && <div className="mt-1 text-xs leading-5 text-[#64748b]">{children}</div>}
+        {title && (
+          <p className="text-[13.5px] font-semibold leading-tight" style={{ color: style.titleColor }}>
+            {title}
+          </p>
+        )}
+        {children && (
+          <div
+            className="mt-1 text-[12.5px] leading-[1.45]"
+            style={{ color: style.bodyColor }}
+          >
+            {children}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-﻿import { type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import EmptyState from './EmptyState'
 
 export interface Column<T> {
@@ -19,6 +19,11 @@ interface DataTableProps<T> {
   emptyDescription?: string
 }
 
+/**
+ * Standard admin data table. Chrome aligned with the design's
+ * .adm-table treatment — warm-tinted header row, slate-700 cells,
+ * hover-row highlight, 16px-radius card surround.
+ */
 export default function DataTable<T>({
   columns,
   rows,
@@ -33,31 +38,40 @@ export default function DataTable<T>({
   }
 
   return (
-    <div className="overflow-hidden rounded-[24px] border border-[#e6e8ec] bg-white shadow-[0_14px_32px_rgba(26,26,24,0.04)]">
+    <div className="overflow-hidden rounded-[16px] bg-white shadow-[0_4px_14px_rgba(46,18,64,0.05),0_1px_3px_rgba(46,18,64,0.04)]">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[#f0f1f3]">
-              {columns.map(col => (
+            <tr className="border-b border-[#F1EEF4] bg-[#F8F6FA]">
+              {columns.map((col) => (
                 <th
                   key={col.key}
                   scope="col"
-                  className={`px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#94a3b8] ${col.srOnly ? 'sr-only' : ''} ${col.className ?? ''}`}
+                  className={[
+                    'px-4 py-3 text-[11px] font-semibold uppercase text-[#6B6371]',
+                    col.srOnly ? 'sr-only' : '',
+                    col.className ?? '',
+                  ].join(' ')}
+                  style={{ letterSpacing: '0.06em' }}
                 >
                   {col.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f7f8f9]">
-            {rows.map(row => {
+          <tbody className="divide-y divide-[#F1EEF4]">
+            {rows.map((row) => {
               const key = getRowKey(row)
               const isClickable = Boolean(onRowClick)
               return (
                 <tr
                   key={key}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={`${isClickable ? 'cursor-pointer hover:bg-[#fafbfc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#6B2C91]' : ''}`}
+                  className={
+                    isClickable
+                      ? 'cursor-pointer transition-colors hover:bg-[#F8F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#6B2C91]'
+                      : ''
+                  }
                   tabIndex={isClickable ? 0 : undefined}
                   onKeyDown={
                     isClickable
@@ -71,9 +85,14 @@ export default function DataTable<T>({
                   }
                   role={isClickable ? 'button' : undefined}
                 >
-                  {columns.map(col => (
-                    <td key={col.key} className={`px-4 py-3 text-[#64748b] ${col.className ?? ''}`}>
-                      {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
+                  {columns.map((col) => (
+                    <td
+                      key={col.key}
+                      className={`px-4 py-3 text-[13.5px] text-[#3F3548] ${col.className ?? ''}`}
+                    >
+                      {col.render
+                        ? col.render(row)
+                        : String((row as Record<string, unknown>)[col.key] ?? '')}
                     </td>
                   ))}
                 </tr>

@@ -202,11 +202,8 @@ export default function KpiGrid({ tiles, storageKey = 'admin:kpi' }: KpiGridProp
         </div>
       )}
 
-      {/* Tile grid */}
-      <section
-        className="grid gap-3.5 md:grid-cols-2 xl:grid-cols-4"
-        aria-label="Dashboard KPIs"
-      >
+      {/* Tile grid — uses the handoff's .adm-kpi-grid layout class. */}
+      <section className="adm-kpi-grid" aria-label="Dashboard KPIs">
         {renderKeys.map((k) => {
           const tile = byKey.get(k)
           if (!tile) return null

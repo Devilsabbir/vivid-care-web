@@ -1,96 +1,194 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-const NAV_GROUPS = [
+/**
+ * Admin sidebar — implements the design handoff's `.adm-side` layout
+ * directly. The class names match `styles/vc-admin.css` exactly, so
+ * the visual output is pixel-identical to the bundled design.
+ *
+ * Responsive behaviour stays the same as before:
+ *  - lg+ : sticky 248px column anchored to the left edge
+ *  - <lg : compact top bar + slide-in drawer
+ */
+
+interface NavGroup {
+  label?: string
+  items: ReadonlyArray<{ href: string; icon: string; label: string }>
+}
+
+const NAV_GROUPS: ReadonlyArray<NavGroup> = [
   {
-    label: 'Operations',
     items: [
-      { href: '/admin/dashboard',        icon: 'dashboard',    label: 'Dashboard' },
-      { href: '/admin/roster',           icon: 'calendar_month', label: 'Roster' },
-      { href: '/admin/shifts',           icon: 'event_note',   label: 'Shifts' },
-      { href: '/admin/active-shifts',    icon: 'location_on',  label: 'Live shifts' },
+      { href: '/admin/dashboard',     icon: 'dashboard',      label: 'Dashboard' },
+      { href: '/admin/roster',        icon: 'calendar_month', label: 'Roster' },
+      { href: '/admin/shifts',        icon: 'event_note',     label: 'Shifts' },
+      { href: '/admin/active-shifts', icon: 'location_on',    label: 'Live shifts' },
     ],
   },
   {
     label: 'People',
     items: [
-      { href: '/admin/clients', icon: 'group',  label: 'Clients' },
+      { href: '/admin/clients', icon: 'groups', label: 'Clients' },
       { href: '/admin/staff',   icon: 'badge',  label: 'Staff' },
     ],
   },
   {
     label: 'Compliance',
     items: [
-      { href: '/admin/compliance',            icon: 'description', label: 'Documents' },
-      { href: '/admin/agreements',            icon: 'draw',        label: 'Agreements' },
-      { href: '/admin/incidents',             icon: 'warning',     label: 'Incidents' },
-      { href: '/admin/service-documentation', icon: 'fact_check',  label: 'Service docs' },
+      { href: '/admin/compliance', icon: 'description', label: 'Documents' },
+      { href: '/admin/agreements', icon: 'draw',        label: 'Agreements' },
+      { href: '/admin/incidents',  icon: 'warning',     label: 'Incidents' },
     ],
   },
   {
-    label: 'Admin',
+    label: 'Operations',
     items: [
-      { href: '/admin/payments',      icon: 'payments',       label: 'Payments' },
-      { href: '/admin/notifications', icon: 'notifications',  label: 'Notifications' },
-      { href: '/admin/settings',      icon: 'tune',           label: 'Settings' },
+      { href: '/admin/payments',      icon: 'payments',      label: 'Billing' },
+      { href: '/admin/notifications', icon: 'notifications', label: 'Notifications' },
+      { href: '/admin/settings',      icon: 'settings',      label: 'Settings' },
     ],
   },
 ]
 
-function NavItems({
-  pathname,
-  onLinkClick,
+function NavItem({
+  href,
+  icon,
+  label,
+  active,
+  onClick,
 }: {
-  pathname: string
-  onLinkClick?: () => void
+  href: string
+  icon: string
+  label: string
+  active: boolean
+  onClick?: () => void
 }) {
   return (
-    <nav
-      aria-label="Main navigation"
-      className="flex-1 overflow-y-auto px-3 pb-3"
-      style={{ scrollbarWidth: 'none' }}
+    <Link
+      href={href}
+      onClick={onClick}
+      aria-current={active ? 'page' : undefined}
+      className={`adm-nav-item ${active ? 'active' : ''}`}
     >
-      {NAV_GROUPS.map(group => (
-        <div key={group.label} className="mb-1">
-          <div className="mb-0.5 px-2 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#94a3b8]">
-            {group.label}
-          </div>
-          {group.items.map(item => {
-            const active = pathname === item.href || pathname.startsWith(item.href + '/')
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onLinkClick}
-                aria-current={active ? 'page' : undefined}
-                className={[
-                  // Design spec: 36px height, 9px radius, 13.5px font, slate-700 default,
-                  // active = purple-50 bg + purple-700 fg + 3px left bar indicator
-                  'relative flex h-9 w-full items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] transition-colors duration-100',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]',
-                  active
-                    ? 'bg-[#F4ECF8] font-semibold text-[#54206F] before:absolute before:-left-3.5 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-[#6B2C91]'
-                    : 'font-medium text-[#3F3548] hover:bg-[#F8F6FA] hover:text-[#1A1320]',
-                ].join(' ')}
-              >
-                <span
-                  className="material-symbols-outlined shrink-0 text-[17px]"
-                  style={active ? { fontVariationSettings: "'FILL' 1, 'wght' 400" } : { fontVariationSettings: "'FILL' 0, 'wght' 300" }}
-                  aria-hidden="true"
-                >
-                  {item.icon}
-                </span>
-                <span className="truncate">{item.label}</span>
-              </Link>
-            )
-          })}
+      <span
+        className="material-symbols-outlined"
+        style={{
+          fontSize: 18,
+          fontVariationSettings: active ? "'FILL' 1, 'wght' 400" : "'FILL' 0, 'wght' 300",
+        }}
+        aria-hidden="true"
+      >
+        {icon}
+      </span>
+      <span>{label}</span>
+    </Link>
+  )
+}
+
+function SidebarBody({
+  pathname,
+  adminName,
+  initials,
+  onSignOut,
+  onLinkClick,
+  onClose,
+}: {
+  pathname: string
+  adminName: string
+  initials: string
+  onSignOut: () => void
+  onLinkClick?: () => void
+  onClose?: () => void
+}) {
+  return (
+    <aside className="adm-side">
+      {/* Logo */}
+      <div className="adm-brand" style={{ position: 'relative' }}>
+        <Link
+          href="/admin/dashboard"
+          onClick={onClose}
+          className="flex flex-1 items-center justify-center"
+          aria-label="Vivid Care home"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="VividCare" style={{ height: 56, width: 'auto' }} />
+        </Link>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close navigation menu"
+            className="adm-iconbtn"
+            style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', width: 28, height: 28 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }} aria-hidden="true">close</span>
+          </button>
+        )}
+      </div>
+
+      {/* Region switcher chip */}
+      <div className="adm-org">
+        <div className="glyph">WA</div>
+        <div className="meta">
+          <div className="name">Western Australia · Perth</div>
+          <div className="sub">Region</div>
         </div>
-      ))}
-    </nav>
+        <span style={{ color: 'var(--slate-400)' }} aria-hidden="true">
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>expand_more</span>
+        </span>
+      </div>
+
+      {/* Nav groups */}
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+        {NAV_GROUPS.map((group, idx) => (
+          <div key={idx} className="adm-nav-group" style={idx > 0 ? { marginTop: 6 } : undefined}>
+            {group.label && (
+              <div className="lbl" style={{ padding: '6px 10px' }}>
+                {group.label}
+              </div>
+            )}
+            {group.items.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(item.href + '/')
+              return (
+                <NavItem
+                  key={item.href}
+                  href={item.href}
+                  icon={item.icon}
+                  label={item.label}
+                  active={active}
+                  onClick={onLinkClick}
+                />
+              )
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* Footer — signed-in admin chip */}
+      <div className="adm-side-foot">
+        <div className="vc-avatar warm" style={{ width: 32, height: 32, fontSize: 12 }} title={adminName || 'Admin'}>
+          {initials}
+        </div>
+        <div className="who">
+          <div className="name">{adminName || 'Admin'}</div>
+          <div className="role">Care coordinator</div>
+        </div>
+        <button
+          type="button"
+          onClick={onSignOut}
+          className="adm-iconbtn"
+          style={{ width: 28, height: 28 }}
+          title="Sign out"
+          aria-label="Sign out"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }} aria-hidden="true">logout</span>
+        </button>
+      </div>
+    </aside>
   )
 }
 
@@ -100,120 +198,57 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
   const router = useRouter()
   const supabase = createClient()
 
-  const initials = adminName
-    ?.split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(part => part[0]?.toUpperCase())
-    .join('') || 'AD'
+  const initials =
+    adminName
+      ?.split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('') || 'AD'
 
   async function handleSignOut() {
     await supabase.auth.signOut()
     router.push('/login')
   }
 
-  const sidebarContent = (onClose?: () => void) => (
-    <>
-      {/* Logo */}
-      <div className="relative flex items-center border-b border-[#e6e8ec] px-4 py-4">
-        <Link
-          href="/admin/dashboard"
-          title="Vivid Care"
-          onClick={onClose}
-          className="flex flex-1 items-center justify-center"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="VividCare" className="h-12 w-auto object-contain" />
-        </Link>
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close navigation menu"
-            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f7f8f9] hover:text-[#0f172a]"
-          >
-            <span className="material-symbols-outlined text-[18px]">close</span>
-          </button>
-        )}
-      </div>
-
-      {/* Region indicator — informational only (single-region deployment) */}
-      <div className="border-b border-[#e6e8ec] px-3 py-3">
-        <div
-          className="flex w-full items-center gap-2.5 rounded-[10px] border border-[#e6e8ec] bg-white px-2.5 py-2"
-          aria-label="Current region"
-        >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] bg-gradient-to-br from-[#6B2C91] to-[#2BAEE0] text-[10px] font-semibold uppercase tracking-[0.06em] text-white">
-            WA
-          </div>
-          <div className="min-w-0 flex-1 text-left">
-            <div className="truncate text-[12px] font-semibold leading-tight text-[#0f172a]">
-              Western Australia · Perth
-            </div>
-            <div className="text-[10.5px] text-[#94a3b8]">Region</div>
-          </div>
-        </div>
-      </div>
-
-      <NavItems pathname={pathname} onLinkClick={onClose} />
-
-      {/* Footer */}
-      <div className="border-t border-[#e6e8ec] px-3 py-3">
-        <div className="flex items-center gap-2.5">
-          <div
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F4ECF8] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#54206F]"
-            title={adminName ?? 'Admin'}
-          >
-            {initials}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-[12.5px] font-600 leading-tight text-[#0f172a]">
-              {adminName ?? 'Admin'}
-            </div>
-            <div className="text-[10.5px] text-[#94a3b8]">Operations admin</div>
-          </div>
-          <button
-            onClick={handleSignOut}
-            type="button"
-            title="Sign out"
-            aria-label="Sign out"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[#94a3b8] transition-colors hover:bg-[#f7f8f9] hover:text-[#475569]"
-          >
-            <span className="material-symbols-outlined text-[16px]">logout</span>
-          </button>
-        </div>
-      </div>
-    </>
-  )
-
   return (
     <>
-      {/* ── Desktop sidebar (lg+) — design spec: 248px wide ── */}
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[248px] flex-col border-r border-[#F1EEF4] bg-white lg:flex">
-        {sidebarContent()}
-      </aside>
+      {/* ── Desktop sidebar (lg+) — sits in the .adm grid's first column ── */}
+      <div className="hidden lg:block">
+        <SidebarBody
+          pathname={pathname}
+          adminName={adminName ?? ''}
+          initials={initials}
+          onSignOut={handleSignOut}
+        />
+      </div>
 
-      {/* ── Mobile top bar (below lg) ── */}
-      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[#e6e8ec] bg-white px-4 lg:hidden">
+      {/* ── Mobile top bar (<lg) ── */}
+      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[#F1EEF4] bg-white px-4 lg:hidden">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Open navigation menu"
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] hover:bg-[#f7f8f9] hover:text-[#0f172a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B2C91]"
+          className="adm-iconbtn"
+          style={{ width: 36, height: 36 }}
         >
-          <span className="material-symbols-outlined text-[20px]">menu</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 20 }} aria-hidden="true">menu</span>
         </button>
 
         <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[7px] bg-[#6B2C91]">
+          <div
+            className="flex items-center justify-center rounded-[7px]"
+            style={{ height: 28, width: 28, background: 'var(--vc-purple)' }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Vivid Care" className="h-4 w-4 object-contain brightness-0 invert" />
+            <img src="/logo.png" alt="" style={{ height: 16, width: 16, filter: 'brightness(0) invert(1)' }} />
           </div>
-          <span className="text-[13px] font-semibold text-[#0f172a]">VividCare</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--slate-900)' }}>VividCare</span>
         </Link>
 
         <div
-          className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F4ECF8] text-[10px] font-semibold uppercase tracking-[0.1em] text-[#54206F]"
+          className="vc-avatar warm"
+          style={{ width: 28, height: 28, fontSize: 11 }}
           title={adminName ?? 'Admin'}
         >
           {initials}
@@ -224,13 +259,24 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0"
+            style={{ background: 'rgba(20,12,32,0.42)', backdropFilter: 'blur(3px)' }}
             aria-hidden="true"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[264px] flex-col border-r border-[#e6e8ec] bg-white shadow-[4px_0_24px_rgba(15,23,42,0.08)]">
-            {sidebarContent(() => setMobileOpen(false))}
-          </aside>
+          <div
+            className="absolute inset-y-0 left-0"
+            style={{ width: 264, boxShadow: '4px 0 24px rgba(20,12,32,0.18)' }}
+          >
+            <SidebarBody
+              pathname={pathname}
+              adminName={adminName ?? ''}
+              initials={initials}
+              onSignOut={handleSignOut}
+              onLinkClick={() => setMobileOpen(false)}
+              onClose={() => setMobileOpen(false)}
+            />
+          </div>
         </div>
       )}
     </>

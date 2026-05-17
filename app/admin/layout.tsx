@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminShell from '@/components/admin/AdminShell'
+// Pull in the design-handoff CSS so .adm-*, .vc-*, .pill, .donut etc.
+// classes are available across every admin page. Scoped to /admin/* only.
+import '@/styles/vc-design.css'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -22,17 +25,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F5FA] text-[#1A1320]">
+    // .adm wrapper from the design handoff — CSS grid with a 248px
+    // sidebar column on lg+, single-column below. The actual sidebar +
+    // mobile drawer logic still lives in <AdminSidebar />; this wrapper
+    // just provides the layout grid and the warm app background.
+    <div className="adm" style={{ background: 'var(--app-bg)' }}>
       <AdminSidebar adminName={adminName} />
-      {/* Sidebar is 248px wide on lg+ — match the design spec. */}
-      <div className="min-h-screen pl-0 pt-14 lg:pl-[248px] lg:pt-0">
+      <div className="adm-main pt-14 lg:pt-0">
         <AdminShell adminName={adminName} unreadCount={unreadCount}>
-          <main>
-            {/* Design spec: 28px padding top/bottom, 32px left/right, max 1400px content. */}
-            <div className="mx-auto w-full max-w-[1400px] px-5 py-6 md:px-8 md:py-7">
-              {children}
-            </div>
-          </main>
+          <main className="adm-page">{children}</main>
         </AdminShell>
       </div>
     </div>

@@ -1,0 +1,12 @@
+/*
+ * VividCare design system — sourced from the Claude Design handoff bundle.
+ * Combines the brand tokens (vc-base.css) with the admin component classes
+ * (vc-admin.css + vc-admin-modals.css) so any admin page can use them.
+ *
+ * IBM Plex Sans is already loaded by the Next.js root layout via next/font,
+ * so we deliberately skip the @import url('https://fonts.googleapis.com/...')
+ * from the design's base sheet — fonts arrive via the framework instead.
+ */
+@import './vc-base.css';
+@import './vc-admin.css';
+@import './vc-admin-modals.css';

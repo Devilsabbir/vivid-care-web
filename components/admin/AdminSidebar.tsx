@@ -213,8 +213,12 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
 
   return (
     <>
-      {/* ── Desktop sidebar (lg+) — sits in the .adm grid's first column ── */}
-      <div className="hidden lg:block">
+      {/* ── Desktop sidebar (lg+) — fixed-positioned 248px column on the
+            left edge so the layout doesn't depend on grid placement. ── */}
+      <div
+        className="fixed inset-y-0 left-0 z-50 hidden lg:block"
+        style={{ width: 248 }}
+      >
         <SidebarBody
           pathname={pathname}
           adminName={adminName ?? ''}

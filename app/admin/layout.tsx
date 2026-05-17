@@ -25,13 +25,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    // .adm wrapper from the design handoff — CSS grid with a 248px
-    // sidebar column on lg+, single-column below. The actual sidebar +
-    // mobile drawer logic still lives in <AdminSidebar />; this wrapper
-    // just provides the layout grid and the warm app background.
-    <div className="adm" style={{ background: 'var(--app-bg)' }}>
+    // Mixing the design's class names with a fixed-positioned sidebar:
+    // CSS grid on .adm caused .adm-main to land in column 1 because the
+    // mobile chrome (fixed top bar + drawer) was still consuming grid
+    // cells. Sticking with a fixed sidebar + left-padding on main is
+    // simpler and matches the design's pixel layout (248px column).
+    <div
+      className="min-h-screen"
+      style={{ background: 'var(--app-bg)', color: 'var(--slate-900)', fontFamily: 'var(--ff-sans)' }}
+    >
       <AdminSidebar adminName={adminName} />
-      <div className="adm-main pt-14 lg:pt-0">
+      <div className="adm-main min-h-screen pt-14 lg:pt-0 lg:pl-[248px]">
         <AdminShell adminName={adminName} unreadCount={unreadCount}>
           <main className="adm-page">{children}</main>
         </AdminShell>

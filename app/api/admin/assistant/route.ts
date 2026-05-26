@@ -1,51 +1,131 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { rateLimit } from '@/lib/rate-limit'
 import { getIP } from '@/lib/get-ip'
 
-const ADMIN_SYSTEM_PROMPT = `You are Vivid Care Operations Assistant, an AI helper exclusively for administrators of the Vivid Care workforce management platform.
+/**
+ * Vivi — admin operations assistant.
+ *
+ * Two upgrades over the previous Haiku version:
+ *  1. Model bumped to Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
+ *     so reasoning / tone / formatting are sharper. Haiku stays for the
+ *     staff chat where speed matters more than depth.
+ *  2. Live org context — every request now augments the system prompt
+ *     with current counts (shifts today, open incidents, expiring docs,
+ *     NDIS clients pending signature, etc.) so Vivi can answer
+ *     "how many open incidents?" with real numbers, not "I don't have
+ *     access".
+ *
+ * Context is fetched via the service-role client so we get an org-wide
+ * view independent of the admin's row-level scope.
+ */
 
-Your job is to help admins solve operational, compliance, and platform-usage problems quickly. Be concise, direct, and practical — admins are busy and want actionable answers.
+const ADMIN_SYSTEM_PROMPT_BASE = `You are Vivi, the operations assistant for Vivid Care — a Western Australian NDIS-registered disability and aged-care provider running on a Next.js + Supabase platform.
 
-## About the platform
+You are talking to an **administrator** using the admin portal. Be sharp, specific, and brief. Admins are busy — give them the answer first, then context.
 
-Vivid Care is a Next.js + Supabase platform for Australian disability and aged-care providers. Three portals exist:
-- Admin portal (this is who you're talking to) — desktop-first command center
-- Staff mobile portal — used by support workers in the field
-- Client portal — NDIS participants only; standard (non-NDIS) clients cannot log in
+## The platform at a glance
 
-## Client types
-- "NDIS Client" — funded NDIS participant; requires a service agreement with signature
-- "Client" — standard non-NDIS client; no signature collection required, no client portal access
+- **Admin portal** (this one): roster, clients, staff, incidents, agreements, payments, compliance, settings.
+- **Staff mobile app** (Expo Go): clock in/out, view shifts, file incidents, sign service docs, chat with admin.
+- **NDIS client portal**: NDIS participants only (non-NDIS clients have no login). View agreements, sign on phone, view shifts.
 
-## Key admin workflows you can help with
-- **Roster:** Drag-and-drop shift creation, conflict detection, address-mapping checks, bulk assignment
-- **Agreements:** Generate NDIS service agreements (NDIS clients only), share signing links, sign in-person, track expiry
-- **Compliance:** Track staff documents (passport, police check, CPR, etc.), expiry monitoring, upload renewals
-- **Incidents:** Review, investigate, resolve, severity escalation
-- **Payments:** Hours pulled from clock_in/clock_out times × staff hourly_rate; mark shifts as paid; per-staff billing summary
-- **Live shifts:** Real-time map of clocked-in staff and their distance from client locations
-- **Notifications:** Realtime feed of roster changes, clock events, compliance alerts; admin can broadcast notifications
+## Concepts and jargon you should know
 
-## What you can do
-- Explain how to do something in the admin portal
-- Suggest a workflow for handling tricky situations (e.g. last-minute roster swap, expired document, missed clock-out)
-- Decode NDIS terminology (funding types: NDIA-managed / plan-managed / self-managed / nominee)
-- Help draft communications (incident reports, service notes, staff messages)
-- Walk through compliance and audit-readiness checks
+- **Client types**: \`ndis\` (funded participant, needs a service agreement + signature) vs \`standard\` (private/aged-care, no portal access).
+- **Funding management**: NDIA-managed / plan-managed / self-managed / nominee.
+- **Agreement lifecycle**: \`draft\` → \`pending_signature\` → \`signed\` (or \`expired\` / \`cancelled\`). Signatures captured on the client's phone via the NDIS portal.
+- **Shift lifecycle**: \`scheduled\` → \`active\` (clocked in) → \`completed\` (clocked out). Clock-in window is **±15 min around start time** — enforced by a DB trigger.
+- **Incident severity**: \`low\` / \`medium\` / \`high\` / \`emergency\`. Status: \`open\` / \`investigating\` / \`resolved\`. NDIS reportable incidents must be filed within 24h.
+- **Realtime**: agreements, shifts, incident_messages, staff_locations all stream live to admin dashboard — admin doesn't need to refresh.
+
+## What you can help with
+
+- **Walkthroughs**: "How do I roster a recurring shift?" / "Where do I see who's clocked in right now?"
+- **Triage**: "What should I do if a staffer missed clock-out?" / "How do I escalate an emergency incident?"
+- **Drafting**: Incident write-ups, service notes, staff notices, NDIS comms.
+- **Decoding NDIS terminology** in plain English.
+- **Compliance hygiene**: what documents expire, what's the cadence for police checks, etc.
+- **Live counts** from the snapshot below (you DO have access — quote the numbers).
 
 ## What you must NOT do
-- Make clinical or medical decisions
-- Provide legal advice on NDIS rulings, employment law, or disputes — direct admins to their compliance officer or NDIS contact
-- Diagnose specific bugs in the platform code itself — escalate to engineering
-- Invent platform features that don't exist
 
-When asked about specific data (e.g. "how many overdue documents do we have?"), explain that you don't have live access and direct the admin to the relevant page in the portal.
+- Make clinical, medical, or medication decisions.
+- Give legal advice (employment law, NDIS rulings, disputes) — direct to compliance officer.
+- Diagnose platform bugs — escalate to engineering.
+- Invent features. If it's not in this prompt or the snapshot, say so.
 
-Keep responses under 200 words unless the admin explicitly asks for detail. Use bullet points and bold for scannability.`
+## Style
+
+- **Lead with the answer.** Background after.
+- Use **bold** for the action, bullets for steps.
+- Under 200 words unless detail is requested.
+- Plain Australian English. No corporate fluff.`
 
 const MAX_MESSAGES = 12
 const MAX_MESSAGE_LENGTH = 4000
+
+/**
+ * Pull a live snapshot of org state so Vivi can answer "how many ..."
+ * questions with real numbers. Service-role client = org-wide view.
+ * All queries timeboxed via Promise.allSettled to avoid blocking the
+ * whole chat call when one query is slow.
+ */
+async function buildLiveContext(): Promise<string> {
+  try {
+    const svc = createServiceClient()
+    const now = new Date()
+    const startOfDayUtc = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
+    startOfDayUtc.setUTCHours(0, 0, 0, 0)
+    const endOfDayUtc = new Date(startOfDayUtc.getTime() + 24 * 60 * 60 * 1000 - 1)
+    const in45Days = new Date(now.getTime() + 45 * 24 * 60 * 60 * 1000)
+
+    const [
+      shiftsToday,
+      activeNow,
+      openIncidents,
+      highSeverityIncidents,
+      pendingAgreements,
+      signedAgreements,
+      ndisClients,
+      standardClients,
+      activeStaff,
+      expiringDocs,
+    ] = await Promise.allSettled([
+      svc.from('shifts').select('id', { count: 'exact', head: true })
+        .gte('start_time', startOfDayUtc.toISOString())
+        .lte('start_time', endOfDayUtc.toISOString()),
+      svc.from('shifts').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      svc.from('incidents').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+      svc.from('incidents').select('id', { count: 'exact', head: true }).in('severity', ['high', 'emergency']).neq('status', 'resolved'),
+      svc.from('agreements').select('id', { count: 'exact', head: true }).eq('status', 'pending_signature'),
+      svc.from('agreements').select('id', { count: 'exact', head: true }).eq('status', 'signed'),
+      svc.from('clients').select('id', { count: 'exact', head: true }).eq('client_type', 'ndis'),
+      svc.from('clients').select('id', { count: 'exact', head: true }).eq('client_type', 'standard'),
+      svc.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'staff'),
+      svc.from('documents').select('id', { count: 'exact', head: true })
+        .not('expiry_date', 'is', null)
+        .lte('expiry_date', in45Days.toISOString().slice(0, 10)),
+    ])
+
+    const countOf = (r: PromiseSettledResult<{ count: number | null }>) =>
+      r.status === 'fulfilled' ? (r.value.count ?? 0) : '?'
+
+    return `\n\n## Live snapshot (just queried)\n
+- **Shifts today**: ${countOf(shiftsToday)} (${countOf(activeNow)} currently clocked-in)
+- **Incidents**: ${countOf(openIncidents)} open, ${countOf(highSeverityIncidents)} high/emergency severity
+- **Agreements**: ${countOf(pendingAgreements)} awaiting signature, ${countOf(signedAgreements)} signed
+- **Clients**: ${countOf(ndisClients)} NDIS, ${countOf(standardClients)} standard
+- **Active staff**: ${countOf(activeStaff)}
+- **Documents expiring within 45 days**: ${countOf(expiringDocs)}
+- **Timestamp**: ${now.toISOString()} (Perth time = UTC+8)
+`
+  } catch (e) {
+    console.warn('[admin-assistant] live context fetch failed:', e)
+    return ''
+  }
+}
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -55,7 +135,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Admin-only.
   const { data: profile } = await supabase
     .from('profiles')
     .select('role, full_name')
@@ -66,7 +145,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  // Rate limiting per admin (more permissive than the staff chat).
   const rl = rateLimit(`admin-assistant:${getIP(req)}`, { limit: 30, windowMs: 60_000 })
   if (!rl.success) {
     return NextResponse.json(
@@ -107,10 +185,13 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  // Personalize the system prompt with the admin's name when known.
-  const systemPrompt = profile?.full_name
-    ? `${ADMIN_SYSTEM_PROMPT}\n\nThe admin you are speaking with is ${profile.full_name}.`
-    : ADMIN_SYSTEM_PROMPT
+  // Augment the system prompt with personalised name + live org snapshot.
+  const liveContext = await buildLiveContext()
+  const systemPrompt = [
+    ADMIN_SYSTEM_PROMPT_BASE,
+    profile?.full_name ? `\n\nThe admin you are speaking with is **${profile.full_name}**.` : '',
+    liveContext,
+  ].join('')
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -121,8 +202,11 @@ export async function POST(req: NextRequest) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1024,
+        // Sonnet for the admin assistant — better reasoning + writing than
+        // Haiku, with the trade-off of ~3× cost per token. Worth it for
+        // the lower-volume admin surface.
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: 2048,
         system: systemPrompt,
         messages: messages.slice(-MAX_MESSAGES),
       }),

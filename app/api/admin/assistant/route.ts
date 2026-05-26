@@ -66,11 +66,31 @@ You are talking to an **administrator** using the admin portal. Be sharp, specif
 const MAX_MESSAGES = 12
 const MAX_MESSAGE_LENGTH = 4000
 
+/** Format an ISO timestamp into Perth-local "Tue 11:30 AM". */
+function fmtPerth(iso: string | null): string {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleString('en-AU', {
+    weekday: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Australia/Perth',
+  })
+}
+
 /**
- * Pull a live snapshot of org state so Vivi can answer "how many ..."
- * questions with real numbers. Service-role client = org-wide view.
- * All queries timeboxed via Promise.allSettled to avoid blocking the
- * whole chat call when one query is slow.
+ * Pull a live snapshot of org state so Vivi can answer with real
+ * numbers AND real rows. Service-role client = org-wide view. All
+ * queries timeboxed via Promise.allSettled.
+ *
+ * Snapshot now includes:
+ *   - High-level counts (shifts today, incidents, agreements, clients)
+ *   - Active roster: every shift that's currently in-progress
+ *   - Today's roster: scheduled / active / completed shifts for today
+ *     with staff + client + time window + status
+ *   - Recent open incidents (top 5)
+ *
+ * Rows are truncated to avoid blowing the system-prompt budget.
  */
 async function buildLiveContext(): Promise<string> {
   try {
@@ -92,6 +112,10 @@ async function buildLiveContext(): Promise<string> {
       standardClients,
       activeStaff,
       expiringDocs,
+      // Detail rows for "tell me the roster" type questions
+      todaysRosterRows,
+      activeShiftRows,
+      openIncidentRows,
     ] = await Promise.allSettled([
       svc.from('shifts').select('id', { count: 'exact', head: true })
         .gte('start_time', startOfDayUtc.toISOString())
@@ -107,12 +131,41 @@ async function buildLiveContext(): Promise<string> {
       svc.from('documents').select('id', { count: 'exact', head: true })
         .not('expiry_date', 'is', null)
         .lte('expiry_date', in45Days.toISOString().slice(0, 10)),
+      // ── DETAIL ROWS ────────────────────────────────────────────────
+      svc
+        .from('shifts')
+        .select('id, status, start_time, end_time, support_type, staff:profiles!staff_id(full_name), clients(full_name, address)')
+        .gte('start_time', startOfDayUtc.toISOString())
+        .lte('start_time', endOfDayUtc.toISOString())
+        .order('start_time', { ascending: true })
+        .limit(20),
+      svc
+        .from('shifts')
+        .select('id, status, start_time, end_time, support_type, clock_in_time, staff:profiles!staff_id(full_name), clients(full_name)')
+        .eq('status', 'active')
+        .order('clock_in_time', { ascending: false })
+        .limit(20),
+      svc
+        .from('incidents')
+        .select('id, title, severity, status, reported_at, staff:profiles!staff_id(full_name), clients(full_name)')
+        .eq('status', 'open')
+        .order('reported_at', { ascending: false })
+        .limit(5),
     ])
 
     const countOf = (r: PromiseSettledResult<{ count: number | null }>) =>
       r.status === 'fulfilled' ? (r.value.count ?? 0) : '?'
+    const dataOf = <T,>(r: PromiseSettledResult<{ data: T[] | null }>): T[] =>
+      r.status === 'fulfilled' && r.value.data ? r.value.data : []
 
-    return `\n\n## Live snapshot (just queried)\n
+    // Normalise PostgREST nested embed (returns array OR object depending on FK cardinality).
+    const flat = (v: unknown): { full_name?: string | null; address?: string | null } | null => {
+      if (!v) return null
+      if (Array.isArray(v)) return (v[0] as any) ?? null
+      return v as any
+    }
+
+    const counts = `## Live snapshot (just queried)\n
 - **Shifts today**: ${countOf(shiftsToday)} (${countOf(activeNow)} currently clocked-in)
 - **Incidents**: ${countOf(openIncidents)} open, ${countOf(highSeverityIncidents)} high/emergency severity
 - **Agreements**: ${countOf(pendingAgreements)} awaiting signature, ${countOf(signedAgreements)} signed
@@ -121,6 +174,47 @@ async function buildLiveContext(): Promise<string> {
 - **Documents expiring within 45 days**: ${countOf(expiringDocs)}
 - **Timestamp**: ${now.toISOString()} (Perth time = UTC+8)
 `
+
+    // Active roster — staff currently clocked in
+    const activeRows = dataOf<any>(activeShiftRows)
+    const activeBlock = activeRows.length
+      ? `\n## Active roster (clocked-in right now)\n` +
+        activeRows.map((s) => {
+          const staff = flat(s.staff)?.full_name ?? 'Unassigned'
+          const client = flat(s.clients)?.full_name ?? 'Client'
+          return `- **${staff}** with ${client} · ${fmtPerth(s.start_time)} → ${fmtPerth(s.end_time)}` +
+            (s.support_type ? ` · ${s.support_type}` : '') +
+            (s.clock_in_time ? ` · in since ${fmtPerth(s.clock_in_time)}` : '')
+        }).join('\n')
+      : `\n## Active roster\nNo staff currently clocked in.`
+
+    // Today's roster — full day view
+    const todayRows = dataOf<any>(todaysRosterRows)
+    const todayBlock = todayRows.length
+      ? `\n\n## Today's roster (in chronological order)\n` +
+        todayRows.map((s) => {
+          const staff = flat(s.staff)?.full_name ?? 'Unassigned'
+          const client = flat(s.clients)?.full_name ?? 'Client'
+          const addr = flat(s.clients)?.address
+          return `- ${fmtPerth(s.start_time)}–${fmtPerth(s.end_time)} · **${staff}** → ${client}` +
+            (s.support_type ? ` (${s.support_type})` : '') +
+            ` · status: \`${s.status}\`` +
+            (addr ? ` · ${addr}` : '')
+        }).join('\n')
+      : `\n\n## Today's roster\nNothing scheduled today.`
+
+    // Open incidents — what needs attention
+    const incRows = dataOf<any>(openIncidentRows)
+    const incBlock = incRows.length
+      ? `\n\n## Open incidents (top ${incRows.length})\n` +
+        incRows.map((i) => {
+          const staff = flat(i.staff)?.full_name ?? '—'
+          const client = flat(i.clients)?.full_name ?? '—'
+          return `- **${i.severity.toUpperCase()}** · ${i.title} · reported by ${staff} for ${client} · ${fmtPerth(i.reported_at)}`
+        }).join('\n')
+      : `\n\n## Open incidents\nNone right now — well done.`
+
+    return `\n\n${counts}${activeBlock}${todayBlock}${incBlock}\n`
   } catch (e) {
     console.warn('[admin-assistant] live context fetch failed:', e)
     return ''
